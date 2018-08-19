@@ -68,7 +68,7 @@ fs::P_Pin fs::Spore::addPIn(const std::string &pinName, Pin_Type type, Pin_Proce
 	pin->_parent = _this;
 	pin->_this = pin;
 	pin->_type = type;
-	pin->_indexInSpore = _pins.size();
+	pin->_indexInSpore = (int)_pins.size();
 	_pins.push_back(pin);
 	_handler.push_back(process);
 	return pin;
