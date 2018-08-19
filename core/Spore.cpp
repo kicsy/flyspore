@@ -1,3 +1,23 @@
+/*!
+ * \class classname
+ *
+ * \ingroup GroupName
+ *
+ * \brief 
+ *
+ * TODO: long description
+ *
+ * \note 
+ *
+ * \author kicsy
+ *
+ * \version 1.0
+ *
+ * \date 2016/08/19 12:38
+ *
+ * Contact: lmj07luck@126.com
+ *
+ */
 #include "Spore.h"
 #include "Pin.h"
 #include "task_pool.h"

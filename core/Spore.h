@@ -1,3 +1,16 @@
+/*!
+ * \file Spore.h
+ * \date 2016/08/19 12:38
+ *
+ * \author kicsy
+ * Contact: lmj07luck@126.com
+ *
+ * \brief 
+ *
+ * TODO: long description
+ *
+ * \note
+*/
 #pragma once
 #include <shared_mutex>
 #include <mutex>
