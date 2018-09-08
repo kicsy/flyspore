@@ -8,14 +8,14 @@ fs::Pin::~Pin()
 {
 }
 
-void fs::Pin::push(C_Data data)
+void fs::Pin::push(P_Data data)
 {
 	if (_type == Pin_Type::IN_PIN)
 	{
 		P_Spore spore = _parent.lock();
 		if (spore)
 		{
-			spore->input(_this.lock(), data);
+			spore->input(getptr(), data);
 		}
 	}
 	else if (_type == Pin_Type::OUT_PIN)
@@ -62,16 +62,15 @@ std::tuple<bool, P_Path> fs::Pin::connect(std::shared_ptr<Pin> otherPin, const s
 		if ((_type == Pin_Type::IN_PIN) && (otherPin->_type == Pin_Type::OUT_PIN))
 		{
 			path = std::make_shared<fs::Path>(pathName, 0);
-			path->_inPin = _this.lock();
+			path->_inPin = getptr();
 			path->_outPin = otherPin;
 		}
 		else if ((_type == Pin_Type::OUT_PIN) && (otherPin->_type == Pin_Type::IN_PIN))
 		{
 			path = std::make_shared<fs::Path>(pathName, 0);
-			path->_outPin = _this.lock();
+			path->_outPin = getptr();
 			path->_inPin = otherPin;
 		}
-		path->_this = path;
 		_paths.push_back(path);
 		otherPin->_paths.push_back(path);
 		return std::move(std::make_tuple(false, path));
@@ -82,7 +81,7 @@ std::tuple<bool, P_Path> fs::Pin::connect(std::shared_ptr<Pin> otherPin, const s
 	if (thisSpore == otherSpore->parent())
 	{
 		//两个Pin的Spore为父子关系，则Pin合并
-		parentPin = _this.lock();
+		parentPin = getptr();
 		childPin = otherPin;
 
 	}
@@ -90,7 +89,7 @@ std::tuple<bool, P_Path> fs::Pin::connect(std::shared_ptr<Pin> otherPin, const s
 	{
 		//两个Pin的Spore为父子关系，则Pin合并
 		parentPin = otherPin;
-		childPin = _this.lock();
+		childPin = getptr();
 	}
 	else
 	{

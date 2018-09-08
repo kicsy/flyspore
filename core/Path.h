@@ -21,7 +21,7 @@ namespace fs
 		std::vector<std::shared_ptr<Traceable>> childs() = delete;
 
 		using Object::Object;
-		bool move(C_Data data);
+		bool move(P_Data data);
 	protected:
 		std::shared_ptr<Pin> _inPin;
 		std::shared_ptr<Pin> _outPin;

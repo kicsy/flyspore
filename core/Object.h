@@ -54,7 +54,6 @@ namespace fs
 	class DataPack;
 	using P_Session = std::shared_ptr<Session>;
 	using P_Data = std::shared_ptr<DataPack>;
-	using C_Data = std::shared_ptr<DataPack>; //std::shared_ptr<const DataPack>;
 	class DataPack : public AnyValues
 	{
 		public:
@@ -69,7 +68,7 @@ namespace fs
 		friend class Session;
 	};
 
-	class Traceable
+	class Traceable 
 	{
 	public:
 		Traceable();
@@ -81,7 +80,7 @@ namespace fs
 	};
 
 	template< typename TObject = Traceable, typename TParent = Traceable>
-	class Object : public Traceable
+	class Object : public Traceable , public std::enable_shared_from_this<TObject>
 	{
 	public:
 		Object(const std::string  &name, IdType id = 0);
@@ -91,10 +90,10 @@ namespace fs
 		IdType id();
 		std::shared_ptr<TParent> parent();
 		std::vector<std::shared_ptr<TObject>> childs();
+		std::shared_ptr<TObject> getptr();
 	protected:
 		std::weak_ptr<TParent>_parent;
 		std::vector<std::shared_ptr<TObject>> _childs;
-		std::weak_ptr<TObject> _this;
 		AnyValues _properties;
 		IdType _id;
 		std::string _name;
@@ -104,7 +103,8 @@ namespace fs
 	template< typename TObject /*= Traceable*/, typename TParent /*= Traceable*/>
 	fs::Object<TObject, TParent>::Object(const std::string  &name, fs::IdType id /*= 0*/) :
 		Traceable()
-		, _name(name), _id(id)
+		, _name(name)
+		, _id(id)
 	{
 		if (_id == 0)
 		{
@@ -155,6 +155,12 @@ namespace fs
 			cs.push_back(std::make_shared<TObject> && (child));
 		}
 		return std::move(cs);
+	}
+
+	template<typename TObject, typename TParent>
+	inline std::shared_ptr<TObject> Object<TObject, TParent>::getptr()
+	{
+		return std::enable_shared_from_this<TObject>::shared_from_this();
 	}
 
 

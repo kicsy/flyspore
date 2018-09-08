@@ -9,9 +9,10 @@ namespace fs
 {
 	class Spore;
 	class Session;
+	class Pin;
 	using P_Session = std::shared_ptr<Session>;
 	using P_Spore = std::shared_ptr<Spore>;
-
+	using P_Pin = std::shared_ptr<Pin>;
 	enum class Session_Status : unsigned int 
 	{
 		Normal = 0,
@@ -23,7 +24,7 @@ namespace fs
 	class Session : public Object<Session, Session>
 	{
 	public:
-
+		Session(P_Pin entryPin, const std::string  &name, IdType id = 0);
 		Session(const Session&) = delete;
 		Session() = delete;
 		~Session();
@@ -36,7 +37,6 @@ namespace fs
 		std::chrono::high_resolution_clock::time_point stopTime() { return _stopTime; }
 		P_Data newData(const AnyValues &any = AnyValues());
 	protected:
-		Session(const std::string  &name, IdType id = 0);
 		std::shared_ptr<Traceable> parent() = delete;
 		std::vector<std::shared_ptr<Traceable>> childs() = delete;
 		void increaseTask();
@@ -51,6 +51,7 @@ namespace fs
 
 		P_Spore _entrySpore;
 		std::string _emtryPinName;
+		P_Pin _entryPin;
 		std::condition_variable  _cond_status;
 		mutable std::mutex _mut_status;
 		Session_Status _status;

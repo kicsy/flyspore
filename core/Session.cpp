@@ -2,34 +2,39 @@
 #include "Session.h"
 #include "task_pool.h"
 #include "Spore.h"
-fs::Session::Session(const std::string &name, fs::IdType id /*= 0*/):
+fs::Session::Session(fs::P_Pin entryPin, const std::string &name, fs::IdType id /*= 0*/) :
 	Object(name, id)
 	,_task_remain(0)
 	, _status(Session_Status::Normal)
 {
+	if (entryPin && entryPin->type() == fs::Pin_Type::IN_PIN)
+	{
+		_entryPin = entryPin;
+		_entrySpore = entryPin->parent();
+		if (_entrySpore)
+		{
+			_entrySpore->buildSession(_id);
+		}
+	}
 }
 
 fs::Session::~Session()
 {
 	if (_entrySpore)
 	{
-		_entrySpore->cleanSession(_this.lock());
+		_entrySpore->releaseSession(id());
 	}
 }
 
 void fs::Session::submit(const AnyValues &any)
 {
-	if(_entrySpore)
+	if(_entrySpore && _entryPin)
 	{
-		P_Pin entryPin = _entrySpore->getPin(_emtryPinName, Pin_Type::IN_PIN);
-		if (entryPin)
-		{
-			entryPin->push(newData(any));
-			_startTime = std::chrono::high_resolution_clock::now();
-			std::unique_lock<std::mutex> lk(_mut_status);
-			_status = Session_Status::Running;
-			_cond_status.notify_all();
-		}
+		_entryPin->push(newData(any));
+		_startTime = std::chrono::high_resolution_clock::now();
+		std::unique_lock<std::mutex> lk(_mut_status);
+		_status = Session_Status::Running;
+		_cond_status.notify_all();
 	}
 }
 
@@ -53,7 +58,7 @@ void fs::Session::join()
 
 fs::P_Data fs::Session::newData(const AnyValues &any)
 {
-	return P_Data(new DataPack(_this.lock(), any));
+	return P_Data(new DataPack(getptr(), any));
 }
 
 void fs::Session::increaseTask()
@@ -70,7 +75,7 @@ void fs::Session::decreaseTask()
 
 		if (_triggerOnFinish)
 		{
-			_triggerOnFinish(_this.lock());
+			_triggerOnFinish(getptr());
 		}
 
 		std::unique_lock<std::mutex> lk(_mut_status);

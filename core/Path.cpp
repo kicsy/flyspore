@@ -1,7 +1,7 @@
 #include "Path.h"
 #include "Pin.h"
 
-bool fs::Path::move(C_Data data)
+bool fs::Path::move(P_Data data)
 {
 	if (_outPin)
 	{

@@ -28,15 +28,15 @@ namespace fs
 	class Spore;
 	using P_Spore = std::shared_ptr<Spore>;
 
-	using Pin_Process = std::function< void(Context& cc, C_Data data)>;
+	using Pin_Process = std::function< void(Context& cc, P_Data data)>;
 	class Spore : public Object<Spore, Spore>
 	{
 	public:
 		Spore(const std::string &name, IdType id = 0);
 		Spore(const Spore&) = delete;
 		Spore() = delete;
-		~Spore() {}
-		bool input(P_Pin pin, C_Data data);
+		~Spore();
+		bool input(P_Pin pin, P_Data data);
 		std::vector<P_Pin> pins();
 		P_Pin getPin(const std::string &name, Pin_Type type = Pin_Type::UNKNOW);
 		P_Pin addPIn(const std::string &pinName, Pin_Type type, Pin_Process process = nullptr);
@@ -46,14 +46,14 @@ namespace fs
 		template<typename ST, typename... Args>
 		std::shared_ptr<ST> addChild(Args&&... args);
 		P_Spore addChild(const std::string  &name, IdType id = 0);
-		P_Session newSession(const std::string &entryPinName, const std::string &name = "");
-		void cleanSession(P_Session pss);
+// 		P_Session newSession(const std::string &entryPinName, const std::string &name = "");
+// 		void cleanSession(P_Session pss);
 		static P_Spore newSpore(const std::string  &name = "", IdType id = 0);
 
 	protected:
 		void buildSession(IdType sessionId);
 		void releaseSession(IdType sessionId);
-		void process(Pin_Process pprocess, C_Data data);
+		void process(Pin_Process pprocess, P_Data data);
 	protected:
 
 		std::vector<P_Pin> _pins;

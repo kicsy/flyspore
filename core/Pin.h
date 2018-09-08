@@ -27,7 +27,7 @@ namespace fs
 	{
 	public:
 		~Pin();
-		void push(C_Data data);
+		void push(P_Data data);
 		std::tuple<bool, P_Path> connect(std::shared_ptr<Pin> otherPin, const std::string &pathName = "");
 		Pin_Type type() const;
 		std::vector<P_Path> paths();

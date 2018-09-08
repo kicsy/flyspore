@@ -30,15 +30,19 @@ fs::Spore::Spore(const std::string  &name, IdType id /*= 0*/)
 
 }
 
-bool fs::Spore::input(P_Pin pin, C_Data data)
+fs::Spore::~Spore()
+{
+
+}
+
+bool fs::Spore::input(P_Pin pin, P_Data data)
 {
 	if (pin == nullptr )
 	{
 		return false;
 	}
 	auto pinParent = pin->parent();
-	auto thisSpore = _this.lock();
-	if (pinParent != thisSpore || (unsigned int)pin->_indexInSpore >= _pins.size())
+	if (pinParent != getptr() || (unsigned int)pin->_indexInSpore >= _pins.size())
 	{
 		return false;
 	}
@@ -85,8 +89,7 @@ fs::P_Pin fs::Spore::getPin(const std::string &name, Pin_Type type)
 fs::P_Pin fs::Spore::addPIn(const std::string &pinName, Pin_Type type, Pin_Process process)
 {
 	auto pin = std::make_shared<Pin>(pinName);// std::shared_ptr<Pin>(new Pin(name));
-	pin->_parent = _this;
-	pin->_this = pin;
+	pin->_parent = getptr();
 	pin->_type = type;
 	pin->_indexInSpore = (int)_pins.size();
 	_pins.push_back(pin);
@@ -117,12 +120,22 @@ void fs::Spore::buildSession(IdType sessionId)
 	}
 	for (auto child : _childs)
 	{
-		child->buildSession(sessionId);
+		if (child)
+		{
+			child->buildSession(sessionId);
+		}
 	}
 }
 
 void fs::Spore::releaseSession(IdType sessionId)
 {
+	for (auto child : _childs)
+	{
+		if (child)
+		{
+			child->releaseSession(sessionId);
+		}
+	}
 	{
 		std::unique_lock<std::shared_mutex> lock(_shared_mutex_session);
 		if (_sessionValues.count(sessionId))
@@ -130,13 +143,9 @@ void fs::Spore::releaseSession(IdType sessionId)
 			_sessionValues[sessionId] = nullptr;
 		}
 	}
-	for (auto child : _childs)
-	{
-		child->releaseSession(sessionId);
-	}
 }
 
-void fs::Spore::process(Pin_Process pprocess, C_Data data)
+void fs::Spore::process(Pin_Process pprocess, P_Data data)
 {
 	if (pprocess && data )
 	{
@@ -157,7 +166,7 @@ void fs::Spore::process(Pin_Process pprocess, C_Data data)
 			std::shared_lock<std::shared_mutex> lock(_shared_mutex_session);
 			plocal = _sessionValues[data->getSession()->id()];
 		}
-		Context cc(_this.lock(), data->getSession(), plocal);
+		Context cc(getptr(), data->getSession(), plocal);
 		pprocess(cc, data);
 		pss->decreaseTask();
 	}
@@ -166,49 +175,47 @@ void fs::Spore::process(Pin_Process pprocess, C_Data data)
 fs::P_Spore fs::Spore::addChild(const std::string & name, IdType id)
 {
 	P_Spore ps = P_Spore(new Spore(name, id));
-	ps->_parent = _this;
-	ps->_this = ps;
+	ps->_parent = getptr();
 	return std::move(ps);
 }
-
-fs::P_Session fs::Spore::newSession(const std::string &entryPinName, const std::string &name)
-{
-
-	auto pss = P_Session(new Session(name));
-	pss->_entrySpore = _this.lock();
-	pss->_emtryPinName = entryPinName;
-	pss->_this = pss;
-	buildSession(pss->id());
-	for (auto ps : _childs)
-	{
-		if (ps)
-		{
-			ps->buildSession(pss->id());
-		}
-	}
-	return pss;
-}
-
-void fs::Spore::cleanSession(P_Session pss)
-{
-	if (!pss)
-	{
-		return;
-	}
-	for (auto ps : _childs)
-	{
-		if (ps)
-		{
-			ps->releaseSession(pss->id());
-		}
-	}
-	releaseSession(pss->id());
-}
+// 
+// fs::P_Session fs::Spore::newSession(const std::string &entryPinName, const std::string &name)
+// {
+// 
+// 	auto pss = P_Session(new Session(name));
+// 	pss->_entrySpore = _this.lock();
+// 	pss->_emtryPinName = entryPinName;
+// 	pss->_this = pss;
+// 	buildSession(pss->id());
+// 	for (auto ps : _childs)
+// 	{
+// 		if (ps)
+// 		{
+// 			ps->buildSession(pss->id());
+// 		}
+// 	}
+// 	return pss;
+// }
+// 
+// void fs::Spore::cleanSession(P_Session pss)
+// {
+// 	if (!pss)
+// 	{
+// 		return;
+// 	}
+// 	for (auto ps : _childs)
+// 	{
+// 		if (ps)
+// 		{
+// 			ps->releaseSession(pss->id());
+// 		}
+// 	}
+// 	releaseSession(pss->id());
+// }
 
 fs::P_Spore fs::Spore::newSpore(const std::string &name, IdType id /*= 0*/)
 {
 	P_Spore ps = std::make_shared<Spore>(name, id);
-	ps->_this = ps;
 	return std::move(ps);
 }
 
