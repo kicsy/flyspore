@@ -1,32 +1,23 @@
 #pragma once
 #include <memory>
-#include "Object.h"
+#include "Statement.h"
 namespace fs
 {
-	class Pin;
-	class DataPack;
-	class Path;
-	using P_Path = std::shared_ptr<Path>;
-	class Path : public Object<>
+	class Path
 	{
 	public:
 		~Path();
 		Path(const Path&) = delete;
 		Path& operator=(const Path&) = delete;
-		std::shared_ptr<Pin> inPin() const;
-		std::shared_ptr<Pin> outPin() const ;
+		P_Pin from() const;
+		P_Pin to() const ;
 		bool isvalid() const;
-	protected:
-		std::shared_ptr<Traceable> parent() = delete;
-		std::vector<std::shared_ptr<Traceable>> childs() = delete;
-
-		using Object::Object;
 		bool move(P_Data data);
+		static P_Path connect(P_Pin from, P_Pin to);
 	protected:
-		std::shared_ptr<Pin> _inPin;
-		std::shared_ptr<Pin> _outPin;
-
-		friend class Pin;
+		P_Pin _from;
+		P_Pin _to;
+		friend class Spore;
 	};
 }
 

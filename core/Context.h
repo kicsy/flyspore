@@ -1,9 +1,7 @@
 #pragma once
-#include "Object.h"
+#include "Statement.h"
 namespace fs
 {
-	class Spore;
-	using P_Spore = std::shared_ptr<Spore>;
 	class CellContext;
 	class Context
 	{
@@ -16,6 +14,7 @@ namespace fs
 		P_Data newData();
 		P_Data newData(P_Data &&pdata);
 		bool push(const std::string  &outPinName, P_Data ppack);
+		P_Spore spore();
 	protected:
 		P_Spore _ps;
 		P_Session _pss;

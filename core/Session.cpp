@@ -61,6 +61,11 @@ fs::P_Data fs::Session::newData(const AnyValues &any)
 	return P_Data(new DataPack(getptr(), any));
 }
 
+fs::P_Session fs::Session::newSession(P_Pin entryPin, const std::string & name, IdType id)
+{
+	return std::make_shared<fs::Session>(entryPin, name, id);
+}
+
 void fs::Session::increaseTask()
 {
 	_task_remain++;

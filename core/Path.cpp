@@ -1,32 +1,83 @@
+#include <algorithm>
 #include "Path.h"
 #include "Pin.h"
-
-bool fs::Path::move(P_Data data)
+#include "Spore.h"
+namespace fs
 {
-	if (_outPin)
+	Path::~Path()
 	{
-		_outPin->push(data);
-		return true;
+
 	}
-	return false;
+
+	bool Path::move(P_Data data)
+	{
+		if (_to)
+		{
+			_to->push(data);
+			return true;
+		}
+		return false;
+	}
+
+	P_Path Path::connect(P_Pin from, P_Pin to)
+	{
+		if (!from || !to)
+		{
+			return nullptr;
+		}
+		P_Spore fromSpore = from->spore();
+		P_Spore toSproe = to->spore();
+		if (!fromSpore || !toSproe)
+		{
+			return nullptr;
+		}
+		if (fromSpore->parent().lock() == toSproe->parent().lock())
+		{
+			//两个Pin的宿主Spore为同级，通过Path连接
+			P_Spore holder = fromSpore->parent().lock();
+			if (!holder)
+			{
+				return nullptr;
+			}
+			if (from->type() != Pin_Type::OUT_PIN || to->type() != Pin_Type::IN_PIN)
+			{
+				return nullptr;
+			}
+			return  holder->create_or_find_Path(from, to);
+		}
+		else if (fromSpore == toSproe->parent().lock())
+		{
+			if (from->type() != Pin_Type::IN_PIN || to->type() != Pin_Type::IN_PIN)
+			{
+				return nullptr;
+			}
+			return  fromSpore->create_or_find_Path(from, to);
+		}
+		else if (fromSpore->parent().lock() == toSproe)
+		{
+			if (from->type() != Pin_Type::OUT_PIN || to->type() != Pin_Type::OUT_PIN)
+			{
+				return nullptr;
+			}
+			return  fromSpore->create_or_find_Path(from, to);
+		}
+		return nullptr;
+	}
+
+	fs::P_Pin fs::Path::from() const
+	{
+		return _from;
+	}
+
+	P_Pin Path::to() const
+	{
+		return _to;
+	}
+
+	bool fs::Path::isvalid() const
+	{
+		return _from != nullptr && _to != nullptr;
+	}
+
 }
 
-fs::Path::~Path()
-{
-
-}
-
-std::shared_ptr<fs::Pin> fs::Path::inPin() const 
-{
-	return _inPin;
-}
-
-std::shared_ptr<fs::Pin> fs::Path::outPin() const
-{
-	return _outPin;
-}
-
-bool fs::Path::isvalid() const
-{
-	return _inPin != nullptr && _outPin != nullptr;
-}

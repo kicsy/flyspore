@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -150,7 +150,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\core\AnyValues.cpp" />
     <ClCompile Include="..\core\Context.cpp" />
+    <ClCompile Include="..\core\DataPack.cpp" />
     <ClCompile Include="..\core\Object.cpp" />
     <ClCompile Include="..\core\Path.cpp" />
     <ClCompile Include="..\core\Pin.cpp" />
@@ -159,12 +161,15 @@
     <ClCompile Include="flyspore.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\core\AnyValues.h" />
     <ClInclude Include="..\core\Context.h" />
+    <ClInclude Include="..\core\DataPack.h" />
     <ClInclude Include="..\core\Object.h" />
     <ClInclude Include="..\core\Path.h" />
     <ClInclude Include="..\core\Pin.h" />
     <ClInclude Include="..\core\Session.h" />
     <ClInclude Include="..\core\Spore.h" />
+    <ClInclude Include="..\core\Statement.h" />
     <ClInclude Include="..\core\stealing_queue.h" />
     <ClInclude Include="..\core\sync_deque.h" />
     <ClInclude Include="..\core\task_pool.h" />

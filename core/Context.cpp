@@ -46,3 +46,8 @@ bool fs::Context::push(const std::string &outPinName, P_Data ppack)
 	}
 	return false;
 }
+
+fs::P_Spore fs::Context::spore()
+{
+	return _ps;
+}

@@ -36,6 +36,8 @@ namespace fs
 		std::chrono::high_resolution_clock::time_point startTime() { return _startTime; }
 		std::chrono::high_resolution_clock::time_point stopTime() { return _stopTime; }
 		P_Data newData(const AnyValues &any = AnyValues());
+		static P_Session newSession(P_Pin entryPin, const std::string  &name = "", IdType id = 0);
+
 	protected:
 		std::shared_ptr<Traceable> parent() = delete;
 		std::vector<std::shared_ptr<Traceable>> childs() = delete;
