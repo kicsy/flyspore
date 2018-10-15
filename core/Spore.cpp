@@ -84,6 +84,21 @@ namespace fs
 		return pin;
 	}
 
+	std::vector<P_Spore> Spore::childs()
+	{
+		std::shared_lock<std::shared_mutex> lock(_childs_mutex);
+		return _childs;
+	}
+
+	P_Spore Spore::addChild(P_Spore child)
+	{
+		if (!child)
+			return nullptr;
+		child->_parent = shared_from_this();
+		std::unique_lock<std::shared_mutex> lock(_childs_mutex);
+		_childs.push_back(child);
+	}
+
 	void Spore::buildSession(IdType sessionId)
 	{
 		{
