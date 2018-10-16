@@ -6,7 +6,7 @@ fs::Context::Context(P_Spore ps, P_Session pss, P_AnyValues plocal):
 	,_pss(pss)
 	,_plocal(plocal)
 	,local(*plocal.get())
-	,session(pss->propertis())
+	,session(pss->values())
 {
 }
 

@@ -38,9 +38,6 @@ namespace fs
 		std::vector<P_Spore> childs();
 		P_Spore addChild(P_Spore child);
 
-		template<typename ST, typename... Args>
-		std::shared_ptr<ST> addChild(Args&&... args);
-		P_Spore addChild(const std::string  &name, IdType id = 0);
 		static P_Spore newSpore(const std::string  &name = "", IdType id = 0);
 
 	protected:

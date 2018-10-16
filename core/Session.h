@@ -4,15 +4,10 @@
 #include <atomic>
 #include <condition_variable>
 #include <chrono>
-#include "Object.h"
+#include "Statement.h"
+#include "AnyValues.h"
 namespace fs
 {
-	class Spore;
-	class Session;
-	class Pin;
-	using P_Session = std::shared_ptr<Session>;
-	using P_Spore = std::shared_ptr<Spore>;
-	using P_Pin = std::shared_ptr<Pin>;
 	enum class Session_Status : unsigned int 
 	{
 		Normal = 0,
@@ -21,10 +16,10 @@ namespace fs
 		Finish = 3
 	};
 
-	class Session : public Object<Session, Session>
+	class Session : public std::enable_shared_from_this<Session>
 	{
 	public:
-		Session(P_Pin entryPin, const std::string  &name, IdType id = 0);
+		Session(P_Pin entryPin);
 		Session(const Session&) = delete;
 		Session() = delete;
 		~Session();
@@ -32,27 +27,27 @@ namespace fs
 		void stop();
 		void onFinish(std::function<void(P_Session)> func);
 		void join();
+		AnyValues &values() { return _values; }
 		Session_Status status() { return _status; }
 		std::chrono::high_resolution_clock::time_point startTime() { return _startTime; }
 		std::chrono::high_resolution_clock::time_point stopTime() { return _stopTime; }
 		P_Data newData(const AnyValues &any = AnyValues());
-		static P_Session newSession(P_Pin entryPin, const std::string  &name = "", IdType id = 0);
+		static P_Session newSession(P_Pin entryPin);
 
 	protected:
-		std::shared_ptr<Traceable> parent() = delete;
-		std::vector<std::shared_ptr<Traceable>> childs() = delete;
 		void increaseTask();
 		void decreaseTask();
 	protected:
+		IdType _id;
 		std::atomic_ullong _task_remain;
 		std::function<void(P_Session)> _triggerOnFinish;
 
-		
 		std::chrono::high_resolution_clock::time_point _startTime;
 		std::chrono::high_resolution_clock::time_point _stopTime;
 
+		AnyValues _values;
+
 		P_Spore _entrySpore;
-		std::string _emtryPinName;
 		P_Pin _entryPin;
 		std::condition_variable  _cond_status;
 		mutable std::mutex _mut_status;

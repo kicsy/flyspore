@@ -108,26 +108,24 @@ namespace fs
 				_sessionValues[sessionId] = std::make_shared<AnyValues>();
 			}
 		}
-		walkChilds([&](P_Spore child) ->bool {
-			if (child)
+		{
+			std::shared_lock<std::shared_mutex> lock(_childs_mutex);
+			for (auto child : _childs)
 			{
 				child->buildSession(sessionId);
 			}
-			return true;
-		});
+		}
 	}
 
 	void Spore::releaseSession(IdType sessionId)
 	{
-
-		walkChilds([&](P_Spore child) {
-			if (child)
+		{
+			std::shared_lock<std::shared_mutex> lock(_childs_mutex);
+			for (auto child : _childs)
 			{
 				child->releaseSession(sessionId);
 			}
-			return true;
-		});
-
+		}
 		{
 			std::unique_lock<std::shared_mutex> lock(_session_mutex);
 			if (_sessionValues.count(sessionId))
@@ -146,20 +144,17 @@ namespace fs
 			{
 				return;
 			}
-
 			if (pss->status() == Session_Status::BlackOut)
 			{
 				pss->decreaseTask();
 				return;
 			}
-
 			P_AnyValues plocal;
 			{
 				std::shared_lock<std::shared_mutex> lock(_session_mutex);
 				plocal = _sessionValues[data->getSession()->id()];
 			}
-
-			Context cc(getptr(), data->getSession(), plocal);
+			Context cc(shared_from_this(), data->getSession(), plocal);
 			pprocess(cc, data);
 			pss->decreaseTask();
 		}
@@ -184,13 +179,6 @@ namespace fs
 		}
 		from->addPath(path);
 		return std::move(path);
-	}
-
-	P_Spore Spore::addChild(const std::string & name, IdType id)
-	{
-		P_Spore ps = P_Spore(new Spore(name, id));
-		ps->_parent = getptr();
-		return std::move(ps);
 	}
 
 	P_Spore Spore::newSpore(const std::string &name, IdType id /*= 0*/)
