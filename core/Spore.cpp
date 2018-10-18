@@ -27,7 +27,11 @@
 #include "DataPack.h"
 namespace fs
 {
-	Spore::Spore()
+
+	Pin_Process Spore::ENTRY = [](Context& cc, P_Data data) {};
+
+	Spore::Spore(const std::string &name):
+		_name(name)
 	{
 	}
 
@@ -38,6 +42,11 @@ namespace fs
 	PW_Spore Spore::parent()
 	{
 		return _parent;
+	}
+
+	std::string Spore::name()
+	{
+		return _name;
 	}
 
 	bool Spore::input(P_Pin pin, P_Data data)
@@ -51,7 +60,8 @@ namespace fs
 		{
 			return false;
 		}
-		if (pin->_process == nullptr)
+		if (pin->_process == nullptr || 
+			pin->_process.target<void(Context&, P_Data)>() == ENTRY.target<void(Context&, P_Data)>())
 		{
 			return false;
 		}
@@ -70,17 +80,31 @@ namespace fs
 
 	std::vector<P_Pin> Spore::pins()
 	{
+		std::vector<P_Pin> ps(_pins.size());
 		std::shared_lock<std::shared_mutex> lock(_pins_mutex);
-		return _pins;
+		for (const auto& pin : _pins)
+		{
+			ps.push_back(pin.second);
+		}
+		return std::move(ps);
 	}
 
-	P_Pin Spore::addPIn(Pin_Type type, Pin_Process process)
+	fs::P_Pin Spore::getPin(const std::string &name)
 	{
-		if (type == Pin_Type::OUT_PIN)
-			process = nullptr;
-		auto pin = std::make_shared<Pin>(shared_from_this(), type, process);
+		std::shared_lock<std::shared_mutex> lock(_pins_mutex);
+		auto iter = _pins.find(name);
+		if (iter  == _pins.end())
+			return nullptr;
+		return *iter;
+	}
+
+	P_Pin Spore::addPin(const std::string &name, Pin_Process process)
+	{
+		auto pin = std::make_shared<Pin>(name, shared_from_this(),process);
 		std::unique_lock<std::shared_mutex> lock(_pins_mutex);
-		_pins.push_back(pin);
+		if (_pins.find(name) != _pins.end())
+			return nullptr;
+		_pins[name] = pin;
 		return pin;
 	}
 
@@ -160,7 +184,7 @@ namespace fs
 		}
 	}
 
-	P_Path Spore::create_or_find_Path(P_Pin from, P_Pin to)
+	P_Path Spore::create_or_find_Path(P_Pin from, P_Pin to, const std::string &name /*= ""*/)
 	{
 		P_Path path;
 		{
@@ -172,7 +196,7 @@ namespace fs
 			{
 				return *iter;
 			}
-			path = std::make_shared<Path>();
+			path = std::make_shared<Path>(name);
 			path->_from = from;
 			path->_to = to;
 			_paths.push_back(path);
@@ -181,9 +205,10 @@ namespace fs
 		return std::move(path);
 	}
 
-	P_Spore Spore::newSpore(const std::string &name, IdType id /*= 0*/)
+
+	P_Spore Spore::newSpore(const std::string &name)
 	{
-		P_Spore ps = std::make_shared<Spore>(name, id);
+		P_Spore ps = std::make_shared<Spore>(name);
 		return std::move(ps);
 	}
 

@@ -12,7 +12,7 @@ namespace fs
 		AnyValues(const AnyValues&) = default;
 
 		template<typename vT>
-		vT& ref(const std::string &strKey) throw
+		vT& ref(const std::string &strKey)
 		{
 			auto iter = find(strKey);
 			if (iter != end())
@@ -23,7 +23,7 @@ namespace fs
 				}
 				catch (const std::bad_any_cast &){}
 			}
-			auto ret = emplace(std::make_pair(std::string(strKey), vT()))
+			auto ret = emplace(std::make_pair(std::string(strKey), vT()));
 			if (!ret.second){
 				throw std::invalid_argument();
 			}

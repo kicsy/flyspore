@@ -42,9 +42,6 @@
     <ClCompile Include="..\core\AnyValues.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="DataPack.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\DataPack.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -85,9 +82,6 @@
     </ClInclude>
     <ClInclude Include="..\core\AnyValues.h">
       <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="DataPack.h">
-      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\DataPack.h">
       <Filter>core</Filter>

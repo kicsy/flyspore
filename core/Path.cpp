@@ -4,6 +4,13 @@
 #include "Spore.h"
 namespace fs
 {
+
+	Path::Path(const std::string &name /*= ""*/):
+		_name(name)
+	{
+
+	}
+
 	Path::~Path()
 	{
 
@@ -19,7 +26,7 @@ namespace fs
 		return false;
 	}
 
-	P_Path Path::connect(P_Pin from, P_Pin to)
+	P_Path Path::connect(P_Pin from, P_Pin to, const std::string &name /*= ""*/)
 	{
 		if (!from || !to)
 		{
@@ -43,7 +50,7 @@ namespace fs
 			{
 				return nullptr;
 			}
-			return  holder->create_or_find_Path(from, to);
+			return  holder->create_or_find_Path(from, to, name);
 		}
 		else if (fromSpore == toSproe->parent().lock())
 		{
@@ -51,7 +58,7 @@ namespace fs
 			{
 				return nullptr;
 			}
-			return  fromSpore->create_or_find_Path(from, to);
+			return  fromSpore->create_or_find_Path(from, to, name);
 		}
 		else if (fromSpore->parent().lock() == toSproe)
 		{
@@ -59,7 +66,7 @@ namespace fs
 			{
 				return nullptr;
 			}
-			return  fromSpore->create_or_find_Path(from, to);
+			return  fromSpore->create_or_find_Path(from, to, name);
 		}
 		return nullptr;
 	}

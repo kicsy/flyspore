@@ -23,7 +23,7 @@ fs::P_Data fs::Context::newData()
 	return P_Data();
 }
 
-fs::P_Data fs::Context::newData(P_Data && pdata)
+fs::P_Data fs::Context::newData(P_Data pdata)
 {
 	if (_pss)
 	{
@@ -38,8 +38,8 @@ bool fs::Context::push(const std::string &outPinName, P_Data ppack)
 	{
 		return false;
 	}
-	P_Pin outPin = _ps->getPin(std::move(outPinName), Pin_Type::OUT_PIN);
-	if (outPin)
+	P_Pin outPin = _ps->getPin(outPinName);
+	if (outPin && outPin->type() == Pin_Type::OUT_PIN)
 	{
 		outPin->push(ppack);
 		return true;

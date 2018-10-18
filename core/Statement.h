@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
-
+#include <functional>
+#include <string>
 namespace fs
 {
 	using IdType = unsigned long long;

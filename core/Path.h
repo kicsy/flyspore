@@ -13,8 +13,11 @@ namespace fs
 		P_Pin to() const ;
 		bool isvalid() const;
 		bool move(P_Data data);
-		static P_Path connect(P_Pin from, P_Pin to);
+		static P_Path connect(P_Pin from, P_Pin to, const std::string &name = "");
 	protected:
+		Path(const std::string &name = "");
+	protected:
+		std::string _name;
 		P_Pin _from;
 		P_Pin _to;
 		friend class Spore;

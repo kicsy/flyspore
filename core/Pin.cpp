@@ -4,17 +4,13 @@
 #include "Path.h"
 namespace fs
 {
-	Pin::Pin(PW_Spore spore, Pin_Type type):
+	Pin::Pin(PW_Spore spore, std::string name, Pin_Process process /*= nullptr*/):
 		_spore(spore)
-		,_type(type)
-	{
-	}
-
-	Pin::Pin(PW_Spore spore, Pin_Type type, Pin_Process process) :
-		_spore(spore)
-		, _type(type)
+		, _type(process == nullptr ? Pin_Type::OUT_PIN : Pin_Type::IN_PIN)
 		, _process(process)
+		, _name(name)
 	{
+
 	}
 
 	Pin::~Pin()
@@ -58,6 +54,11 @@ namespace fs
 	fs::P_Spore Pin::spore()
 	{
 		return _spore.lock();
+	}
+
+	std::string Pin::name()
+	{
+		return _name;
 	}
 
 }
