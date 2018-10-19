@@ -35,13 +35,13 @@ namespace fs
 		std::vector<P_Pin> pins();
 		P_Pin getPin(const std::string &name);
 		P_Pin addPin(const std::string &name, Pin_Process process = nullptr);
+		P_Pin addPin(const std::string &name, Pin_Type type, Pin_Process process = nullptr);
 
 		std::vector<P_Spore> childs();
 		P_Spore addChild(P_Spore child);
+		P_Spore addChild(const std::string &name);
 
 		static P_Spore newSpore(const std::string &name = "");
-
-		static Pin_Process ENTRY;
 	protected:
 		void buildSession(IdType sessionId);
 		void releaseSession(IdType sessionId);

@@ -23,6 +23,7 @@ namespace fs
 		Session(const Session&) = delete;
 		Session() = delete;
 		~Session();
+		IdType id();
 		void submit(const AnyValues &any = AnyValues());
 		void stop();
 		void onFinish(std::function<void(P_Session)> func);

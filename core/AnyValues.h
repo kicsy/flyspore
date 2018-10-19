@@ -14,20 +14,15 @@ namespace fs
 		template<typename vT>
 		vT& ref(const std::string &strKey)
 		{
-			auto iter = find(strKey);
-			if (iter != end())
+			try
 			{
-				try
-				{
-					return std::any_cast<vT&>(*iter);
-				}
-				catch (const std::bad_any_cast &){}
+				return std::any_cast<vT&>(at(strKey));
 			}
-			auto ret = emplace(std::make_pair(std::string(strKey), vT()));
-			if (!ret.second){
-				throw std::invalid_argument();
+			catch (const std::out_of_range&)
+			{
+				std::any& ref = ((*this)[strKey] = vT());
+				return std::any_cast<vT&>(ref);
 			}
-			return std::any_cast<vT&>(*(ret.first));
 		}
 
 		template<typename vT>

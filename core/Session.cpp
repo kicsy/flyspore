@@ -30,6 +30,11 @@ fs::Session::~Session()
 	}
 }
 
+fs::IdType fs::Session::id()
+{
+	return _id;
+}
+
 void fs::Session::submit(const AnyValues &any)
 {
 	if(_entrySpore && _entryPin)

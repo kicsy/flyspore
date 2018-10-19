@@ -23,15 +23,6 @@ fs::P_Data fs::Context::newData()
 	return P_Data();
 }
 
-fs::P_Data fs::Context::newData(P_Data pdata)
-{
-	if (_pss)
-	{
-		return _pss->newData(*pdata);
-	}
-	return P_Data();
-}
-
 bool fs::Context::push(const std::string &outPinName, P_Data ppack)
 {
 	if (!_ps)

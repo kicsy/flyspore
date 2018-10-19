@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Statement.h"
-
+#include <shared_mutex>
 namespace fs
 {
 	enum class Pin_Type : unsigned int
@@ -21,7 +21,7 @@ namespace fs
 		P_Spore spore();
 		std::string name();
 	protected:
-		Pin(PW_Spore spore, std::string name, Pin_Process process = nullptr);
+		Pin(PW_Spore spore, std::string name, Pin_Type type, Pin_Process process = nullptr);
 		Pin(const Pin&) = delete;
 		Pin& operator=(const Pin&) = delete;
 		bool addPath(P_Path path);

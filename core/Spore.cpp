@@ -27,9 +27,6 @@
 #include "DataPack.h"
 namespace fs
 {
-
-	Pin_Process Spore::ENTRY = [](Context& cc, P_Data data) {};
-
 	Spore::Spore(const std::string &name):
 		_name(name)
 	{
@@ -60,11 +57,6 @@ namespace fs
 		{
 			return false;
 		}
-		if (pin->_process == nullptr || 
-			pin->_process.target<void(Context&, P_Data)>() == ENTRY.target<void(Context&, P_Data)>())
-		{
-			return false;
-		}
 		P_Session pss = data->getSession();
 		if (pss)
 		{
@@ -72,9 +64,12 @@ namespace fs
 			{
 				return false;
 			}
-			pss->increaseTask();
 		}
-		task_pool::get_instance().submit(&Spore::process, this, pin->_process, data);
+		if (pin->_process)
+		{
+			pss->increaseTask();
+			task_pool::get_instance().submit(&Spore::process, this, pin->_process, data);
+		}
 		return true;
 	}
 
@@ -95,12 +90,17 @@ namespace fs
 		auto iter = _pins.find(name);
 		if (iter  == _pins.end())
 			return nullptr;
-		return *iter;
+		return iter->second;
 	}
 
 	P_Pin Spore::addPin(const std::string &name, Pin_Process process)
 	{
-		auto pin = std::make_shared<Pin>(name, shared_from_this(),process);
+		return addPin(name, process == nullptr ? Pin_Type::OUT_PIN : Pin_Type::IN_PIN, process);
+	}
+
+	fs::P_Pin Spore::addPin(const std::string &name, Pin_Type type, Pin_Process process)
+	{
+		auto pin = P_Pin(new Pin(weak_from_this(), name, type, process));
 		std::unique_lock<std::shared_mutex> lock(_pins_mutex);
 		if (_pins.find(name) != _pins.end())
 			return nullptr;
@@ -121,6 +121,12 @@ namespace fs
 		child->_parent = shared_from_this();
 		std::unique_lock<std::shared_mutex> lock(_childs_mutex);
 		_childs.push_back(child);
+		return child;
+	}
+
+	fs::P_Spore Spore::addChild(const std::string &name)
+	{
+		return addChild(newSpore(name));
 	}
 
 	void Spore::buildSession(IdType sessionId)
@@ -196,7 +202,7 @@ namespace fs
 			{
 				return *iter;
 			}
-			path = std::make_shared<Path>(name);
+			path = P_Path(new Path(name));
 			path->_from = from;
 			path->_to = to;
 			_paths.push_back(path);

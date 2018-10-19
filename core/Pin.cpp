@@ -4,9 +4,9 @@
 #include "Path.h"
 namespace fs
 {
-	Pin::Pin(PW_Spore spore, std::string name, Pin_Process process /*= nullptr*/):
+	Pin::Pin(PW_Spore spore, std::string name, Pin_Type type, Pin_Process process /*= nullptr*/):
 		_spore(spore)
-		, _type(process == nullptr ? Pin_Type::OUT_PIN : Pin_Type::IN_PIN)
+		, _type(type)
 		, _process(process)
 		, _name(name)
 	{
