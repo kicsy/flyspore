@@ -2,8 +2,4 @@
 
 namespace fs
 {
-	AnyValues::~AnyValues()
-	{
-
-	}
 }

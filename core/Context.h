@@ -12,7 +12,6 @@ namespace fs
 		AnyValues& local;
 		AnyValues& session;
 		P_Data newData();
-		P_Data newData(P_Data pdata);
 		bool push(const std::string  &outPinName, P_Data ppack);
 		P_Spore spore();
 	protected:

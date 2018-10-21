@@ -4,25 +4,22 @@
 #include <any>
 namespace fs
 {
-	class AnyValues : public std::unordered_map<std::string, std::any>
+	class AnyValues 
 	{
 	public:
-		AnyValues() = default;
-		virtual ~AnyValues();
-		AnyValues(const AnyValues&) = default;
-
 		template<typename vT>
 		vT& ref(const std::string &strKey)
 		{
-			try
+			std::any& ref = _values[strKey];
+			if (!ref.has_value())
 			{
-				return std::any_cast<vT&>(at(strKey));
+				ref = vT();
 			}
-			catch (const std::out_of_range&)
+			if (ref.type() != typeid(vT))
 			{
-				std::any& ref = ((*this)[strKey] = vT());
-				return std::any_cast<vT&>(ref);
+				ref = (_values[strKey] = vT());
 			}
+			return std::any_cast<vT&>(ref);
 		}
 
 		template<typename vT>
@@ -32,7 +29,14 @@ namespace fs
 			{
 				return false;
 			}
-			return (*this)[strKey].type() == typeid(vT);
+			return _values[strKey].type() == typeid(vT);
 		}
+
+		bool isEmpty() const
+		{
+			return _values.size() == 0;
+		}
+	protected:
+		std::unordered_map<std::string, std::any> _values;
 	};
 }

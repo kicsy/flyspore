@@ -2,13 +2,10 @@
 
 namespace fs
 {
-	DataPack::DataPack(P_Session pss, const AnyValues &any) :
-		_session(pss)
+	DataPack::DataPack(P_Session pss, const AnyValues &any) :AnyValues()
+		,_session(pss)
 	{
-		if (any.size() > 0)
-		{
-			(*static_cast<AnyValues*>(this)) = any;
-		}
+		(*static_cast<AnyValues*>(this)) = any;
 	}
 
 	fs::P_Session fs::DataPack::getSession() const
