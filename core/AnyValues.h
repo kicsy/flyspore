@@ -25,11 +25,12 @@ namespace fs
 		template<typename vT>
 		bool is_a(const std::string &strKey) const
 		{
-			if (count(strKey) <= 0)
+			if (_values.count(strKey) <= 0)
 			{
 				return false;
 			}
-			return _values[strKey].type() == typeid(vT);
+			const std::any& ref = _values.at(strKey);
+			return ref.type() == typeid(vT);
 		}
 
 		bool isEmpty() const
