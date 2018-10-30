@@ -45,6 +45,9 @@
     <ClCompile Include="..\core\DataPack.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\core\Schema.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\core\Context.h">
@@ -84,6 +87,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\core\DataPack.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Schema.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

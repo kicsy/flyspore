@@ -23,7 +23,7 @@
     <ProjectGuid>{990F1B33-A1DF-481B-94EC-3402E7E4764B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>flyspore</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClCompile Include="..\core\AnyValues.cpp" />
     <ClCompile Include="..\core\Context.cpp" />
+    <ClCompile Include="..\core\Schema.cpp" />
     <ClCompile Include="..\core\DataPack.cpp" />
     <ClCompile Include="..\core\Object.cpp" />
     <ClCompile Include="..\core\Path.cpp" />
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="..\core\AnyValues.h" />
     <ClInclude Include="..\core\Context.h" />
+    <ClInclude Include="..\core\Schema.h" />
     <ClInclude Include="..\core\DataPack.h" />
     <ClInclude Include="..\core\Object.h" />
     <ClInclude Include="..\core\Path.h" />

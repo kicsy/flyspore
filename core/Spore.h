@@ -45,7 +45,7 @@ namespace fs
 	protected:
 		void buildSession(IdType sessionId);
 		void releaseSession(IdType sessionId);
-		void process(Pin_Process pprocess, P_Data data);
+		void process(P_Pin pin, P_Data data);
 		P_Path create_or_find_Path(P_Pin from, P_Pin to, const std::string &name = "");
 
 	protected:

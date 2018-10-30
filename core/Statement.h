@@ -9,6 +9,9 @@ namespace fs
 	class AnyValues;
 	using P_AnyValues = std::shared_ptr<AnyValues>;
 
+	class Data;
+
+
 	class DataPack;
 	using P_Data = std::shared_ptr<DataPack>;
 

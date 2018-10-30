@@ -21,21 +21,38 @@ namespace fs
 		P_Spore spore();
 		std::string name();
 	protected:
-		Pin(PW_Spore spore, std::string name, Pin_Type type, Pin_Process process = nullptr);
+		Pin(PW_Spore spore, std::string name, Pin_Type type);
 		Pin(const Pin&) = delete;
 		Pin& operator=(const Pin&) = delete;
 		bool addPath(P_Path path);
+		virtual void process(Context* ct, P_Data& pdata);
 	protected:
 		Pin_Type _type;
 		std::string _name;
 		std::shared_mutex _paths_mutex;
 		std::vector<P_Path> _paths;
-		Pin_Process _process;
 		PW_Spore _spore;
 
 		friend class Spore;
 		friend class Path;
 	};
+
+	template< typename SchemaType>
+	class WarpPin : public Pin
+	{
+	protected:
+		WarpPin(ProcessType pt):_process(pt)
+		{
+
+		}
+		virtual void process(Context* ct, P_Data& pdata)
+		{
+
+		}
+
+		SchemaType _schema;
+	};
+
 }
 
 

@@ -4,10 +4,9 @@
 #include "Path.h"
 namespace fs
 {
-	Pin::Pin(PW_Spore spore, std::string name, Pin_Type type, Pin_Process process /*= nullptr*/):
+	Pin::Pin(PW_Spore spore, std::string name, Pin_Type type):
 		_spore(spore)
 		, _type(type)
-		, _process(process)
 		, _name(name)
 	{
 
@@ -59,6 +58,10 @@ namespace fs
 	std::string Pin::name()
 	{
 		return _name;
+	}
+
+	void Pin::process(Context* ct, P_Data& pdata)
+	{
 	}
 
 }

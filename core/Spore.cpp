@@ -165,9 +165,9 @@ namespace fs
 		}
 	}
 
-	void Spore::process(Pin_Process pprocess, P_Data data)
+	void Spore::process(P_Pin pin, P_Data data)
 	{
-		if (pprocess && data)
+		if (pin && data)
 		{
 			P_Session pss = data->getSession();
 			if (pss == nullptr)
@@ -182,10 +182,10 @@ namespace fs
 			P_AnyValues plocal;
 			{
 				std::shared_lock<std::shared_mutex> lock(_session_mutex);
-				plocal = _sessionValues[data->getSession()->id()];
+				plocal = _sessionValues[pss->id()];
 			}
-			Context cc(shared_from_this(), data->getSession(), plocal);
-			pprocess(cc, data);
+			Context cc(shared_from_this(), pss, plocal);
+			pin->process(&cc, data);
 			pss->decreaseTask();
 		}
 	}
