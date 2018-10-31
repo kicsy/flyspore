@@ -10,10 +10,13 @@ namespace fs
 	using P_AnyValues = std::shared_ptr<AnyValues>;
 
 	class Data;
-
+	using P_Data = std::shared_ptr<Data>;
 
 	class DataPack;
-	using P_Data = std::shared_ptr<DataPack>;
+	using P_DataPack = std::shared_ptr<DataPack>;
+
+	class DataAdapter;
+	using P_DataAdapter = std::shared_ptr<DataAdapter>;
 
 	class Spore;
 	using P_Spore = std::shared_ptr<Spore>;

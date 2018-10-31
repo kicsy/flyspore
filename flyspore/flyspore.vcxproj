@@ -152,11 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\core\AnyValues.cpp" />
     <ClCompile Include="..\core\Context.cpp" />
-    <ClCompile Include="..\core\Schema.cpp" />
-    <ClCompile Include="..\core\DataPack.cpp" />
-    <ClCompile Include="..\core\Object.cpp" />
     <ClCompile Include="..\core\Path.cpp" />
     <ClCompile Include="..\core\Pin.cpp" />
     <ClCompile Include="..\core\Session.cpp" />
@@ -166,9 +162,10 @@
   <ItemGroup>
     <ClInclude Include="..\core\AnyValues.h" />
     <ClInclude Include="..\core\Context.h" />
+    <ClInclude Include="..\core\Data.h" />
+    <ClInclude Include="..\core\DataAdapter.h" />
     <ClInclude Include="..\core\Schema.h" />
     <ClInclude Include="..\core\DataPack.h" />
-    <ClInclude Include="..\core\Object.h" />
     <ClInclude Include="..\core\Path.h" />
     <ClInclude Include="..\core\Pin.h" />
     <ClInclude Include="..\core\Session.h" />
@@ -177,6 +174,8 @@
     <ClInclude Include="..\core\stealing_queue.h" />
     <ClInclude Include="..\core\sync_deque.h" />
     <ClInclude Include="..\core\task_pool.h" />
+    <ClInclude Include="..\core\WarpPin.h" />
+    <ClInclude Include="DataAdapter.h" />
     <ClInclude Include="Threads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

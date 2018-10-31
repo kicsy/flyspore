@@ -17,7 +17,8 @@
 #include <vector>
 #include <unordered_map>
 #include "Statement.h"
-#include "Pin.h"
+#include "Schema.h"
+#include "WarpPin.h"
 
 namespace fs
 {
@@ -34,8 +35,28 @@ namespace fs
 		bool input(P_Pin pin, P_Data data);
 		std::vector<P_Pin> pins();
 		P_Pin getPin(const std::string &name);
-		P_Pin addPin(const std::string &name, Pin_Process process = nullptr);
-		P_Pin addPin(const std::string &name, Pin_Type type, Pin_Process process = nullptr);
+
+		template< typename SchemaType = Schema<>>
+		P_Pin addPin(const std::string &name, 
+			typename SchemaType::InnerProcessType process = nullptr)
+		{
+			return addPin<SchemaType>(
+				name, 
+				process == nullptr ? Pin_Type::OUT_PIN : Pin_Type::IN_PIN, 
+				process);
+		}
+
+		template< typename SchemaType = Schema<>>
+		P_Pin addPin(const std::string &name, Pin_Type type, 
+			typename SchemaType::InnerProcessType process = nullptr)
+		{
+			auto pin = P_Pin(new WarpPin<SchemaType>(weak_from_this(), name, type, process));
+			std::unique_lock<std::shared_mutex> lock(_pins_mutex);
+			if (_pins.find(name) != _pins.end())
+				return nullptr;
+			_pins[name] = pin;
+			return pin;
+		}
 
 		std::vector<P_Spore> childs();
 		P_Spore addChild(P_Spore child);

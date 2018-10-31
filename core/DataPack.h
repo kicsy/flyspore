@@ -1,19 +1,20 @@
 #include "Statement.h"
+#include "Data.h"
 #include "AnyValues.h"
 
 namespace fs
 {
-	class DataPack : public AnyValues
+	class DataPack : public Data,  public AnyValues
 	{
 	public:
-		~DataPack() {}
+		DataPack(const P_Session &session, const AnyValues &any = AnyValues()) :
+			Data(session)
+			, AnyValues(any){}
+		DataPack(const AnyValues &any = AnyValues()) :
+			Data(NULL)
+			,AnyValues(any) {}
+		virtual ~DataPack() {}
 		DataPack(const DataPack&) = delete;
 		DataPack& operator=(const DataPack&) = delete;
-		P_Session getSession() const;
-	protected:
-		DataPack(P_Session pss, const AnyValues &any = AnyValues());
-	protected:
-		P_Session _session;
-		friend class Session;
 	};
 }

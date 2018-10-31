@@ -58,17 +58,18 @@ namespace fs
 			return false;
 		}
 		P_Session pss = data->getSession();
-		if (pss)
+		if (!pss)
 		{
-			if (pss->status() == Session_Status::BlackOut)
-			{
-				return false;
-			}
+			return false;
 		}
-		if (pin->_process)
+		if (pss->status() == Session_Status::BlackOut)
+		{
+			return false;
+		}
+		if (pin->enableProcess())
 		{
 			pss->increaseTask();
-			task_pool::get_instance().submit(&Spore::process, this, pin->_process, data);
+			task_pool::get_instance().submit(&Spore::process, this, pin, data);
 		}
 		return true;
 	}
@@ -91,21 +92,6 @@ namespace fs
 		if (iter  == _pins.end())
 			return nullptr;
 		return iter->second;
-	}
-
-	P_Pin Spore::addPin(const std::string &name, Pin_Process process)
-	{
-		return addPin(name, process == nullptr ? Pin_Type::OUT_PIN : Pin_Type::IN_PIN, process);
-	}
-
-	fs::P_Pin Spore::addPin(const std::string &name, Pin_Type type, Pin_Process process)
-	{
-		auto pin = P_Pin(new Pin(weak_from_this(), name, type, process));
-		std::unique_lock<std::shared_mutex> lock(_pins_mutex);
-		if (_pins.find(name) != _pins.end())
-			return nullptr;
-		_pins[name] = pin;
-		return pin;
 	}
 
 	std::vector<P_Spore> Spore::childs()
@@ -185,7 +171,7 @@ namespace fs
 				plocal = _sessionValues[pss->id()];
 			}
 			Context cc(shared_from_this(), pss, plocal);
-			pin->process(&cc, data);
+			pin->process(cc, data);
 			pss->decreaseTask();
 		}
 	}

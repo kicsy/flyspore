@@ -1,6 +1,7 @@
 #include "Context.h"
 #include "Session.h"
 #include "Spore.h"
+#include "Data.h"
 fs::Context::Context(P_Spore ps, P_Session pss, P_AnyValues plocal):
 	_ps(ps)
 	,_pss(pss)
@@ -14,21 +15,13 @@ fs::Context::~Context()
 {
 }
 
-fs::P_Data fs::Context::newData()
-{
-	if (_pss)
-	{
-		return _pss->newData();
-	}
-	return P_Data();
-}
-
 bool fs::Context::push(const std::string &outPinName, P_Data ppack)
 {
-	if (!_ps)
+	if (!_ps || !ppack)
 	{
 		return false;
 	}
+	ppack->setSession(_pss);
 	P_Pin outPin = _ps->getPin(outPinName);
 	if (outPin && outPin->type() == Pin_Type::OUT_PIN)
 	{

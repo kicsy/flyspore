@@ -39,7 +39,9 @@ void fs::Session::submit(const AnyValues &any)
 {
 	if(_entrySpore && _entryPin)
 	{
-		_entryPin->push(newData(any));
+		P_Data pdata = std::make_shared<DataPack>(any);
+		pdata->setSession(shared_from_this());
+		_entryPin->push(pdata);
 		_startTime = std::chrono::high_resolution_clock::now();
 		std::unique_lock<std::mutex> lk(_mut_status);
 		_status = Session_Status::Running;

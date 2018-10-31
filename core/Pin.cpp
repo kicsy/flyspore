@@ -59,10 +59,5 @@ namespace fs
 	{
 		return _name;
 	}
-
-	void Pin::process(Context* ct, P_Data& pdata)
-	{
-	}
-
 }
 

@@ -14,7 +14,7 @@ namespace fs
 	class Pin : public std::enable_shared_from_this<Pin>
 	{
 	public:
-		~Pin();
+		virtual ~Pin();
 		void push(P_Data data);
 		Pin_Type type() const;
 		std::vector<P_Path> paths();
@@ -25,7 +25,8 @@ namespace fs
 		Pin(const Pin&) = delete;
 		Pin& operator=(const Pin&) = delete;
 		bool addPath(P_Path path);
-		virtual void process(Context* ct, P_Data& pdata);
+		virtual void process(Context& ct, P_Data& pdata){}
+		virtual bool enableProcess() { return false; }
 	protected:
 		Pin_Type _type;
 		std::string _name;
@@ -36,23 +37,6 @@ namespace fs
 		friend class Spore;
 		friend class Path;
 	};
-
-	template< typename SchemaType>
-	class WarpPin : public Pin
-	{
-	protected:
-		WarpPin(ProcessType pt):_process(pt)
-		{
-
-		}
-		virtual void process(Context* ct, P_Data& pdata)
-		{
-
-		}
-
-		SchemaType _schema;
-	};
-
 }
 
 

@@ -24,9 +24,6 @@
     <ClCompile Include="..\core\Context.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Object.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\Path.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -39,21 +36,9 @@
     <ClCompile Include="..\core\Spore.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\AnyValues.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\DataPack.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\Schema.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\core\Context.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Object.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\core\Path.h">
@@ -90,6 +75,18 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="..\core\Schema.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Data.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\WarpPin.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="DataAdapter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\DataAdapter.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

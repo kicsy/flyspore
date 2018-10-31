@@ -8,10 +8,8 @@ namespace fs
 	public:
 		Context(P_Spore ps, P_Session pss, P_AnyValues plocal);
 		~Context();
-
 		AnyValues& local;
 		AnyValues& session;
-		P_Data newData();
 		bool push(const std::string  &outPinName, P_Data ppack);
 		P_Spore spore();
 	protected:
