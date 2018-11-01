@@ -1,8 +1,6 @@
 #pragma once
 #include <cassert>
-#include "Pin.h"
 #include "Statement.h"
-#include "DataPack.h"
 #include "DataAdapter.h"
 namespace fs
 {
@@ -68,17 +66,12 @@ namespace fs
 		ToAnyValuesFunc _toAnyValuesFunc;
 	};
 
-	using defaultProcess = void(Context&, DataPack&);
-	std::shared_ptr<Schema< defaultProcess>> defaultSchema();
-
-
-
 	template<typename DataSetType>
 	class LightSchema : public DataAdapter, public std::enable_shared_from_this<LightSchema<DataSetType>>
 	{
 	public:
 		using InnerProcessType = std::function< void(Context&, typename DataSetType&)>;
-		explicit LightSchema():std::enable_shared_from_this<Schema<ProcessType>>()
+		explicit LightSchema() :std::enable_shared_from_this<LightSchema<DataSetType>>() {}
 		virtual ~LightSchema() {}
 		virtual void callInnerProcess(InnerProcessType innerProcess, Context& context, const P_Data& pdata)
 		{
@@ -100,7 +93,7 @@ namespace fs
 
 		P_Pin addPin(P_Spore &spore, const std::string &name, Pin_Type type, InnerProcessType process = nullptr)
 		{
-			auto pin = P_Pin(new WarpPin<Schema<typename ProcessType>>(spore, name, type, shared_from_this(), process));
+			auto pin = P_Pin(new WarpPin<LightSchema<typename DataSetType>>(spore, name, type, shared_from_this(), process));
 			return spore->addPin(pin);
 		}
 
@@ -134,20 +127,6 @@ namespace fs
 
 	protected:
 		friend Spore;
-	};
-
-	class DefaultSchema : public LightSchema<DataPack>
-	{
-	protected:
-		virtual DataPack* toDataFunc(const AnyValues & values)
-		{
-			return new DataPack(values);
-		}
-
-		virtual AnyValues toAnyValuesFunc(const DataPack & dataPack)
-		{
-			return *(AnyValues*)(&dataPack);
-		}
 	};
 }
 

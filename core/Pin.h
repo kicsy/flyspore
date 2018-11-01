@@ -4,13 +4,6 @@
 #include <shared_mutex>
 namespace fs
 {
-	enum class Pin_Type : unsigned int
-	{
-		UNKNOW = 0,
-		IN_PIN,
-		OUT_PIN
-	};
-
 	class Pin : public std::enable_shared_from_this<Pin>
 	{
 	public:

@@ -23,7 +23,7 @@
     <ProjectGuid>{990F1B33-A1DF-481B-94EC-3402E7E4764B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>flyspore</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -155,7 +155,7 @@
     <ClCompile Include="..\core\Context.cpp" />
     <ClCompile Include="..\core\Path.cpp" />
     <ClCompile Include="..\core\Pin.cpp" />
-    <ClCompile Include="..\core\Schema.cpp" />
+    <ClCompile Include="..\core\DefaultSchema.cpp" />
     <ClCompile Include="..\core\Session.cpp" />
     <ClCompile Include="..\core\Spore.cpp" />
     <ClCompile Include="flyspore.cpp" />
@@ -165,6 +165,7 @@
     <ClInclude Include="..\core\Context.h" />
     <ClInclude Include="..\core\Data.h" />
     <ClInclude Include="..\core\DataAdapter.h" />
+    <ClInclude Include="..\core\DefaultSchema.h" />
     <ClInclude Include="..\core\Schema.h" />
     <ClInclude Include="..\core\DataPack.h" />
     <ClInclude Include="..\core\Path.h" />
@@ -176,7 +177,6 @@
     <ClInclude Include="..\core\sync_deque.h" />
     <ClInclude Include="..\core\task_pool.h" />
     <ClInclude Include="..\core\WarpPin.h" />
-    <ClInclude Include="DataAdapter.h" />
     <ClInclude Include="Threads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

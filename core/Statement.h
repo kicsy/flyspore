@@ -28,6 +28,13 @@ namespace fs
 	class Pin;
 	using P_Pin = std::shared_ptr<Pin>;
 
+	enum class Pin_Type : unsigned int
+	{
+		UNKNOW = 0,
+		IN_PIN,
+		OUT_PIN
+	};
+
 	class Path;
 	using P_Path = std::shared_ptr<Path>;
 

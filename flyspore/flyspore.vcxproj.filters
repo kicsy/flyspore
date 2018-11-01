@@ -36,7 +36,7 @@
     <ClCompile Include="..\core\Spore.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Schema.cpp">
+    <ClCompile Include="..\core\DefaultSchema.cpp">
       <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,10 +86,10 @@
     <ClInclude Include="..\core\WarpPin.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="DataAdapter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\DataAdapter.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\DefaultSchema.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

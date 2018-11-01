@@ -1,3 +1,4 @@
+#pragma once
 #include "Statement.h"
 #include "Data.h"
 #include "AnyValues.h"
