@@ -36,6 +36,9 @@
     <ClCompile Include="..\core\Spore.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="..\core\Schema.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\core\Context.h">

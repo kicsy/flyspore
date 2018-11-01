@@ -10,16 +10,30 @@ namespace fs
 		template<typename vT>
 		vT& ref(const std::string &strKey)
 		{
+			using storageType = std::shared_ptr<vT>;
 			std::any& ref = _values[strKey];
 			if (!ref.has_value())
 			{
-				ref = vT();
+				ref = std::make_shared<vT>();
 			}
-			if (ref.type() != typeid(vT))
+			if (ref.type() != typeid(storageType))
 			{
-				ref = (_values[strKey] = vT());
+				ref = (_values[strKey] = std::make_shared<vT>());
 			}
-			return std::any_cast<vT&>(ref);
+			return *std::any_cast<storageType&>(ref).get();
+		}
+
+		template<typename vT>
+		bool get(const std::string &strKey,  vT& refValue) const
+		{
+			using storageType = std::shared_ptr<vT>;
+			const std::any& ref = _values.at(strKey);
+			if (!ref.has_value() || ref.type() != typeid(storageType))
+			{
+				return false;
+			}
+			refValue = *(std::any_cast<const storageType&>(ref).get());
+			return true;
 		}
 
 		template<typename vT>

@@ -46,7 +46,7 @@ namespace fs
 		return _name;
 	}
 
-	bool Spore::input(P_Pin pin, P_Data data)
+	bool Spore::input(const P_Pin &pin, const P_Data &data)
 	{
 		if (pin == nullptr)
 		{
@@ -92,6 +92,19 @@ namespace fs
 		if (iter  == _pins.end())
 			return nullptr;
 		return iter->second;
+	}
+
+	fs::P_Pin Spore::addPin(P_Pin &pin)
+	{
+		if (!pin)
+		{
+			return NULL;
+		}
+		std::unique_lock<std::shared_mutex> lock(_pins_mutex);
+		if (_pins.find(pin->name()) != _pins.end())
+			return nullptr;
+		_pins[pin->name()] = pin;
+		return pin;
 	}
 
 	std::vector<P_Spore> Spore::childs()
@@ -151,7 +164,7 @@ namespace fs
 		}
 	}
 
-	void Spore::process(P_Pin pin, P_Data data)
+	void Spore::process(const P_Pin &pin, const P_Data &data)
 	{
 		if (pin && data)
 		{

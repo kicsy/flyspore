@@ -32,7 +32,6 @@ namespace fs
 		Session_Status status() { return _status; }
 		std::chrono::high_resolution_clock::time_point startTime() { return _startTime; }
 		std::chrono::high_resolution_clock::time_point stopTime() { return _stopTime; }
-		P_Data newData(const AnyValues &any = AnyValues());
 		static P_Session newSession(P_Pin entryPin);
 
 	protected:

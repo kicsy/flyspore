@@ -10,7 +10,7 @@ namespace fs
 		~Context();
 		AnyValues& local;
 		AnyValues& session;
-		bool push(const std::string  &outPinName, P_Data ppack);
+		bool push(const std::string  &outPinName, const P_Data &ppack);
 		P_Spore spore();
 	protected:
 		P_Spore _ps;

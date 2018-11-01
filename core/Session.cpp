@@ -37,9 +37,10 @@ fs::IdType fs::Session::id()
 
 void fs::Session::submit(const AnyValues &any)
 {
-	if(_entrySpore && _entryPin)
+	if(_entrySpore && _entryPin && _entryPin->adapter())
 	{
-		P_Data pdata = std::make_shared<DataPack>(any);
+		
+		P_Data pdata = _entryPin->adapter()->toData(any);
 		pdata->setSession(shared_from_this());
 		_entryPin->push(pdata);
 		_startTime = std::chrono::high_resolution_clock::now();
@@ -65,11 +66,6 @@ void fs::Session::join()
 {
 	std::unique_lock<std::mutex> lk(_mut_status);
 	_cond_status.wait(lk, [&] {return _status == Session_Status::Finish; });
-}
-
-fs::P_Data fs::Session::newData(const AnyValues &any)
-{
-	return P_Data(new DataPack(shared_from_this(), any));
 }
 
 fs::P_Session fs::Session::newSession(P_Pin entryPin)

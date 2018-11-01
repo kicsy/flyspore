@@ -7,25 +7,31 @@ namespace fs
 	{
 	public:
 		using InnerProcessType = typename SchemaType::InnerProcessType;
-	protected:
-		WarpPin(PW_Spore spore, std::string name, Pin_Type type, InnerProcessType innerProcess) :
+		WarpPin(PW_Spore spore, std::string name, Pin_Type type, std::shared_ptr< SchemaType> schema, InnerProcessType innerProcess) :
 			Pin(spore, name, type)
+			, _schema(schema)
 			, _innerProcess(innerProcess)
 		{
-			//DataAdapter *p = SchemaType
 		}
-		virtual void process(Context& ct, P_Data& pdata)
+		virtual P_DataAdapter adapter() const 
+		{
+			return std::move(std::dynamic_pointer_cast<DataAdapter>(_schema));
+		}
+	protected:
+		virtual bool enableProcess() const { return NULL != _innerProcess; }
+		virtual void process(Context& ct, const P_Data& pdata)
 		{
 			if (_innerProcess)
 			{
-				_schema.callInnerProcess(_innerProcess, ct, pdata);
+				_schema->callInnerProcess(_innerProcess, ct, pdata);
 			}
 		}
-		virtual bool enableProcess() { return NULL != _innerProcess; }
+
+
 	protected:
-		SchemaType _schema;
+		std::shared_ptr< SchemaType> _schema;
 		InnerProcessType _innerProcess;
-		friend class Spore;
+
 	};
 
 }

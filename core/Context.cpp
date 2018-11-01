@@ -15,7 +15,7 @@ fs::Context::~Context()
 {
 }
 
-bool fs::Context::push(const std::string &outPinName, P_Data ppack)
+bool fs::Context::push(const std::string &outPinName, const P_Data &ppack)
 {
 	if (!_ps || !ppack)
 	{

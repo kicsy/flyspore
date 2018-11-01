@@ -16,7 +16,7 @@ namespace fs
 	{
 	}
 
-	void Pin::push(P_Data data)
+	void Pin::push(const P_Data &data)
 	{
 		P_Spore spore = _spore.lock();
 		if (spore == nullptr)
@@ -32,12 +32,17 @@ namespace fs
 		}
 	}
 
+	fs::P_DataAdapter Pin::adapter() const 
+	{
+		return NULL;
+	}
+
 	Pin_Type Pin::type() const
 	{
 		return _type;
 	}
 
-	std::vector<P_Path> Pin::paths()
+	std::vector<P_Path> Pin::paths() const 
 	{
 		std::shared_lock<std::shared_mutex> lock(_paths_mutex);
 		return _paths;
@@ -50,12 +55,12 @@ namespace fs
 		return true;
 	}
 
-	fs::P_Spore Pin::spore()
+	fs::P_Spore Pin::spore() const 
 	{
 		return _spore.lock();
 	}
 
-	std::string Pin::name()
+	std::string Pin::name() const 
 	{
 		return _name;
 	}

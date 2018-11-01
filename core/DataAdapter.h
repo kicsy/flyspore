@@ -7,7 +7,6 @@ namespace fs
 	{
 	public:
 		virtual ~DataAdapter() {}
-		virtual long long id() = 0;
 		virtual bool equal(DataAdapter*) = 0;
 		virtual P_Data toData(const AnyValues &values) = 0;
 		virtual AnyValues toAnyValues(const P_Data& pdata) = 0;
