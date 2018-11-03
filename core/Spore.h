@@ -38,8 +38,11 @@ namespace fs
 		P_Pin addPin(P_Pin &pin);
 
 		std::vector<P_Spore> childs();
+		P_Spore getChild(const std::string &name);
 		P_Spore addChild(P_Spore child);
 		P_Spore addChild(const std::string &name);
+		bool removeChild(P_Spore child);
+		bool removeChild(const std::string &name);
 
 		static P_Spore newSpore(const std::string &name = "");
 	protected:
@@ -54,7 +57,6 @@ namespace fs
 
 		std::vector<P_Spore> _childs;
 		std::shared_mutex _childs_mutex;
-
 
 		std::unordered_map<std::string, P_Pin> _pins;
 		std::shared_mutex _pins_mutex;

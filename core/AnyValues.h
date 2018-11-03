@@ -24,6 +24,12 @@ namespace fs
 		}
 
 		template<typename vT>
+		void def(const std::string &strKey)
+		{
+			vT& temp = ref<vT>(strKey);
+		}
+
+		template<typename vT>
 		bool get(const std::string &strKey,  vT& refValue) const
 		{
 			using storageType = std::shared_ptr<vT>;

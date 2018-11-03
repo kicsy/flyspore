@@ -113,6 +113,19 @@ namespace fs
 		return _childs;
 	}
 
+	P_Spore Spore::getChild(const std::string &name)
+	{
+		std::shared_lock<std::shared_mutex> lock(_childs_mutex);
+		auto iter = std::find_if(_childs.begin(), _childs.end(), [&](P_Spore& pp) {
+			return pp->name() == name;
+		});
+		if (iter != _childs.end())
+		{
+			return *iter;
+		}
+		return NULL;
+	}
+
 	P_Spore Spore::addChild(P_Spore child)
 	{
 		if (!child)
@@ -123,9 +136,25 @@ namespace fs
 		return child;
 	}
 
-	fs::P_Spore Spore::addChild(const std::string &name)
+	P_Spore Spore::addChild(const std::string &name)
 	{
 		return addChild(newSpore(name));
+	}
+
+	bool Spore::removeChild(P_Spore child)
+	{
+		std::unique_lock<std::shared_mutex> lock(_childs_mutex);
+		return std::remove_if(_childs.begin(), _childs.end(), [&](P_Spore& pp) {
+			return pp == child;
+		}) != _childs.end();
+	}
+
+	bool Spore::removeChild(const std::string &name)
+	{
+		std::unique_lock<std::shared_mutex> lock(_childs_mutex);
+		return std::remove_if(_childs.begin(), _childs.end(), [&](P_Spore& pp) {
+			return pp->name() == name;
+		}) != _childs.end();
 	}
 
 	void Spore::buildSession(IdType sessionId)
@@ -209,7 +238,6 @@ namespace fs
 		from->addPath(path);
 		return std::move(path);
 	}
-
 
 	P_Spore Spore::newSpore(const std::string &name)
 	{
