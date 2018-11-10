@@ -83,7 +83,7 @@ namespace fs
 		return nullptr;
 	}
 
-	bool Path::release(P_Path &path)
+	bool Path::release(const P_Path &path)
 	{
 		if (!path->from() || !path->to())
 		{

@@ -50,6 +50,7 @@ namespace fs
 	protected:
 		void buildSession(IdType sessionId);
 		void releaseSession(IdType sessionId);
+		void cleanAllSession();
 		void process(const P_Pin &pin, const P_Data &data);
 		P_Path create_or_find_Path(P_Pin from, P_Pin to, const std::string &name = "");
 		bool deletePath(const P_Path &path);
