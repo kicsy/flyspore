@@ -3,7 +3,7 @@
 #include "Statement.h"
 namespace fs
 {
-	class Path
+	class Path : public std::enable_shared_from_this<Path>
 	{
 	public:
 		~Path();
@@ -13,9 +13,11 @@ namespace fs
 		P_Pin to() const ;
 		bool isvalid() const;
 		bool move(P_Data data);
-		static P_Path connect(P_Pin from, P_Pin to, const std::string &name = "");
+		static P_Path connect(P_Pin &from, P_Pin &to, const std::string &name = "");
+		static bool release(const P_Path &path);
 	protected:
-		Path(const std::string &name = "");
+		Path(P_Pin from, P_Pin to, const std::string &name = "");
+		bool _release();
 	protected:
 		std::string _name;
 		P_Pin _from;

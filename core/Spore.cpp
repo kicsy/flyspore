@@ -96,7 +96,7 @@ namespace fs
 
 	fs::P_Pin Spore::addPin(P_Pin &pin)
 	{
-		if (!pin)
+		if (!pin || pin->spore().get() != this)
 		{
 			return NULL;
 		}
@@ -105,6 +105,42 @@ namespace fs
 			return nullptr;
 		_pins[pin->name()] = pin;
 		return pin;
+	}
+
+	bool Spore::deletePin(P_Pin &pin)
+	{
+		if (!pin || pin->spore().get() != this)
+		{
+			return false;
+		}
+		P_Pin pin;
+		{
+			std::unique_lock<std::shared_mutex> lock(_pins_mutex);
+			auto iter = _pins.find(pin->name());
+			if (iter == _pins.end())
+			{
+				return false;
+			}
+			pin = iter->second;
+			_pins.erase(iter);
+		}
+		if (pin)
+		{
+			for (const P_Path& path : pin->_inPaths)
+			{
+				Path::release(path);
+			}
+			for (const P_Path& path : pin->_outPaths)
+			{
+				Path::release(path);
+			}
+		}
+		return true;
+	}
+
+	bool Spore::deletePin(const std::string &name)
+	{
+		return deletePin(getPin(name));
 	}
 
 	std::vector<P_Spore> Spore::childs()
@@ -141,20 +177,37 @@ namespace fs
 		return addChild(newSpore(name));
 	}
 
-	bool Spore::removeChild(P_Spore child)
+	P_Spore Spore::removeChild(P_Spore child)
 	{
-		std::unique_lock<std::shared_mutex> lock(_childs_mutex);
-		return std::remove_if(_childs.begin(), _childs.end(), [&](P_Spore& pp) {
-			return pp == child;
-		}) != _childs.end();
+		if (!child)
+		{
+			return nullptr;
+		}
+		return removeChild(child->name());
 	}
 
-	bool Spore::removeChild(const std::string &name)
+	P_Spore Spore::removeChild(const std::string &name)
 	{
 		std::unique_lock<std::shared_mutex> lock(_childs_mutex);
-		return std::remove_if(_childs.begin(), _childs.end(), [&](P_Spore& pp) {
+		auto iter = std::remove_if(_childs.begin(), _childs.end(), [&](P_Spore& pp) {
 			return pp->name() == name;
-		}) != _childs.end();
+		});
+		P_Spore theRemove = *iter;
+		if (!theRemove)
+		{
+			return nullptr;
+		}
+		for (const P_Path& path : _paths)
+		{
+			if ((path->from() && path->from()->spore() == theRemove) ||
+				(path->to() && path->to()->spore() == theRemove))
+			{
+				Path::release(path);
+			}
+		}
+		theRemove->cleanAllSession();
+		theRemove->_parent = nullptr;
+		return theRemove;
 	}
 
 	void Spore::buildSession(IdType sessionId)
@@ -193,6 +246,21 @@ namespace fs
 		}
 	}
 
+	void Spore::cleanAllSession()
+	{
+		{
+			std::shared_lock<std::shared_mutex> lock(_childs_mutex);
+			for (auto child : _childs)
+			{
+				child->cleanAllSession();
+			}
+		}
+		{
+			std::unique_lock<std::shared_mutex> lock(_session_mutex);
+			_sessionValues.clear();
+		}
+	}
+
 	void Spore::process(const P_Pin &pin, const P_Data &data)
 	{
 		if (pin && data)
@@ -220,23 +288,32 @@ namespace fs
 
 	P_Path Spore::create_or_find_Path(P_Pin from, P_Pin to, const std::string &name /*= ""*/)
 	{
-		P_Path path;
+		std::unique_lock<std::shared_mutex> lock(_paths_mutex);
+		auto iter = std::find_if(_paths.begin(), _paths.end(), [&](P_Path& pp) {
+			return pp->from() == from && pp->to() == to;
+		});
+		if (iter != _paths.end())
 		{
-			std::unique_lock<std::shared_mutex> lock(_paths_mutex);
-			auto iter = std::find_if(_paths.begin(), _paths.end(), [&](P_Path& pp) {
-				return pp->from() == from && pp->to() == to;
-			});
-			if (iter != _paths.end())
-			{
-				return *iter;
-			}
-			path = P_Path(new Path(name));
-			path->_from = from;
-			path->_to = to;
-			_paths.push_back(path);
+			return *iter;
 		}
-		from->addPath(path);
+		P_Path path = P_Path(new Path(from, to, name));
+		_paths.push_back(path);
 		return std::move(path);
+	}
+
+	bool Spore::deletePath(const P_Path &path)
+	{
+		bool isOk = false;
+		std::unique_lock<std::shared_mutex> lock(_paths_mutex);
+		std::remove_if(_paths.begin(), _paths.end(), [&](P_Path& pp) {
+			if (pp == path)
+			{
+				isOk = true;
+				pp->_release();
+				return true;
+			}
+		});
+		return isOk;
 	}
 
 	P_Spore Spore::newSpore(const std::string &name)

@@ -26,12 +26,9 @@ namespace fs
 				_schema->callInnerProcess(_innerProcess, ct, pdata);
 			}
 		}
-
-
 	protected:
 		std::shared_ptr< SchemaType> _schema;
 		InnerProcessType _innerProcess;
-
 	};
 
 }

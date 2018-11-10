@@ -19,13 +19,15 @@ namespace fs
 		Pin(const Pin&) = delete;
 		Pin& operator=(const Pin&) = delete;
 		bool addPath(P_Path path);
+		bool removePath(P_Path path);
 		virtual void process(Context& ct, const P_Data& pdata){}
 		virtual bool enableProcess() const { return false; }
 	protected:
 		Pin_Type _type;
 		std::string _name;
 		mutable std::shared_mutex _paths_mutex;
-		std::vector<P_Path> _paths;
+		std::vector<P_Path> _outPaths;
+		std::vector<P_Path> _inPaths;
 		PW_Spore _spore;
 		friend class Spore;
 		friend class Path;

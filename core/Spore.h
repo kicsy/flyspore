@@ -36,13 +36,15 @@ namespace fs
 		std::vector<P_Pin> pins();
 		P_Pin getPin(const std::string &name);
 		P_Pin addPin(P_Pin &pin);
+		bool deletePin(P_Pin &pin);
+		bool deletePin(const std::string &name);
 
 		std::vector<P_Spore> childs();
 		P_Spore getChild(const std::string &name);
 		P_Spore addChild(P_Spore child);
 		P_Spore addChild(const std::string &name);
-		bool removeChild(P_Spore child);
-		bool removeChild(const std::string &name);
+		P_Spore removeChild(P_Spore child);
+		P_Spore removeChild(const std::string &name);
 
 		static P_Spore newSpore(const std::string &name = "");
 	protected:
@@ -50,6 +52,7 @@ namespace fs
 		void releaseSession(IdType sessionId);
 		void process(const P_Pin &pin, const P_Data &data);
 		P_Path create_or_find_Path(P_Pin from, P_Pin to, const std::string &name = "");
+		bool deletePath(const P_Path &path);
 
 	protected:
 		std::string _name;

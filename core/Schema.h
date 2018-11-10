@@ -43,6 +43,35 @@ namespace fs
 			return spore->addPin(pin);
 		}
 
+		bool deletePin(P_Spore &spore, const std::string &name)
+		{
+			if (!spore)
+			{
+				return false;
+			}
+			P_Pin pin = spore->getPin(name);
+			return deletePin(spore, pin);
+		}
+
+		bool deletePin(P_Spore &spore, P_Pin &pin)
+		{
+			if (!pin || !dynamic_cast<WarpPin<Schema<typename ProcessType>>>(pin.get()))
+			{
+				return false;
+			}
+			return spore && spore->deletePin(pin);
+		}
+
+		bool clonePinTo(P_Spore &srcSpore, const std::string &pinName, P_Spore &tarSpore, bool autoReName = true, InnerProcessType newProcess = nullptr)
+		{
+			return true;
+		}
+
+		bool clonePinTo(P_Spore &srcSpore, P_Pin &pin, P_Spore &tarSpore, bool autoReName = true, InnerProcessType newProcess = nullptr)
+		{
+			return true;
+		}
+
 		virtual bool equal(DataAdapter* other)
 		{
 			return (DataAdapter*)this == other;
@@ -95,6 +124,25 @@ namespace fs
 		{
 			auto pin = P_Pin(new WarpPin<LightSchema<typename DataSetType>>(spore, name, type, shared_from_this(), process));
 			return spore->addPin(pin);
+		}
+
+		bool deletePin(P_Spore &spore, const std::string &name)
+		{
+			if (!spore)
+			{
+				return false;
+			}
+			P_Pin pin = spore->getPin(name);
+			return deletePin(spore, pin);
+		}
+
+		bool deletePin(P_Spore &spore, P_Pin &pin)
+		{
+			if (!pin || !dynamic_cast<WarpPin<LightSchema<typename DataSetType>>>(pin.get()))
+			{
+				return false;
+			}
+			return spore && spore->deletePin(pin);
 		}
 
 		virtual bool equal(DataAdapter* other)
