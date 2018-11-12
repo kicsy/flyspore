@@ -3,7 +3,7 @@
 #include "task_pool.h"
 #include "Spore.h"
 #include "DataPack.h"
-fs::Session::Session(fs::P_Pin entryPin) :
+fs::L0::Session::Session(fs::L0::P_Pin entryPin) :
 	_task_remain(0)
 	, _status(Session_Status::Normal)
 {
@@ -11,7 +11,7 @@ fs::Session::Session(fs::P_Pin entryPin) :
 	auto duration_in_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_now.time_since_epoch());
 	_id = duration_in_ms.count();
 
-	if (entryPin && entryPin->type() == fs::Pin_Type::IN_PIN)
+	if (entryPin && entryPin->type() == fs::L0::Pin_Type::IN_PIN)
 	{
 		_entryPin = entryPin;
 		_entrySpore = entryPin->spore();
@@ -22,7 +22,7 @@ fs::Session::Session(fs::P_Pin entryPin) :
 	}
 }
 
-fs::Session::~Session()
+fs::L0::Session::~Session()
 {
 	if (_entrySpore)
 	{
@@ -30,12 +30,12 @@ fs::Session::~Session()
 	}
 }
 
-fs::IdType fs::Session::id()
+fs::L0::IdType fs::L0::Session::id()
 {
 	return _id;
 }
 
-void fs::Session::submit(const AnyValues &any)
+void fs::L0::Session::submit(const AnyValues &any)
 {
 	if(_entrySpore && _entryPin && _entryPin->adapter())
 	{
@@ -50,35 +50,35 @@ void fs::Session::submit(const AnyValues &any)
 	}
 }
 
-void fs::Session::stop()
+void fs::L0::Session::stop()
 {
 	std::unique_lock<std::mutex> lk(_mut_status);
 	_status = Session_Status::BlackOut;
 	_cond_status.notify_all();
 }
 
-void fs::Session::onFinish(std::function<void(P_Session)> func)
+void fs::L0::Session::onFinish(std::function<void(P_Session)> func)
 {
 	_triggerOnFinish = func;
 }
 
-void fs::Session::join()
+void fs::L0::Session::join()
 {
 	std::unique_lock<std::mutex> lk(_mut_status);
 	_cond_status.wait(lk, [&] {return _status == Session_Status::Finish; });
 }
 
-fs::P_Session fs::Session::newSession(P_Pin entryPin)
+fs::L0::P_Session fs::L0::Session::newSession(P_Pin entryPin)
 {
-	return std::make_shared<fs::Session>(entryPin);
+	return std::make_shared<fs::L0::Session>(entryPin);
 }
 
-void fs::Session::increaseTask()
+void fs::L0::Session::increaseTask()
 {
 	_task_remain.fetch_add(1);
 }
 
-void fs::Session::decreaseTask()
+void fs::L0::Session::decreaseTask()
 {
 	_task_remain.fetch_sub(1);
 	if (_task_remain.load(std::memory_order_relaxed) == 0)

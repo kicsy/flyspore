@@ -2,7 +2,7 @@
 #include "Session.h"
 #include "Spore.h"
 #include "Data.h"
-fs::Context::Context(P_Spore ps, P_Session pss, P_AnyValues plocal):
+fs::L0::Context::Context(P_Spore ps, P_Session pss, P_AnyValues plocal):
 	_ps(ps)
 	,_pss(pss)
 	,_plocal(plocal)
@@ -11,11 +11,11 @@ fs::Context::Context(P_Spore ps, P_Session pss, P_AnyValues plocal):
 {
 }
 
-fs::Context::~Context()
+fs::L0::Context::~Context()
 {
 }
 
-bool fs::Context::push(const std::string &outPinName, const P_Data &ppack)
+bool fs::L0::Context::push(const std::string &outPinName, const P_Data &ppack)
 {
 	if (!_ps || !ppack)
 	{
@@ -31,7 +31,7 @@ bool fs::Context::push(const std::string &outPinName, const P_Data &ppack)
 	return false;
 }
 
-fs::P_Spore fs::Context::spore()
+fs::L0::P_Spore fs::L0::Context::spore()
 {
 	return _ps;
 }

@@ -33,8 +33,8 @@
 #include <type_traits>
 #include <sstream>
 
-#include "core/stealing_queue.h"
-#include "core/task_pool.h"
+#include "core/Level0/stealing_queue.h"
+#include "core/Level0/task_pool.h"
 using namespace std;
 
 #ifdef _MSC_VER

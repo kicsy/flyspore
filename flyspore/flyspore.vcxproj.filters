@@ -16,81 +16,84 @@
     <Filter Include="core">
       <UniqueIdentifier>{92b3e159-783b-483a-b297-2f4548167917}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\Level0">
+      <UniqueIdentifier>{81189bed-1c0e-4fe7-b14e-69ea3cc69c61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="flyspore.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Context.cpp">
-      <Filter>core</Filter>
+    <ClCompile Include="..\core\Level0\Context.cpp">
+      <Filter>core\Level0</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Path.cpp">
-      <Filter>core</Filter>
+    <ClCompile Include="..\core\Level0\DefaultSchema.cpp">
+      <Filter>core\Level0</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Pin.cpp">
-      <Filter>core</Filter>
+    <ClCompile Include="..\core\Level0\Path.cpp">
+      <Filter>core\Level0</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Session.cpp">
-      <Filter>core</Filter>
+    <ClCompile Include="..\core\Level0\Pin.cpp">
+      <Filter>core\Level0</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Spore.cpp">
-      <Filter>core</Filter>
+    <ClCompile Include="..\core\Level0\Session.cpp">
+      <Filter>core\Level0</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\DefaultSchema.cpp">
-      <Filter>core</Filter>
+    <ClCompile Include="..\core\Level0\Spore.cpp">
+      <Filter>core\Level0</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\core\Context.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Path.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Pin.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Session.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Spore.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\stealing_queue.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\sync_deque.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\task_pool.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="Threads.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\Statement.h">
-      <Filter>core</Filter>
+    <ClInclude Include="..\core\Level0\AnyValues.h">
+      <Filter>core\Level0</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\AnyValues.h">
-      <Filter>core</Filter>
+    <ClInclude Include="..\core\Level0\Context.h">
+      <Filter>core\Level0</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\DataPack.h">
-      <Filter>core</Filter>
+    <ClInclude Include="..\core\Level0\Data.h">
+      <Filter>core\Level0</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\Schema.h">
-      <Filter>core</Filter>
+    <ClInclude Include="..\core\Level0\DataAdapter.h">
+      <Filter>core\Level0</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\Data.h">
-      <Filter>core</Filter>
+    <ClInclude Include="..\core\Level0\DataPack.h">
+      <Filter>core\Level0</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\WarpPin.h">
-      <Filter>core</Filter>
+    <ClInclude Include="..\core\Level0\DefaultSchema.h">
+      <Filter>core\Level0</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\DataAdapter.h">
-      <Filter>core</Filter>
+    <ClInclude Include="..\core\Level0\Path.h">
+      <Filter>core\Level0</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\DefaultSchema.h">
-      <Filter>core</Filter>
+    <ClInclude Include="..\core\Level0\Pin.h">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\Schema.h">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\Session.h">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\Spore.h">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\Statement.h">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\stealing_queue.h">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\sync_deque.h">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\task_pool.h">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\WarpPin.h">
+      <Filter>core\Level0</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
