@@ -152,31 +152,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\core\Level0\Context.cpp" />
-    <ClCompile Include="..\core\Level0\DefaultSchema.cpp" />
-    <ClCompile Include="..\core\Level0\Path.cpp" />
-    <ClCompile Include="..\core\Level0\Pin.cpp" />
-    <ClCompile Include="..\core\Level0\Session.cpp" />
-    <ClCompile Include="..\core\Level0\Spore.cpp" />
+    <ClCompile Include="..\core\Level1\Context.cpp" />
+    <ClCompile Include="..\core\Level1\DefaultSchema.cpp" />
+    <ClCompile Include="..\core\Level1\Path.cpp" />
+    <ClCompile Include="..\core\Level1\Pin.cpp" />
+    <ClCompile Include="..\core\Level1\Session.cpp" />
+    <ClCompile Include="..\core\Level1\Spore.cpp" />
     <ClCompile Include="flyspore.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\core\Level0\AnyValues.h" />
-    <ClInclude Include="..\core\Level0\Context.h" />
-    <ClInclude Include="..\core\Level0\Data.h" />
-    <ClInclude Include="..\core\Level0\DataAdapter.h" />
-    <ClInclude Include="..\core\Level0\DataPack.h" />
-    <ClInclude Include="..\core\Level0\DefaultSchema.h" />
-    <ClInclude Include="..\core\Level0\Path.h" />
-    <ClInclude Include="..\core\Level0\Pin.h" />
-    <ClInclude Include="..\core\Level0\Schema.h" />
-    <ClInclude Include="..\core\Level0\Session.h" />
-    <ClInclude Include="..\core\Level0\Spore.h" />
-    <ClInclude Include="..\core\Level0\Statement.h" />
     <ClInclude Include="..\core\Level0\stealing_queue.h" />
     <ClInclude Include="..\core\Level0\sync_deque.h" />
     <ClInclude Include="..\core\Level0\task_pool.h" />
-    <ClInclude Include="..\core\Level0\WarpPin.h" />
+    <ClInclude Include="..\core\Level1\AnyValues.h" />
+    <ClInclude Include="..\core\Level1\Context.h" />
+    <ClInclude Include="..\core\Level1\Data.h" />
+    <ClInclude Include="..\core\Level1\DataAdapter.h" />
+    <ClInclude Include="..\core\Level1\DataPack.h" />
+    <ClInclude Include="..\core\Level1\DefaultSchema.h" />
+    <ClInclude Include="..\core\Level1\Path.h" />
+    <ClInclude Include="..\core\Level1\Pin.h" />
+    <ClInclude Include="..\core\Level1\Schema.h" />
+    <ClInclude Include="..\core\Level1\Session.h" />
+    <ClInclude Include="..\core\Level1\Spore.h" />
+    <ClInclude Include="..\core\Level1\Statement.h" />
+    <ClInclude Include="..\core\Level1\WarpPin.h" />
     <ClInclude Include="Threads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

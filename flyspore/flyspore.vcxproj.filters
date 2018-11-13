@@ -19,69 +19,36 @@
     <Filter Include="core\Level0">
       <UniqueIdentifier>{81189bed-1c0e-4fe7-b14e-69ea3cc69c61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\Level1">
+      <UniqueIdentifier>{344c35cd-c74c-4bb8-9064-35bd8dc3cc5c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="flyspore.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Level0\Context.cpp">
-      <Filter>core\Level0</Filter>
+    <ClCompile Include="..\core\Level1\Context.cpp">
+      <Filter>core\Level1</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Level0\DefaultSchema.cpp">
-      <Filter>core\Level0</Filter>
+    <ClCompile Include="..\core\Level1\DefaultSchema.cpp">
+      <Filter>core\Level1</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Level0\Path.cpp">
-      <Filter>core\Level0</Filter>
+    <ClCompile Include="..\core\Level1\Path.cpp">
+      <Filter>core\Level1</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Level0\Pin.cpp">
-      <Filter>core\Level0</Filter>
+    <ClCompile Include="..\core\Level1\Pin.cpp">
+      <Filter>core\Level1</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Level0\Session.cpp">
-      <Filter>core\Level0</Filter>
+    <ClCompile Include="..\core\Level1\Session.cpp">
+      <Filter>core\Level1</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Level0\Spore.cpp">
-      <Filter>core\Level0</Filter>
+    <ClCompile Include="..\core\Level1\Spore.cpp">
+      <Filter>core\Level1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Threads.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\AnyValues.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\Context.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\Data.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\DataAdapter.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\DataPack.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\DefaultSchema.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\Path.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\Pin.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\Schema.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\Session.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\Spore.h">
-      <Filter>core\Level0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level0\Statement.h">
-      <Filter>core\Level0</Filter>
     </ClInclude>
     <ClInclude Include="..\core\Level0\stealing_queue.h">
       <Filter>core\Level0</Filter>
@@ -92,8 +59,44 @@
     <ClInclude Include="..\core\Level0\task_pool.h">
       <Filter>core\Level0</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\Level0\WarpPin.h">
-      <Filter>core\Level0</Filter>
+    <ClInclude Include="..\core\Level1\AnyValues.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Context.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Data.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\DataAdapter.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\DataPack.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\DefaultSchema.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Path.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Pin.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Schema.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Session.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Spore.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Statement.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\WarpPin.h">
+      <Filter>core\Level1</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

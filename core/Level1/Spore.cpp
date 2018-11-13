@@ -21,13 +21,16 @@
 #include "Spore.h"
 #include "Pin.h"
 #include "Path.h"
-#include "task_pool.h"
+#include "../Level0/task_pool.h"
 #include "Session.h"
 #include "Context.h"
 #include "DataPack.h"
+
+using namespace fs::L0;
+
 namespace fs
 {
-	namespace L0
+	namespace L1
 	{
 		Spore::Spore(const std::string &name) :
 			_name(name)

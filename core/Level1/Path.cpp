@@ -4,7 +4,7 @@
 #include "Spore.h"
 namespace fs
 {
-	namespace L0
+	namespace L1
 	{
 		Path::Path(P_Pin from, P_Pin to, const std::string &name /*= ""*/) :
 			std::enable_shared_from_this<Path>()
