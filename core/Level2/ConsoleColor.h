@@ -52,3 +52,4 @@ std::basic_ostream<_Elem, _Traits>& operator<<(std::basic_ostream<_Elem, _Traits
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 #endif
 
+#define INFLAG	"|> "

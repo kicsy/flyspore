@@ -16,8 +16,10 @@ namespace fs
 			void run();
 		protected:
 			void _call(Context& cc, DataPack& data);
-			void _out_to_console(Context& cc, DataPack& data);
-			void _error_to_console(Context& cc, DataPack& data);
+			void _read_cmd(std::string &instring);
+			void _echo_out(Context& cc, DataPack& data);
+			void _echo_error(Context& cc, DataPack& data);
+			void _echo_about();
 		protected:
 			P_Session _session_call;
 			mutable std::mutex _mut_console;
