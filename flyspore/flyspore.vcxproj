@@ -158,9 +158,11 @@
     <ClCompile Include="..\core\Level1\Pin.cpp" />
     <ClCompile Include="..\core\Level1\Session.cpp" />
     <ClCompile Include="..\core\Level1\Spore.cpp" />
+    <ClCompile Include="..\core\Level2\Maze.cpp" />
     <ClCompile Include="flyspore.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\core\Level0\Level0.h" />
     <ClInclude Include="..\core\Level0\stealing_queue.h" />
     <ClInclude Include="..\core\Level0\sync_deque.h" />
     <ClInclude Include="..\core\Level0\task_pool.h" />
@@ -170,6 +172,7 @@
     <ClInclude Include="..\core\Level1\DataAdapter.h" />
     <ClInclude Include="..\core\Level1\DataPack.h" />
     <ClInclude Include="..\core\Level1\DefaultSchema.h" />
+    <ClInclude Include="..\core\Level1\Level1.h" />
     <ClInclude Include="..\core\Level1\Path.h" />
     <ClInclude Include="..\core\Level1\Pin.h" />
     <ClInclude Include="..\core\Level1\Schema.h" />
@@ -177,6 +180,8 @@
     <ClInclude Include="..\core\Level1\Spore.h" />
     <ClInclude Include="..\core\Level1\Statement.h" />
     <ClInclude Include="..\core\Level1\WarpPin.h" />
+    <ClInclude Include="..\core\Level2\ConsoleColor.h" />
+    <ClInclude Include="..\core\Level2\Maze.h" />
     <ClInclude Include="Threads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

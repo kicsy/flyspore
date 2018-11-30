@@ -17,6 +17,8 @@ namespace fs
 			bool isvalid() const;
 			bool move(P_Data data);
 			static P_Path connect(P_Pin &from, P_Pin &to, const std::string &name = "");
+			static P_Path connect(P_Spore &fromSpore, const std::string &fromPinName,
+				P_Spore &toSpore, const std::string &toPinName, const std::string &name = "");
 			static bool release(const P_Path &path);
 		protected:
 			bool _build();

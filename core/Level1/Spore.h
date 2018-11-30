@@ -70,9 +70,8 @@ namespace fs
 			std::vector<P_Path> _paths;
 			std::shared_mutex _paths_mutex;
 
-
-			std::unordered_map<IdType, P_AnyValues> _sessionValues;
-			std::shared_mutex _session_mutex;
+			std::unordered_map<IdType, P_AnyValues> _session_local_Values;
+			std::shared_mutex _session_local_mutex;
 			friend class Session;
 			friend class Path;
 		};

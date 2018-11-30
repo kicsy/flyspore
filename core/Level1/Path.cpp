@@ -86,6 +86,15 @@ namespace fs
 			return nullptr;
 		}
 
+		fs::L1::P_Path Path::connect(P_Spore &fromSpore, const std::string &fromPinName, P_Spore &toSpore, const std::string &toPinName, const std::string &name /*= ""*/)
+		{
+			if (!fromSpore || !toSpore)
+			{
+				return nullptr;
+			}
+			return connect(fromSpore->getPin(fromPinName), toSpore->getPin(toPinName), name);
+		}
+
 		bool Path::release(const P_Path &path)
 		{
 			if (!path->from() || !path->to())

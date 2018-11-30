@@ -22,6 +22,9 @@
     <Filter Include="core\Level1">
       <UniqueIdentifier>{344c35cd-c74c-4bb8-9064-35bd8dc3cc5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\Level2">
+      <UniqueIdentifier>{3c0a3755-4a78-42cf-b521-fa90c152f9d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="flyspore.cpp">
@@ -44,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="..\core\Level1\Spore.cpp">
       <Filter>core\Level1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\Level2\Maze.cpp">
+      <Filter>core\Level2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +103,18 @@
     </ClInclude>
     <ClInclude Include="..\core\Level1\WarpPin.h">
       <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level2\Maze.h">
+      <Filter>core\Level2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Level1.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\Level0.h">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level2\ConsoleColor.h">
+      <Filter>core\Level2</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

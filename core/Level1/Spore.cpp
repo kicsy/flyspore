@@ -217,10 +217,10 @@ namespace fs
 		void Spore::buildSession(IdType sessionId)
 		{
 			{
-				std::unique_lock<std::shared_mutex> lock(_session_mutex);
-				if (!_sessionValues.count(sessionId))
+				std::unique_lock<std::shared_mutex> lock(_session_local_mutex);
+				if (!_session_local_Values.count(sessionId))
 				{
-					_sessionValues[sessionId] = std::make_shared<AnyValues>();
+					_session_local_Values[sessionId] = std::make_shared<AnyValues>();
 				}
 			}
 			{
@@ -242,10 +242,10 @@ namespace fs
 				}
 			}
 			{
-				std::unique_lock<std::shared_mutex> lock(_session_mutex);
-				if (_sessionValues.count(sessionId))
+				std::unique_lock<std::shared_mutex> lock(_session_local_mutex);
+				if (_session_local_Values.count(sessionId))
 				{
-					_sessionValues[sessionId] = nullptr;
+					_session_local_Values[sessionId] = nullptr;
 				}
 			}
 		}
@@ -260,8 +260,8 @@ namespace fs
 				}
 			}
 			{
-				std::unique_lock<std::shared_mutex> lock(_session_mutex);
-				_sessionValues.clear();
+				std::unique_lock<std::shared_mutex> lock(_session_local_mutex);
+				_session_local_Values.clear();
 			}
 		}
 
@@ -281,8 +281,8 @@ namespace fs
 				}
 				P_AnyValues plocal;
 				{
-					std::shared_lock<std::shared_mutex> lock(_session_mutex);
-					plocal = _sessionValues[pss->id()];
+					std::shared_lock<std::shared_mutex> lock(_session_local_mutex);
+					plocal = _session_local_Values[pss->id()];
 				}
 				Context cc(shared_from_this(), pss, plocal);
 				pin->process(cc, data);
@@ -316,6 +316,7 @@ namespace fs
 					pp->_release();
 					return true;
 				}
+				return false;
 			}) != _paths.end();
 			return isOk;
 		}
