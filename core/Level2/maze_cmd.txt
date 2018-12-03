@@ -1,0 +1,39 @@
+##pwd cd info add remove copy  set get 
+
+>pwd
+/home
+
+>info
+.spore
+inpins			outpins			paths			processes			name
+0					0					0					0						mydemo
+
+>cd /mydemo
+
+>pwd
+/home/mydemo
+
+>add .spore name=spore1
+.spore
+inpins			outpins			paths			processes			name
+0					0					0					0						spore1
+
+>add .spore name=spore2
+.spore
+inpins			outpins			paths			processes			name
+0					0					0					0						spore1
+0					0					0					0						spore2
+
+>cd spore1
+
+>pwd /home/spore1
+
+>add .pin type=in name=indata1 process=def
+
+
+>info
+.pin
+type				connected				process				name
+in					3								process1			indata
+.path
+from					to					name

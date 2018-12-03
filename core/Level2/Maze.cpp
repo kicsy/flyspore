@@ -14,9 +14,9 @@ fs::L2::Maze::Maze()
 
 	P_Spore _console = _root->addChild("Console");
 	defaultSchema().addPin(_console, "out",
-		std::bind(&Maze::_echo_out, this, std::placeholders::_1, std::placeholders::_2));
+		std::bind(&Maze::_out, this, std::placeholders::_1, std::placeholders::_2));
 	defaultSchema().addPin(_console, "error",
-		std::bind(&Maze::_echo_error, this, std::placeholders::_1, std::placeholders::_2));
+		std::bind(&Maze::_error, this, std::placeholders::_1, std::placeholders::_2));
 
 	Path::connect(_spore, "out", _console, "out", "out");
 	Path::connect(_spore, "error", _console, "error", "error");
@@ -42,7 +42,7 @@ void fs::L2::Maze::call(const std::string & cmd)
 
 void fs::L2::Maze::run()
 {
-	_echo_about();
+	_echo_Welcome();
 	std::string cmd;
 	do 
 	{
@@ -67,7 +67,6 @@ void fs::L2::Maze::_call(Context& cc, DataPack& data)
 	}
 
 	cc.push("out", echo);
-	cc.push("error", echo);
 }
 
 void fs::L2::Maze::_read_cmd(std::string &instring)
@@ -75,31 +74,34 @@ void fs::L2::Maze::_read_cmd(std::string &instring)
 	std::getline(std::cin, instring);
 }
 
-void fs::L2::Maze::_echo_out(Context& cc, DataPack& data)
+void fs::L2::Maze::_out(Context& cc, DataPack& data)
 {
-	std::unique_lock<std::mutex> lk(_mut_console);
 	std::string &echo = data.ref<std::string>("echo");
-	std::cout << "\r";
-	std::cout.flush();
-	std::cout << echo << std::endl << INFLAG;
-	std::cout.flush();
+	_echo_textBlock(std::cout, echo);
 }
 
-void fs::L2::Maze::_echo_error(Context& cc, DataPack& data)
+void fs::L2::Maze::_error(Context& cc, DataPack& data)
 {
-	std::unique_lock<std::mutex> lk(_mut_console);
 	std::string &echo = data.ref<std::string>("echo");
-	std::cerr << "\r";
-	std::cerr.flush();
-	std::cerr << RED << echo << RESET << std::endl << INFLAG;
-	std::cout.flush();
+	_echo_textBlock(std::cerr, echo);
 }
 
-void fs::L2::Maze::_echo_about()
+void fs::L2::Maze::_echo_textBlock(std::ostream &stream, std::string &textBlock)
 {
 	std::unique_lock<std::mutex> lk(_mut_console);
-	std::cout << "\r";
-	std::cout.flush();
-	std::cout << GREEN << "Maze 0.0.6.0 (fly spore version 0.0.6.0)\n" << RESET << INFLAG;
-	std::cout.flush();
+	std::cout << "\r" << CYAN << "FlySpore  " << RESET << "/home" << "\n"  ;
+
+	if (&stream == &std::cerr)
+	{
+		stream <<  RED << textBlock << RESET << std::endl << INFLAG;
+	}
+	else
+	{
+		stream <<  textBlock << std::endl << INFLAG;
+	}
+}
+
+void fs::L2::Maze::_echo_Welcome()
+{
+	std::cout << "\r" << GREEN << "FlySpore"<< RESET << "  (version 0.0.6.0)\n"  << INFLAG;
 }
