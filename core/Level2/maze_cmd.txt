@@ -35,6 +35,10 @@ inpins			outpins			paths			processes			name
 >pwd
 /home/mydemo
 
+>add .spore name=spore1
+>spore name=spore2;V1=200;V2=300;V3=400;.pin[in]=
+
+
 ##operation on spore
 
 ##add spore
