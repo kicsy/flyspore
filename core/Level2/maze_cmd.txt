@@ -1,4 +1,26 @@
-##pwd cd info add remove copy  set get 
+//pwd cd info add remove copy  set get 
+/*
+spore
+	.
+	..
+	.spore
+	.attribute
+	.path
+	.pin
+	.process
+	.session
+
+	>pwd
+	/home
+
+	
+	>.spore[s1].spore[s1_1].attribute[valueA] = "string value"
+	>s1/s1_1.valueA = "string value"
+
+	>.spore[s1].pin[indata].attribute[name] = "new pin"
+
+
+*/
 
 >pwd
 /home
@@ -13,27 +35,66 @@ inpins			outpins			paths			processes			name
 >pwd
 /home/mydemo
 
->add .spore name=spore1
-.spore
-inpins			outpins			paths			processes			name
-0					0					0					0						spore1
+##operation on spore
 
->add .spore name=spore2
-.spore
-inpins			outpins			paths			processes			name
-0					0					0					0						spore1
-0					0					0					0						spore2
+##add spore
+>add .spore name=spore1
+
+>add .spore name=spore2;V1=200;V2=300;V3=400;.pin[in]
+
+>add .spore name=temp
+
+>add .spore name=temp
+
+error
+name conflict.
+
+##remove spore
+
+>remove .spore name=temp
+
+>remove .spore name=temp
+error
+not found.
+
+##set spore attribute
+
+>set ./.spore[spore2] name=newspore2
+
+>set .spore[spore2] value1=300
+
+##set current spore attribute
+>set myattrbute1 = abcd
+>set .attribute[myattribute1] = aaaa
+>set ./ myattribute2 = 1.00
+>remove ./ myattribute2
+
+##copy spore
+
+>copy .spore
 
 >cd spore1
 
->pwd /home/spore1
+>pwd
+/home/spore1
 
->add .pin type=in name=indata1 process=def
+>add .pin type=in;name=indata1
+
+>add .pin type=in;name=indata2;process=@default
+
+>add .pin type=in;name=indata3;process=@default_python
+
 
 
 >info
-.pin
+.attribute 3
+name = spore1
+V1= 100
+V2 = 200
+.spore 0
+
+.pin 1
 type				connected				process				name
-in					3								process1			indata
-.path
-from					to					name
+in					0								none					indata1
+
+
