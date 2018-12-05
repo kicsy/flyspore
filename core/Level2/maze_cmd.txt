@@ -1,6 +1,6 @@
-//pwd cd mk rm cp 
+//pwd cd mk rm rmf cp 
 
-//info add remove clean copy  set get 
+//info add del clean copy  set get 
 
 //run stop pause
 
@@ -39,86 +39,38 @@ inpins			outpins			paths			processes			name
 >pwd
 /home/mydemo
 
+> mk 	spore1
+> mk 	spore2
+> mk 	spore3
+> mk 	spore4
+
+> rm 	spore3
+> rmf	spore4 
+
+> cp	spore1	spore5
+> cp	/home/share/superS1	spore6
 
 
+> add 	.pins.indata  		{"type":"in","process":"/home/share.processes.default"}
+> add 	.paths.path1		{"from":"myspore1.pins.out", "to":"myspore2.pins.in"}
+> add 	.processes.p1 		{"entry":"/home/share.processes.default.entry"}
+> add 	.sessions.ss1 		{"invoke":"indata1", "Key1": "Value1", "Key2":"Value2"}
 
+> del 	.pins.indata
+> del 	.paths.path1
+> del 	.processes.proc1
+> del 	.sessions.ss1 
+> del	.sessions.ss1.key1
+> del	.sessions.ss1.key*
 
-
-> add 	./ spore 	spore1 	{}
-> add 	./ spore 	spore2 	{"Value1":"1","Value2":"2"}
-> add 	./ pin 		indata  {"type":"in","process":"/home/share.processes.default"}
-> add 	./ path 	path1	{"from":"myspore1.pins.out", "to":"myspore2.pins.in"}
-> add 	./ process 	p1 		{"entry":"/home/share.processes.default.entry"}
-> add 	./ session 	ss1 	{"invoke":"indata1", "Key1": "Value1", "Key2":"Value2"}
-
-> delete ./ spore 	spore1
-> delete ./ pin 	indata
-> delete ./ path 	path1
-> delete ./ process proc1
-> delete ./ session ss1 
-
-> set ./ attribute {"key1":"AAA","key2":"BBB"}
-> set ./ pin indata1 {"key1":"AAA","key2":"BBB"}
-> set ./ path p1 {"key1":"AAA","key2":"BBB"}
-> set ./ process proc1 {"key1":"AAA","key2":"BBB"}
-> set ./ session ss1 {"key1":"AAA","key2":"BBB"}
-
-
-
->add .spore {"name":"spore1"}
->add .spore {"name":"spore2","Value1":"1","Value2":"2"}
->add .pin {"name":"indata2","type":"in","process":"/home/share.process.default"}
->add .path {"name":"p1","from":"myspore1.pin.out"; "to":"myspore2.pin.in"}
->add .process name=p1;entry=/home/share.process[default].entry
-
-##operation on spore
-
-##add spore
->add .spore name=spore1
-
->add .spore name=spore2;V1=200;V2=300;V3=400
-
->add .spore name=temp
-
->add .spore name=temp
-
-error
-name conflict.
-
-##remove spore
-
->remove .spore name=temp
-
->remove .spore name=temp
-error
-not found.
-
-##set spore attribute
-
->set ./.spore[spore2] name=newspore2
-
->set .spore[spore2] value1=300
-
-##set current spore attribute
->set myattrbute1 = abcd
->set .attribute[myattribute1] = aaaa
->set ./ myattribute2 = 1.00
->remove ./ myattribute2
-
-##copy spore
-
->copy .spore
-
->cd spore1
-
->pwd
-/home/spore1
-
->add .pin type=in;name=indata1
-
->add .pin type=in;name=indata2;process=@default
-
->add .pin type=in;name=indata3;process=@default_python
+> set 	.key1				"value1"
+> set 						{"key1":"AAA","key2":"BBB"}
+> set 	.pins.indata1 		{"key1":"AAA","key2":"BBB"}
+> set 	.paths.p1 			{"key1":"AAA","key2":"BBB"}
+> set 	.processes.proc1 	{"key1":"AAA","key2":"BBB"}
+> set 	.sessions.ss1 		{"key1":"AAA","key2":"BBB"}
+> set	.sessions.ss1.key1	"CCC"
+> set	.sessions.ss*		{"key1":"AAA","key2":"BBB"}
 
 
 
