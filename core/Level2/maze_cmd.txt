@@ -1,17 +1,18 @@
-//pwd cd info add remove clean run stop pause copy  set get 
+//pwd cd mk rm cp 
+
+//info add remove clean copy  set get 
+
+//run stop pause
+
 /*
 /home
 	/share
 	/MySpace
-		/spore
+		/spore[pins | paths | processes | sessions | ...]
 			.
 			..
-			.spore
-			.attribute
-			.path
-			.pin
-			.process
-			.session
+			child_spore_1
+			child_spore_2
 
 	>pwd
 	/home
@@ -38,24 +39,29 @@ inpins			outpins			paths			processes			name
 >pwd
 /home/mydemo
 
->./ add spore spore1 {}
->./ add spore spore2 {"Value1":"1","Value2":"2"}
->./ add pin indata  {"type":"in","process":"/home/share.processes.default"}
->./ add path {"from":"myspore1.pins.out", "to":"myspore2.pins.in"}
->./ add process p1 {"entry":"/home/share.processes.default.entry"}
->./ add session ss1 {"invoke":"indata1", "Key1": "Value1", "Key2":"Value2"}
 
->./ delete spore spore1
->./ delete pin indata
->./ delete path path1
->./ delete process proc1
->./ delete session ss1 
 
->./ set attribute {"key1":"AAA","key2":"BBB"}
->./ set pin indata1 {"key1":"AAA","key2":"BBB"}
->./ set path p1 {"key1":"AAA","key2":"BBB"}
->./ set process proc1 {"key1":"AAA","key2":"BBB"}
->./ set session ss1 {"key1":"AAA","key2":"BBB"}
+
+
+
+> add 	./ spore 	spore1 	{}
+> add 	./ spore 	spore2 	{"Value1":"1","Value2":"2"}
+> add 	./ pin 		indata  {"type":"in","process":"/home/share.processes.default"}
+> add 	./ path 	path1	{"from":"myspore1.pins.out", "to":"myspore2.pins.in"}
+> add 	./ process 	p1 		{"entry":"/home/share.processes.default.entry"}
+> add 	./ session 	ss1 	{"invoke":"indata1", "Key1": "Value1", "Key2":"Value2"}
+
+> delete ./ spore 	spore1
+> delete ./ pin 	indata
+> delete ./ path 	path1
+> delete ./ process proc1
+> delete ./ session ss1 
+
+> set ./ attribute {"key1":"AAA","key2":"BBB"}
+> set ./ pin indata1 {"key1":"AAA","key2":"BBB"}
+> set ./ path p1 {"key1":"AAA","key2":"BBB"}
+> set ./ process proc1 {"key1":"AAA","key2":"BBB"}
+> set ./ session ss1 {"key1":"AAA","key2":"BBB"}
 
 
 
