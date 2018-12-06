@@ -1,8 +1,17 @@
+//关于spore节点的操作
 //pwd cd mk rm rmf cp 
 
-//info add del clean copy  set get 
+//关于属性的操作
+//add del set get update clean cp
 
+//关于session的操作
 //run stop pause
+
+//输出信息
+//info
+
+//执行外部命令
+!
 
 /*
 /home
@@ -13,26 +22,10 @@
 			..
 			child_spore_1
 			child_spore_2
-
-	>pwd
-	/home
-
-	
-	>.spore[s1].spore[s1_1].attribute[valueA] = "string value"
-	>s1/s1_1.valueA = "string value"
-
-	>.spore[s1].pin[indata].attribute[name] = "new pin"
-
-
 */
 
 >pwd
 /home
-
->info
-.spore
-inpins			outpins			paths			processes			name
-0					0					0					0						mydemo
 
 >cd /mydemo
 
@@ -50,6 +43,7 @@ inpins			outpins			paths			processes			name
 > cp	spore1	spore5
 > cp	/home/share/superS1	spore6
 
+//------------------------
 
 > add 	.pins.indata  		{"type":"in","process":"/home/share.processes.default"}
 > add 	.paths.path1		{"from":"myspore1.pins.out", "to":"myspore2.pins.in"}
@@ -62,6 +56,7 @@ inpins			outpins			paths			processes			name
 > del 	.sessions.ss1 
 > del	.sessions.ss1.key1
 > del	.sessions.ss1.key*
+
 
 > set 	.key1				"value1"
 > set 						{"key1":"AAA","key2":"BBB"}
