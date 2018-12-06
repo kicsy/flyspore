@@ -1,8 +1,5 @@
-//关于spore节点的操作
-//pwd cd mk rm rmf cp 
 
-//关于属性的操作
-//add del set get update clean cp
+
 
 //关于session的操作
 //run stop pause
@@ -17,13 +14,17 @@
 /home
 	/share
 	/MySpace
-		/spore[pins | paths | processes | sessions | ...]
+		/spore1[pins | paths | processes | sessions | ...]
 			.
 			..
-			child_spore_1
-			child_spore_2
+			child1
+			child2
 */
 
+
+//关于spore节点的操作
+//pwd cd mk rm rmf cp 
+//------------------------------
 >pwd
 /home
 
@@ -43,7 +44,19 @@
 > cp	spore1	spore5
 > cp	/home/share/superS1	spore6
 
+//关于属性的操作
+//add del set get update clean cp
 //------------------------
+/*
+xpath:  /home/MySpace/spore1/child1.pins.indata1.process
+
+
+spore/attribute mode
+
+Necessity | Locked | Executable | Readable | Writable | Executable   
+
+
+*/
 
 > add 	.pins.indata  		{"type":"in","process":"/home/share.processes.default"}
 > add 	.paths.path1		{"from":"myspore1.pins.out", "to":"myspore2.pins.in"}
