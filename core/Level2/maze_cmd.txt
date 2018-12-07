@@ -1,9 +1,6 @@
 
 
 
-//关于session的操作
-//run stop pause
-
 //输出信息
 //info
 
@@ -45,15 +42,15 @@
 > cp	/home/share/superS1	spore6
 
 //关于属性的操作
-//add del set get update clean cp
+//add del set get update clean
 //------------------------
 /*
 xpath:  /home/MySpace/spore1/child1.pins.indata1.process
 
 
-spore/attribute mode
+spore/attribute mode:
 
-Necessity | Locked | Executable | Readable | Writable | Executable   
+Necessity | Readable | Writable | Executable | Hide
 
 
 */
@@ -64,6 +61,7 @@ Necessity | Locked | Executable | Readable | Writable | Executable
 > add 	.sessions.ss1 		{"invoke":"indata1", "Key1": "Value1", "Key2":"Value2"}
 
 > del 	.pins.indata
+> del 	.pins				["tempPin","tempPin1"]
 > del 	.paths.path1
 > del 	.processes.proc1
 > del 	.sessions.ss1 
@@ -79,18 +77,52 @@ Necessity | Locked | Executable | Readable | Writable | Executable
 > set 	.sessions.ss1 		{"key1":"AAA","key2":"BBB"}
 > set	.sessions.ss1.key1	"CCC"
 > set	.sessions.ss*		{"key1":"AAA","key2":"BBB"}
+> set	.pins.pin.inddata1	.pins.pin.indata2
 
 
+> update 	.key1				"value1"
+> update 						{"key1":"AAA","key2":"BBB"}
+> update 	.pins.indata1 		{"key1":"AAA","key2":"BBB"}
+> update 	.paths.p1 			{"key1":"AAA","key2":"BBB"}
+> update 	.processes.proc1 	{"key1":"AAA","key2":"BBB"}
+> update 	.sessions.ss1 		{"key1":"AAA","key2":"BBB"}
+> update	.sessions.ss1.key1	"CCC"
+> update	.sessions.ss*		{"key1":"AAA","key2":"BBB"}
+> update	.pins.pin.inddata3	.pins.pin.indata2
+
+> get 	.key1				
+> get 	.pins.indata1.key1
+> get 	.paths.p1 			["from","to"]
+> get 	.processes.proc1.invoke
+> get 	.sessions.ss1 		["key1", "key2"]
+> get	.sessions.ss1		"key1"
+> get	.sessions.ss1.*
+
+
+> clean 	.key1				
+> clean 	.pins.indata1.key1
+> clean 	.paths.p1 			["from","to"]
+> clean 	.processes.proc1.invoke
+> clean 	.sessions.ss1 		["key1", "key2"]
+> clean		.sessions.ss1		"key1"
+> clean		.sessions.ss1.*
+	
+
+//关于session的操作
+//run stop pause
+
+> run 	.sessions.ss1	
+
+> stop 	.sessions.ss1
+
+> pause	.sessions.ss1 
+	
+//关于info
 
 >info
-.attribute 3
-name = spore1
-V1= 100
-V2 = 200
-.spore 0
-
-.pin 1
-type				connected				process				name
-in					0								none					indata1
+>info ./
+>info .pins.* ["type", "process"]
+>info .pins.*
+>info .pins.indata.type
 
 
