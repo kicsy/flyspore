@@ -160,6 +160,7 @@
     <ClCompile Include="..\core\Level1\Spore.cpp" />
     <ClCompile Include="..\core\Level2\Maze.cpp" />
     <ClCompile Include="flyspore.cpp" />
+    <ClCompile Include="Traceable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\core\Level0\Level0.h" />
@@ -183,6 +184,10 @@
     <ClInclude Include="..\core\Level2\ConsoleColor.h" />
     <ClInclude Include="..\core\Level2\Maze.h" />
     <ClInclude Include="Threads.h" />
+    <ClInclude Include="Traceable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\core\Level2\maze_cmd.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

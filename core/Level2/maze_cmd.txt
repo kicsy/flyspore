@@ -59,6 +59,7 @@ Necessity | Readable | Writable | Executable | Hide
 > add 	.paths.path1		{"from":"myspore1.pins.out", "to":"myspore2.pins.in"}
 > add 	.processes.p1 		{"entry":"/home/share.processes.default.entry"}
 > add 	.sessions.ss1 		{"invoke":"indata1", "Key1": "Value1", "Key2":"Value2"}
+> add	.context			{"Key1":"Value1","Key2":"Value2"}
 
 > del 	.pins.indata
 > del 	.pins				["tempPin","tempPin1"]
@@ -67,7 +68,7 @@ Necessity | Readable | Writable | Executable | Hide
 > del 	.sessions.ss1 
 > del	.sessions.ss1.key1
 > del	.sessions.ss1.key*
-
+> del	.context.Key1
 
 > set 	.key1				"value1"
 > set 						{"key1":"AAA","key2":"BBB"}
@@ -78,7 +79,7 @@ Necessity | Readable | Writable | Executable | Hide
 > set	.sessions.ss1.key1	"CCC"
 > set	.sessions.ss*		{"key1":"AAA","key2":"BBB"}
 > set	.pins.pin.inddata1	.pins.pin.indata2
-
+> set	.context			{"Key1":"Value1","Key2":"Value2"}
 
 > update 	.key1				"value1"
 > update 						{"key1":"AAA","key2":"BBB"}
@@ -89,15 +90,16 @@ Necessity | Readable | Writable | Executable | Hide
 > update	.sessions.ss1.key1	"CCC"
 > update	.sessions.ss*		{"key1":"AAA","key2":"BBB"}
 > update	.pins.pin.inddata3	.pins.pin.indata2
+> update	.context			{"Key1":"Value1","Key2":"Value2"}
 
-> get 	.key1				
-> get 	.pins.indata1.key1
-> get 	.paths.p1 			["from","to"]
-> get 	.processes.proc1.invoke
-> get 	.sessions.ss1 		["key1", "key2"]
-> get	.sessions.ss1		"key1"
-> get	.sessions.ss1.*
-
+> get 		.key1				
+> get 		.pins.indata1.key1
+> get 		.paths.p1 			["from","to"]
+> get 		.processes.proc1.invoke
+> get 		.sessions.ss1 		["key1", "key2"]
+> get		.sessions.ss1		"key1"
+> get		.sessions.ss1.*
+> get		.context.Key1
 
 > clean 	.key1				
 > clean 	.pins.indata1.key1
@@ -106,16 +108,16 @@ Necessity | Readable | Writable | Executable | Hide
 > clean 	.sessions.ss1 		["key1", "key2"]
 > clean		.sessions.ss1		"key1"
 > clean		.sessions.ss1.*
-	
+> clean		.context
 
 //关于session的操作
 //run stop pause
 
-> run 	.sessions.ss1	
+> run 		.sessions.ss1	
 
-> stop 	.sessions.ss1
+> stop 		.sessions.ss1
 
-> pause	.sessions.ss1 
+> pause		.sessions.ss1 
 	
 //关于info
 

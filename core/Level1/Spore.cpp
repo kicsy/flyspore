@@ -33,7 +33,7 @@ namespace fs
 	namespace L1
 	{
 		Spore::Spore(const std::string &name) :
-			_name(name)
+			Traceable<Spore>(name)
 		{
 		}
 
@@ -145,73 +145,6 @@ namespace fs
 		bool Spore::deletePin(const std::string &name)
 		{
 			return deletePin(getPin(name));
-		}
-
-		std::vector<P_Spore> Spore::childs()
-		{
-			std::shared_lock<std::shared_mutex> lock(_childs_mutex);
-			return _childs;
-		}
-
-		P_Spore Spore::getChild(const std::string &name)
-		{
-			std::shared_lock<std::shared_mutex> lock(_childs_mutex);
-			auto iter = std::find_if(_childs.begin(), _childs.end(), [&](P_Spore& pp) {
-				return pp->name() == name;
-			});
-			if (iter != _childs.end())
-			{
-				return *iter;
-			}
-			return NULL;
-		}
-
-		P_Spore Spore::addChild(P_Spore child)
-		{
-			if (!child)
-				return nullptr;
-			child->_parent = shared_from_this();
-			std::unique_lock<std::shared_mutex> lock(_childs_mutex);
-			_childs.push_back(child);
-			return child;
-		}
-
-		P_Spore Spore::addChild(const std::string &name)
-		{
-			return addChild(newSpore(name));
-		}
-
-		P_Spore Spore::removeChild(P_Spore child)
-		{
-			if (!child)
-			{
-				return nullptr;
-			}
-			return removeChild(child->name());
-		}
-
-		P_Spore Spore::removeChild(const std::string &name)
-		{
-			std::unique_lock<std::shared_mutex> lock(_childs_mutex);
-			auto iter = std::remove_if(_childs.begin(), _childs.end(), [&](P_Spore& pp) {
-				return pp->name() == name;
-			});
-			P_Spore theRemove = *iter;
-			if (!theRemove)
-			{
-				return nullptr;
-			}
-			for (const P_Path& path : _paths)
-			{
-				if ((path->from() && path->from()->spore() == theRemove) ||
-					(path->to() && path->to()->spore() == theRemove))
-				{
-					Path::release(path);
-				}
-			}
-			theRemove->cleanAllSession();
-			theRemove->_parent = nullptr;
-			return theRemove;
 		}
 
 		void Spore::buildSession(IdType sessionId)
