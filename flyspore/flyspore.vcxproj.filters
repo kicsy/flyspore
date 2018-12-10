@@ -51,9 +51,6 @@
     <ClCompile Include="..\core\Level2\Maze.cpp">
       <Filter>core\Level2</Filter>
     </ClCompile>
-    <ClCompile Include="Traceable.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Threads.h">
@@ -119,8 +116,8 @@
     <ClInclude Include="..\core\Level2\ConsoleColor.h">
       <Filter>core\Level2</Filter>
     </ClInclude>
-    <ClInclude Include="Traceable.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="..\core\Level1\Traceable.h">
+      <Filter>core\Level1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

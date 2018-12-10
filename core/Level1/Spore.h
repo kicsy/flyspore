@@ -32,10 +32,8 @@ namespace fs
 			Spore(const Spore&) = delete;
 			Spore() = delete;
 			~Spore();
-			PW_Spore parent();
-			std::string name();
-
 			bool input(const P_Pin &pin, const P_Data &data);
+
 			std::vector<P_Pin> pins();
 			P_Pin getPin(const std::string &name);
 			P_Pin addPin(P_Pin &pin);
@@ -60,6 +58,7 @@ namespace fs
 
 			std::unordered_map<IdType, P_AnyValues> _session_local_Values;
 			std::shared_mutex _session_local_mutex;
+
 			friend class Session;
 			friend class Path;
 		};

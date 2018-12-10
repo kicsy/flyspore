@@ -23,7 +23,7 @@
     <ProjectGuid>{990F1B33-A1DF-481B-94EC-3402E7E4764B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>flyspore</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -160,7 +160,6 @@
     <ClCompile Include="..\core\Level1\Spore.cpp" />
     <ClCompile Include="..\core\Level2\Maze.cpp" />
     <ClCompile Include="flyspore.cpp" />
-    <ClCompile Include="Traceable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\core\Level0\Level0.h" />
@@ -180,11 +179,11 @@
     <ClInclude Include="..\core\Level1\Session.h" />
     <ClInclude Include="..\core\Level1\Spore.h" />
     <ClInclude Include="..\core\Level1\Statement.h" />
+    <ClInclude Include="..\core\Level1\Traceable.h" />
     <ClInclude Include="..\core\Level1\WarpPin.h" />
     <ClInclude Include="..\core\Level2\ConsoleColor.h" />
     <ClInclude Include="..\core\Level2\Maze.h" />
     <ClInclude Include="Threads.h" />
-    <ClInclude Include="Traceable.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\core\Level2\maze_cmd.txt" />

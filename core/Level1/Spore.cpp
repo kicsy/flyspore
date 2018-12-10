@@ -41,16 +41,6 @@ namespace fs
 		{
 		}
 
-		PW_Spore Spore::parent()
-		{
-			return _parent;
-		}
-
-		std::string Spore::name()
-		{
-			return _name;
-		}
-
 		bool Spore::input(const P_Pin &pin, const P_Data &data)
 		{
 			if (pin == nullptr)
@@ -156,24 +146,18 @@ namespace fs
 					_session_local_Values[sessionId] = std::make_shared<AnyValues>();
 				}
 			}
-			{
-				std::shared_lock<std::shared_mutex> lock(_childs_mutex);
-				for (auto child : _childs)
-				{
-					child->buildSession(sessionId);
-				}
-			}
+			forwardChild([&](const P_Spore& child) ->bool{
+				child->buildSession(sessionId);
+				return true;
+			});
 		}
 
 		void Spore::releaseSession(IdType sessionId)
 		{
-			{
-				std::shared_lock<std::shared_mutex> lock(_childs_mutex);
-				for (auto child : _childs)
-				{
-					child->releaseSession(sessionId);
-				}
-			}
+			forwardChild([&](const P_Spore& child) ->bool {
+				child->releaseSession(sessionId);
+				return true;
+			});
 			{
 				std::unique_lock<std::shared_mutex> lock(_session_local_mutex);
 				if (_session_local_Values.count(sessionId))
@@ -185,13 +169,10 @@ namespace fs
 
 		void Spore::cleanAllSession()
 		{
-			{
-				std::shared_lock<std::shared_mutex> lock(_childs_mutex);
-				for (auto child : _childs)
-				{
-					child->cleanAllSession();
-				}
-			}
+			forwardChild([&](const P_Spore& child) ->bool {
+				child->cleanAllSession();
+				return true;
+			});
 			{
 				std::unique_lock<std::shared_mutex> lock(_session_local_mutex);
 				_session_local_Values.clear();
