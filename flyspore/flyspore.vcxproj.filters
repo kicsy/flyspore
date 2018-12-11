@@ -119,6 +119,9 @@
     <ClInclude Include="..\core\Level1\Traceable.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\Level1\PropertyNode.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\core\Level2\maze_cmd.txt">

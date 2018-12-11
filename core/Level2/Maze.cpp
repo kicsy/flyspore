@@ -35,7 +35,7 @@ void fs::L2::Maze::call(const std::string & cmd)
 	if (_session_call)
 	{
 		DataPack cmdData;
-		cmdData.ref<std::string>("cmd") = cmd;
+		cmdData.set<std::string>("cmd", cmd);
 		_session_call->submit(cmdData);
 	}
 }
@@ -56,10 +56,9 @@ void fs::L2::Maze::run()
 
 void fs::L2::Maze::_call(Context& cc, DataPack& data)
 {
-	std::string &cmd = data.ref<std::string>("cmd");
-
+	std::string  cmd = data.get<std::string>("cmd");
 	auto echo = std::make_shared<DataPack>();
-	echo->ref<std::string>("echo") = cmd;
+	echo->set<std::string>("echo", cmd);
 
 	if (cmd == "info")
 	{
@@ -76,13 +75,13 @@ void fs::L2::Maze::_read_cmd(std::string &instring)
 
 void fs::L2::Maze::_out(Context& cc, DataPack& data)
 {
-	std::string &echo = data.ref<std::string>("echo");
+	std::string echo = data.get<std::string>("echo");
 	_echo_textBlock(std::cout, echo);
 }
 
 void fs::L2::Maze::_error(Context& cc, DataPack& data)
 {
-	std::string &echo = data.ref<std::string>("echo");
+	std::string echo = data.get<std::string>("echo");
 	_echo_textBlock(std::cerr, echo);
 }
 
