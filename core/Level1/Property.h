@@ -23,25 +23,22 @@ namespace fs
 		using any = std::any;
 		using pairItem = std::pair<std::string, any>;
 		using PropertyInitList = std::list<pairItem>;
-
+		class PropertyCollection;
 		class Property
 		{
 		public:
 			friend class std::shared_lock<Property>;
-			Property(const std::string & name, const any &&value = any(),
-				const PropertyInitList &&initList = PropertyInitList()):
+			friend class PropertyCollection;
+			Property(const std::string & name, const any &&value = any()):
 				_name(name)
-				,_value(value)
 			{
-				for (auto &pairItem : initList)
+				_value = value;
+				if (_value.type() == typeid(PropertyCollection))
 				{
-					if (pairItem.first.length() > 0)
-					{
-						_childs[pairItem.first] = 
-							std::make_shared<Property>(pairItem.first, pairItem.second);
-					}
+					std::any_cast<PropertyCollection&>(_value)._owner = weakFromThis();
 				}
 			}
+
 			~Property(){}
 			PW_Property parent() const 
 			{
@@ -52,16 +49,6 @@ namespace fs
 			{
 				std::shared_lock<Property> lock(*const_cast<Property*>(this));
 				return _name;
-			}
-			bool setName(const std::string &name)
-			{
-				if (name.length() == 0)
-				{
-					return false;
-				}
-				std::unique_lock<Property> lock(*this);
-				_name = name;
-				return true;
 			}
 			uint16_t mode() const 
 			{
@@ -88,7 +75,11 @@ namespace fs
 			void set(const vT& value)
 			{
 				std::unique_lock<Property> lock(*this);
-				std::any_cast<vT&>(_value)  = value;
+				_value = any(value);
+				if (value.type() == typeid(PropertyCollection))
+				{
+					std::any_cast<PropertyCollection&>(_value)._owner = weakFromThis();
+				}
 			}
 
 			template<typename vT>
@@ -106,81 +97,6 @@ namespace fs
 					_childs[name] = pp = std::make_shared<Property>(name);
 				}
 				return *pp.get();
-			}
-			std::vector<std::string> childNames() const
-			{
-				std::shared_lock<Property> lock(*const_cast<Property*>(this));
-				std::vector<std::string> cl;
-				for (auto& x : _childs)
-				{
-					if (x.second)
-					{
-						cl.push_back(x.second->_name);
-					}
-				}
-				return std::move(cl);
-			}
-
-			void foreachChild(std::function<bool(const Property& child)> p) const
-			{
-				if (p)
-				{
-					std::shared_lock<Property> lock(*const_cast<Property*>(this));
-					for (auto& x : _childs)
-					{
-						if (x.second && !p(*x.second.get()))
-						{
-							return;
-						}
-					}
-				}
-			}
-
-			P_Property getChild(const std::string &name)
-			{
-				std::shared_lock<Property> lock(*this);
-				auto iter = _childs.find(name);
-				if (iter != _childs.end())
-				{
-					return (*iter).second;
-				}
-				return nullptr;
-			}
-			P_Property addChild(P_Property child)
-			{
-				if (!child)
-				{
-					return nullptr;
-				}
-				std::unique_lock<Property> lock(*this);
-				auto iter = _childs.find(child->_name);
-				if (iter != _childs.end())
-				{
-					return nullptr;
-				}
-				child->_parent = weakFromThis();
-				_childs[child->_name] = (child);
-				return child;
-			}
-			P_Property removeChild(P_Property child)
-			{
-				if (!child)
-				{
-					return nullptr;
-				}
-				return removeChild(child->_name);
-			}
-			P_Property removeChild(const std::string &name)
-			{
-				std::unique_lock<Property> lock(*this);
-				auto iter = _childs.find(name);
-				if (iter == _childs.end())
-				{
-					return nullptr;
-				}
-				_childs.erase(iter);
-				(*iter).second->_parent.reset();
-				return (*iter).second;
 			}
 
 			std::string getLocator()
@@ -244,6 +160,104 @@ namespace fs
 			std::unordered_map<std::string, P_Property> _childs;
 			std::shared_mutex _mutex;
 			int16_t _mode{ 0 };
+		};
+
+		class PropertyCollection
+		{
+		protected:
+			using ItemList = std::vector<P_Property>;
+			PropertyCollection(const PW_Property &owner, const ItemList&& itemList = ItemList()):
+				_owner(owner)
+			{
+				for (auto item : itemList)
+				{
+					if (item)
+					{
+						_items[item->_name] = item;
+					}
+				}
+			}
+		public:
+			std::vector<std::string> itemNames() const
+			{
+				std::shared_lock<Property> lock(*const_cast<Property*>(_owner.lock().get()));
+				std::vector<std::string> cl;
+				for (auto& x : _items)
+				{
+					if (x.second)
+					{
+						cl.push_back(x.second->_name);
+					}
+				}
+				return std::move(cl);
+			}
+
+			void foreach(std::function<bool(const Property& child)> p) const
+			{
+				if (p)
+				{
+					std::shared_lock<Property> lock(*const_cast<Property*>(_owner.lock().get()));
+					for (auto& x : _items)
+					{
+						if (x.second && !p(*x.second.get()))
+						{
+							return;
+						}
+					}
+				}
+			}
+
+			P_Property getItem(const std::string &name)
+			{
+				std::shared_lock<Property> lock(*const_cast<Property*>(_owner.lock().get()));
+				auto iter = _items.find(name);
+				if (iter != _items.end())
+				{
+					return (*iter).second;
+				}
+				return nullptr;
+			}
+
+			P_Property addItem(P_Property child)
+			{
+				if (!child)
+				{
+					return nullptr;
+				}
+				std::unique_lock<Property> lock(*const_cast<Property*>(_owner.lock().get()));
+				auto iter = _items.find(child->_name);
+				if (iter != _items.end())
+				{
+					return nullptr;
+				}
+				child->_parent = _owner;
+				_items[child->_name] = (child);
+				return child;
+			}
+			P_Property removeItem(P_Property child)
+			{
+				if (!child)
+				{
+					return nullptr;
+				}
+				return removeItem(child->_name);
+			}
+			P_Property removeItem(const std::string &name)
+			{
+				std::unique_lock<Property> lock(*const_cast<Property*>(_owner.lock().get()));
+				auto iter = _items.find(name);
+				if (iter == _items.end())
+				{
+					return nullptr;
+				}
+				_items.erase(iter);
+				(*iter).second->_parent.reset();
+				return (*iter).second;
+			}
+		protected:
+			PW_Property _owner;
+			std::unordered_map<std::string, P_Property> _items;
+			friend class Property;
 		};
 	}
 }
