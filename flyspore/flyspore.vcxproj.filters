@@ -51,6 +51,9 @@
     <ClCompile Include="..\core\Level2\Maze.cpp">
       <Filter>core\Level2</Filter>
     </ClCompile>
+    <ClCompile Include="..\core\Level1\PropertyMetaDataManager.cpp">
+      <Filter>core\Level1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Threads.h">
@@ -119,7 +122,10 @@
     <ClInclude Include="..\core\Level1\Traceable.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\Level1\PropertyNode.h">
+    <ClInclude Include="..\core\Level1\PropertyMetaDataManager.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Property.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
   </ItemGroup>

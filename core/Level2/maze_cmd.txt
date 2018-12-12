@@ -45,21 +45,23 @@
 //add del set get update clean
 //------------------------
 /*
-xpath:  /home/MySpace/spore1/child1.pins.indata1.process
+xpath:  /home/MySpace/spore1/child1/pins/indata1/process
+
+code:  myspace["spore1/child1.pins.indata1"].property["process"]
 
 
 spore/attribute mode:
 
-Necessity | Readable | Writable | Executable | Hide
+Inherit | Necessity | Readable | Writable | Executable | Hide
 
 
 */
 
-> add 	.pins.indata  		{"type":"in","process":"/home/share.processes.default"}
-> add 	.paths.path1		{"from":"myspore1.pins.out", "to":"myspore2.pins.in"}
-> add 	.processes.p1 		{"entry":"/home/share.processes.default.entry"}
-> add 	.sessions.ss1 		{"invoke":"indata1", "Key1": "Value1", "Key2":"Value2"}
-> add	.context			{"Key1":"Value1","Key2":"Value2"}
+> add 	/pins/indata  		{"type":"in","process":"/home/share.processes.default"}
+> add 	/paths/path1		{"from":"myspore1.pins.out", "to":"myspore2.pins.in"}
+> add 	/processes/p1 		{"entry":"/home/share.processes.default.entry"}
+> add 	/sessions/ss1 		{"invoke":"indata1", "Key1": "Value1", "Key2":"Value2"}
+> add	/context			{"Key1":"Value1","Key2":"Value2"}
 
 > del 	.pins.indata
 > del 	.pins				["tempPin","tempPin1"]

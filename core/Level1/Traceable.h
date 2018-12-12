@@ -72,7 +72,6 @@ namespace fs
 					return nullptr;
 				}
 				return removeChild(child->name());
-
 			}
 			P_BasicType removeChild(const std::string &name)
 			{

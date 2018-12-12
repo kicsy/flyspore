@@ -32,8 +32,8 @@ namespace fs
 {
 	namespace L1
 	{
-		Spore::Spore(const std::string &name) :
-			Traceable<Spore>(name)
+		Spore::Spore(const std::string &name, const PropertyInitList &&initList) :
+			Property(name, any(), std::forward<const PropertyInitList>(initList))
 		{
 		}
 
@@ -235,10 +235,10 @@ namespace fs
 			return isOk;
 		}
 
-		P_Spore Spore::newSpore(const std::string &name)
+		P_Property Spore::newSpore(const std::string &name, const PropertyInitList &&initList = PropertyInitList())
 		{
-			P_Spore ps = std::make_shared<Spore>(name);
-			return std::move(ps);
+			return std::static_pointer_cast<Property>(std::make_shared<Spore>(
+				name, std::forward<const PropertyInitList>(initList)));
 		}
 	}
 }

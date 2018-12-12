@@ -16,8 +16,8 @@
 #include <mutex>
 #include <vector>
 #include <unordered_map>
-#include "Traceable.h"
 #include "Statement.h"
+#include "Property.h"
 #include "Schema.h"
 #include "WarpPin.h"
 
@@ -25,10 +25,10 @@ namespace fs
 {
 	namespace L1
 	{
-		class Spore : public Traceable<Spore>
+		class Spore : public Property , public std::enable_shared_from_this<Spore>
 		{
 		public:
-			Spore(const std::string &name = std::string());
+			Spore(const std::string &name, const PropertyInitList &&initList = PropertyInitList());
 			Spore(const Spore&) = delete;
 			Spore() = delete;
 			~Spore();
@@ -40,8 +40,13 @@ namespace fs
 			bool deletePin(P_Pin &pin);
 			bool deletePin(const std::string &name);
 
-			static P_Spore newSpore(const std::string &name = "");
+			static P_Property newSpore(const std::string &name, const PropertyInitList &&initList = PropertyInitList());
 		protected:
+			virtual PW_Property  weakFromThis()
+			{
+				return std::static_pointer_cast<Property>(shared_from_this());
+			}
+
 			void buildSession(IdType sessionId);
 			void releaseSession(IdType sessionId);
 			void cleanAllSession();

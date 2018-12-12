@@ -156,6 +156,7 @@
     <ClCompile Include="..\core\Level1\DefaultSchema.cpp" />
     <ClCompile Include="..\core\Level1\Path.cpp" />
     <ClCompile Include="..\core\Level1\Pin.cpp" />
+    <ClCompile Include="..\core\Level1\PropertyMetaDataManager.cpp" />
     <ClCompile Include="..\core\Level1\Session.cpp" />
     <ClCompile Include="..\core\Level1\Spore.cpp" />
     <ClCompile Include="..\core\Level2\Maze.cpp" />
@@ -175,7 +176,8 @@
     <ClInclude Include="..\core\Level1\Level1.h" />
     <ClInclude Include="..\core\Level1\Path.h" />
     <ClInclude Include="..\core\Level1\Pin.h" />
-    <ClInclude Include="..\core\Level1\PropertyNode.h" />
+    <ClInclude Include="..\core\Level1\PropertyMetaDataManager.h" />
+    <ClInclude Include="..\core\Level1\Property.h" />
     <ClInclude Include="..\core\Level1\Schema.h" />
     <ClInclude Include="..\core\Level1\Session.h" />
     <ClInclude Include="..\core\Level1\Spore.h" />
