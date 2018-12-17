@@ -23,19 +23,19 @@ namespace fs
 		using any = std::any;
 		using pairItem = std::pair<std::string, any>;
 		using PropertyInitList = std::list<pairItem>;
-		class PropertyCollection;
+		class PropertyList;
 		class Property
 		{
 		public:
 			friend class std::shared_lock<Property>;
-			friend class PropertyCollection;
+			friend class PropertyList;
 			Property(const std::string & name, const any &&value = any()):
 				_name(name)
 			{
 				_value = value;
-				if (_value.type() == typeid(PropertyCollection))
+				if (_value.type() == typeid(PropertyList))
 				{
-					std::any_cast<PropertyCollection&>(_value)._owner = weakFromThis();
+					std::any_cast<PropertyList&>(_value)._owner = weakFromThis();
 				}
 			}
 
@@ -72,20 +72,26 @@ namespace fs
 			}
 
 			template<typename vT>
+			const vT& ref() const 
+			{
+				return std::any_cast<const vT&>(_value);
+			}
+
+			template<typename vT>
 			void set(const vT& value)
 			{
 				std::unique_lock<Property> lock(*this);
 				_value = any(value);
-				if (value.type() == typeid(PropertyCollection))
+				if (value.type() == typeid(PropertyList))
 				{
-					std::any_cast<PropertyCollection&>(_value)._owner = weakFromThis();
+					std::any_cast<PropertyList&>(_value)._owner = weakFromThis();
 				}
 			}
 
 			template<typename vT>
 			bool is_a() const
 			{
-				std::shared_lock<Property> lock(*this);
+				std::shared_lock<Property> lock(*const_cast<Property*>(this));
 				return _value.type() == typeid(vT);
 			}
 
@@ -110,7 +116,10 @@ namespace fs
 				return loc + _name;
 			}
 		protected:
-			virtual PW_Property  weakFromThis() = 0;
+			virtual PW_Property  weakFromThis() 
+			{
+				return PW_Property();
+			}
 
 			virtual void visit()
 			{
@@ -162,31 +171,24 @@ namespace fs
 			int16_t _mode{ 0 };
 		};
 
-		class PropertyCollection
+		class PropertyCollection : public Property
 		{
-		protected:
-			using ItemList = std::vector<P_Property>;
-			PropertyCollection(const PW_Property &owner, const ItemList&& itemList = ItemList()):
-				_owner(owner)
-			{
-				for (auto item : itemList)
-				{
-					if (item)
-					{
-						_items[item->_name] = item;
-					}
-				}
-			}
 		public:
+			using ItemList = std::list<P_Property>;
+			PropertyCollection(const std::string &name, const ItemList&& itemList = ItemList()) :
+				Property(name, any(std::forward<const ItemList>(itemList)))
+			{
+			}
+
 			std::vector<std::string> itemNames() const
 			{
-				std::shared_lock<Property> lock(*const_cast<Property*>(_owner.lock().get()));
+				std::shared_lock<const PropertyCollection> lock(*this);
 				std::vector<std::string> cl;
-				for (auto& x : _items)
+				for (auto& x : ref<ItemList>())
 				{
-					if (x.second)
+					if (x)
 					{
-						cl.push_back(x.second->_name);
+						cl.push_back(x->_name);
 					}
 				}
 				return std::move(cl);
@@ -196,10 +198,10 @@ namespace fs
 			{
 				if (p)
 				{
-					std::shared_lock<Property> lock(*const_cast<Property*>(_owner.lock().get()));
-					for (auto& x : _items)
+					std::shared_lock<const PropertyCollection> lock(*this);
+					for (auto& x : ref<ItemList>())
 					{
-						if (x.second && !p(*x.second.get()))
+						if (x && !p(*x.get()))
 						{
 							return;
 						}
@@ -209,7 +211,7 @@ namespace fs
 
 			P_Property getItem(const std::string &name)
 			{
-				std::shared_lock<Property> lock(*const_cast<Property*>(_owner.lock().get()));
+				std::shared_lock<PropertyCollection> lock(*this);
 				auto iter = _items.find(name);
 				if (iter != _items.end())
 				{
@@ -255,9 +257,6 @@ namespace fs
 				return (*iter).second;
 			}
 		protected:
-			PW_Property _owner;
-			std::unordered_map<std::string, P_Property> _items;
-			friend class Property;
 		};
 	}
 }
