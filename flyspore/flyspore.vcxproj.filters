@@ -125,7 +125,7 @@
     <ClInclude Include="..\core\Level1\PropertyMetaDataManager.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\Level1\Property.h">
+    <ClInclude Include="..\core\Level1\PropertyNode.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
   </ItemGroup>
