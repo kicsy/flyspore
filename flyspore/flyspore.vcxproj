@@ -177,7 +177,7 @@
     <ClInclude Include="..\core\Level1\Path.h" />
     <ClInclude Include="..\core\Level1\Pin.h" />
     <ClInclude Include="..\core\Level1\PropertyMetaDataManager.h" />
-    <ClInclude Include="..\core\Level1\PropertyNode.h" />
+    <ClInclude Include="..\core\Level1\BasicNode.h" />
     <ClInclude Include="..\core\Level1\Schema.h" />
     <ClInclude Include="..\core\Level1\Session.h" />
     <ClInclude Include="..\core\Level1\Spore.h" />

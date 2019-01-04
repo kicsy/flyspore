@@ -32,9 +32,13 @@ namespace fs
 {
 	namespace L1
 	{
-		Spore::Spore(const std::string &name, const PropertyInitList &&initList) :
-			PropertyNode(name, any(), std::forward<const PropertyInitList>(initList))
+		Spore::Spore(const std::string &name) :BasicNodeMap()
 		{
+			set("name", name);
+			set("/", make_PropertyMap());
+			set("pins", make_PropertyMap());
+			set("paths", make_PropertyMap());
+			set("processes", make_PropertyMap());
 		}
 
 		Spore::~Spore()
@@ -235,9 +239,9 @@ namespace fs
 			return isOk;
 		}
 
-		P_PropertyNode Spore::newSpore(const std::string &name, const PropertyInitList &&initList = PropertyInitList())
+		P_BasicNode Spore::newSpore(const std::string &name, const PropertyInitList &&initList = PropertyInitList())
 		{
-			return std::static_pointer_cast<PropertyNode>(std::make_shared<Spore>(
+			return std::static_pointer_cast<BasicNode>(std::make_shared<Spore>(
 				name, std::forward<const PropertyInitList>(initList)));
 		}
 	}

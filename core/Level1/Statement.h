@@ -10,9 +10,9 @@ namespace fs
 
 		class AnyValues;
 		using P_AnyValues = std::shared_ptr<AnyValues>;
-		class PropertyNode;
-		using P_PropertyNode = std::shared_ptr<PropertyNode>;
-		using PW_PropertyNode = std::weak_ptr<PropertyNode>;
+		class BasicNode;
+		using P_BasicNode = std::shared_ptr<BasicNode>;
+		using PW_BasicNode = std::weak_ptr<BasicNode>;
 
 
 		class Data;
