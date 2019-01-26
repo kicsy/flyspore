@@ -23,7 +23,7 @@
     <ProjectGuid>{990F1B33-A1DF-481B-94EC-3402E7E4764B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>flyspore</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -152,7 +152,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\core\Level1\BasicNode.cpp" />
+    <ClCompile Include="..\core\Level1\BasicNodeList.cpp" />
+    <ClCompile Include="..\core\Level1\BasicNodeMap.cpp" />
+    <ClCompile Include="..\core\Level1\BasicNodeOperator.cpp" />
     <ClCompile Include="..\core\Level1\Context.cpp" />
+    <ClCompile Include="..\core\Level1\DefaultNest.cpp" />
     <ClCompile Include="..\core\Level1\DefaultSchema.cpp" />
     <ClCompile Include="..\core\Level1\Path.cpp" />
     <ClCompile Include="..\core\Level1\Pin.cpp" />
@@ -168,10 +173,14 @@
     <ClInclude Include="..\core\Level0\sync_deque.h" />
     <ClInclude Include="..\core\Level0\task_pool.h" />
     <ClInclude Include="..\core\Level1\AnyValues.h" />
+    <ClInclude Include="..\core\Level1\BasicNodeList.h" />
+    <ClInclude Include="..\core\Level1\BasicNodeMap.h" />
+    <ClInclude Include="..\core\Level1\BasicNodeOperator.h" />
     <ClInclude Include="..\core\Level1\Context.h" />
     <ClInclude Include="..\core\Level1\Data.h" />
     <ClInclude Include="..\core\Level1\DataAdapter.h" />
     <ClInclude Include="..\core\Level1\DataPack.h" />
+    <ClInclude Include="..\core\Level1\DefaultNest.h" />
     <ClInclude Include="..\core\Level1\DefaultSchema.h" />
     <ClInclude Include="..\core\Level1\Level1.h" />
     <ClInclude Include="..\core\Level1\Path.h" />

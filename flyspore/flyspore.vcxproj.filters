@@ -54,6 +54,21 @@
     <ClCompile Include="..\core\Level1\PropertyMetaDataManager.cpp">
       <Filter>core\Level1</Filter>
     </ClCompile>
+    <ClCompile Include="..\core\Level1\BasicNode.cpp">
+      <Filter>core\Level1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\Level1\BasicNodeList.cpp">
+      <Filter>core\Level1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\Level1\BasicNodeMap.cpp">
+      <Filter>core\Level1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\Level1\BasicNodeOperator.cpp">
+      <Filter>core\Level1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\Level1\DefaultNest.cpp">
+      <Filter>core\Level1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Threads.h">
@@ -126,6 +141,18 @@
       <Filter>core\Level1</Filter>
     </ClInclude>
     <ClInclude Include="..\core\Level1\BasicNode.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\BasicNodeList.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\BasicNodeMap.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\BasicNodeOperator.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\DefaultNest.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
   </ItemGroup>

@@ -17,7 +17,7 @@
 #include <vector>
 #include <unordered_map>
 #include "Statement.h"
-#include "BasicNode.h"
+#include "BasicNodeMap.h"
 #include "Schema.h"
 #include "WarpPin.h"
 
@@ -25,7 +25,7 @@ namespace fs
 {
 	namespace L1
 	{
-		class Spore : protected BasicNodeMap, public std::enable_shared_from_this<Spore>
+		class Spore : protected BasicNodeMap
 		{
 		public:
 			Spore(const std::string &name);
@@ -39,14 +39,7 @@ namespace fs
 			P_Pin addPin(P_Pin &pin);
 			bool deletePin(P_Pin &pin);
 			bool deletePin(const std::string &name);
-
-			static P_BasicNode newSpore(const std::string &name, const PropertyInitList &&initList = PropertyInitList());
 		protected:
-			virtual PW_BasicNode  weakFromThis()
-			{
-				return std::static_pointer_cast<BasicNode>(shared_from_this());
-			}
-
 			void buildSession(IdType sessionId);
 			void releaseSession(IdType sessionId);
 			void cleanAllSession();
@@ -66,6 +59,11 @@ namespace fs
 
 			friend class Session;
 			friend class Path;
+		};
+
+		class SporeBuilder
+		{
+
 		};
 	}
 }

@@ -6,449 +6,114 @@
 #include <any>
 #include <unordered_map>
 #include <vector>
-#include "Statement.h"
 namespace fs
 {
 	namespace L1
 	{
-		enum NodeMode : int16_t {
-			Inherit =			0x0001 << 0,
-			Necessity =		0x0001 << 1,
-			Readable =		0x0001 << 2,
-			Writable =		0x0001 << 3,
-			Executable =		0x0001 << 4,
-			Hide =				0x0001 << 5
+		enum NodeMode : uint32_t {
+			AsNode=			0x0001 << 0,
+			AsList =			0x0001 << 1,
+			AsMap =			0x0001 << 2
 		};
-
-
 		using any = std::any;
-		class BasicNode
+		class BasicNode;
+		class BasicNodeOperator;
+
+		class NodeCollectionVisitor
 		{
 		public:
+			virtual std::string getItemPath(const std::shared_ptr<const BasicNode>& itemNode) const = 0;
+		};
+		
 
-			BasicNode(any  &value = any())
-			{
-				_value = value;
-			}
-			BasicNode(any &&value)
-			{
-				std::swap(_value, value);
-			}
-			BasicNode(const BasicNode& other)
-			{
-				_value = other._value;
-			}
-			BasicNode(BasicNode&& other)
-			{
-				swap(std::forward<BasicNode>(other));
-			}
-			BasicNode& operator=(const BasicNode& other)
-			{
-				_value = other._value;
-			}
-			~BasicNode(){}
-			PW_BasicNode parent() const 
-			{
-				std::shared_lock<const BasicNode> lock(*this);
-				return _parent;
-			}
-			uint16_t mode() const 
-			{
-				return _mode;
-			}
-			uint16_t setMode(uint16_t mode)
-			{
-				_mode = mode;
-			}
-
+		class BasicNode : public std::enable_shared_from_this<BasicNode>
+		{
+		public:
+			using shared_lock_const_node = std::shared_lock<const BasicNode>;
+			using unique_lock_const_node = std::unique_lock<const BasicNode>;
+			friend shared_lock_const_node;
+			friend unique_lock_const_node;
+			friend BasicNodeOperator;
+			~BasicNode();
+			BasicNode& operator=(const BasicNode& other);
+			std::shared_ptr<BasicNode> parent() const;
+			virtual uint32_t mode() const;
+			virtual uint32_t setMode(uint32_t mode);
+			bool has_value() const;
+			void swap(BasicNode &&other);
+			virtual std::shared_ptr<BasicNode> clone() const;
+			std::string path() const;
 			template<typename vT> 
-			vT get() const
-			{
-				std::shared_lock<const BasicNode> lock(*this);
-				return std::any_cast<vT>(_value);
-			}
-
+			vT value() const;
 			template<typename vT>
-			vT& ref()
-			{
-				return std::any_cast<vT&>(_value);
-			}
-
+			void setValue(const vT& value);
 			template<typename vT>
-			const vT& ref() const 
-			{
-				return std::any_cast<vT&>(_value);
-			}
-
+			bool is_a() const;
+			any mark() const;
+			std::shared_ptr< BasicNodeOperator> opr() const;
 			template<typename vT>
-			void set(const vT& value)
-			{
-				std::unique_lock<BasicNode> lock(*this);
-				_value = value;
-			}
-
+			vT& ref();
 			template<typename vT>
-			bool is_a() const
-			{
-				std::shared_lock<BasicNode> lock(*const_cast<BasicNode*>(this));
-				return _value.type() == typeid(vT);
-			}
+			const vT& ref() const;
 
-			bool has_value()
-			{
-				return _value.has_value();
-			}
-
-			void swap(BasicNode &&other)
-			{
-				std::swap(_value, other._value);
-				std::swap(_parent, other._parent);
-				std::swap(_mode, other._mode);
-			}
 		protected:
-			virtual PW_BasicNode  weakFromThis() = 0;
-			void lock()
-			{
-				_mutex.lock();
-			}
-			void unlock()
-			{
-				_mutex.unlock();
-			}
+			BasicNode(std::weak_ptr<BasicNodeOperator> op, const any  &value = any());
+			BasicNode(const BasicNode& other);
+			BasicNode(BasicNode&& other);
+			void lock() const;
+			void unlock() const;
+			void lock_shared() const;
+			void unlock_shared() const;
+			bool try_lock() const;
+			bool try_lock_shared() const;
 
-			void lock_shared()
-			{
-				_mutex.lock_shared();
-			}
-
-			void unlock_shared()
-			{
-				_mutex.unlock_shared();
-			}
-
-			bool try_lock()
-			{
-				return _mutex.try_lock();
-			}
-
-			bool try_lock_shared()
-			{
-				return _mutex.try_lock_shared();
-			}
 		protected:
-			PW_BasicNode _parent;
+			std::weak_ptr<BasicNode> _parent;
 			any _value;
-			std::shared_mutex _mutex;
-			int16_t _mode{ 0 };
-			friend class BasicNodeMap;
-			friend class BasicNodeList;
-			friend class std::shared_lock<BasicNode>;
+			any _mark;
+			std::weak_ptr<BasicNodeOperator> _operator;
+			uint32_t _mode{0};
 		};
 
-		template<class... _Types>
-		P_BasicNode make_PropertyNode(_Types&&... _Args)
+		template<typename vT>
+		vT BasicNode::value() const
 		{
-			return std::make_shared<PropertyMode>(std::forward<_Types>(_Args)...);
+			shared_lock_const_node lock(*this);
+			return ref<vT>();
 		}
 
-		class BasicNodeMap : public BasicNode
+		template<typename vT>
+		void BasicNode::setValue(const vT& value)
 		{
-		public:
-			using innerValueType = std::unordered_map<std::string, P_BasicNode>;
-			BasicNodeMap() :BasicNode(innerValueType())
+			auto _op = opr();
+			if (!_op || !_op->modify(shared_from_this(), any(value)))
 			{
+				return;
 			}
-			BasicNodeMap(std::unordered_map<std::string, std::any> values) :BasicNode(innerValueType())
-			{
-				for (auto& x : values)
-				{
-					(ref<innerValueType>())[x.first] = make_PropertyNode(x.second);
-				}
-			}
-			BasicNodeMap(const innerValueType &&nodeMap) :
-				BasicNode(nodeMap)
-			{
-				for (auto& x : ref<innerValueType>())
-				{
-					if (x.second)
-					{
-						(x.second)->_parent = weakFromThis();
-					}
-				}
-			}
-			std::vector<std::string> keys() const
-			{
-				std::shared_lock<const BasicNodeMap> lock(*this);
-				std::vector<std::string> ks;
-				for (auto& x : ref<innerValueType>())
-				{
-					ks.push_back(x.first);
-				}
-				return ks;
-			}
-
-			void foreach(std::function<bool(const P_BasicNode& child)> p) const
-			{
-				if (p)
-				{
-					std::shared_lock<const BasicNodeMap> lock(*this);
-					for (const auto& x : ref<const innerValueType>())
-					{
-						if (!p(x.second))
-						{
-							return;
-						}
-					}
-				}
-			}
-
-			template<typename vT>
-			vT get(const std::string &key) const
-			{
-				std::shared_lock<const BasicNodeMap> lock(*this);
-				const innerValueType &map = ref<innerValueType>();
-				const innerValueType::const_iterator iter = map.find(key);
-				if(iter == map.end() || !iter->second)
-				{
-					return vT();
-				}
-				return iter->second->ref<vT>();
-			}
-
-			template<>
-			P_BasicNode get<P_BasicNode>(const std::string &key) const
-			{
-				std::shared_lock<const BasicNodeMap> lock(*this);
-				const innerValueType &map = ref<innerValueType>();
-				const innerValueType::const_iterator iter = map.find(key);
-				if (iter == map.end())
-				{
-					return nullptr;
-				}
-				return iter->second;
-			}
-
-			template<typename vT>
-			void set(const std::string &key, vT&& node)
-			{
-				std::unique_lock<BasicNodeMap> lock(*this);
-				((*this)[key] = make_PropertyNode(std::any(std::forward<vT>(node))))->_parent = weakFromThis();
-			}
-
-			template<>
-			void set<P_BasicNode>(const std::string &key, P_BasicNode&& node)
-			{
-				std::unique_lock<BasicNodeMap> lock(*this);
-				if (!node)
-				{
-					return;
-				}
-				((ref<innerValueType>())[key] = node)->_parent = weakFromThis();
-			}
-
-			template<typename vT>
-			vT& operator[](const std::string &key)
-			{
-				innerValueType &map = ref<innerValueType>();
-				innerValueType::iterator iter = map.find(key);
-				if (iter != map.end() && iter->second)
-				{
-					return iter->second->ref<vT>();
-				}
-				return std::move(vT());
-			}
-
-			template<>
-			P_BasicNode& operator[]<P_BasicNode>(const std::string &key)
-			{
-				innerValueType &map = ref<innerValueType>();
-				innerValueType::iterator iter = map.find(key);
-				if (iter != map.end())
-				{
-					return iter->second;
-				}
-				return std::move(P_BasicNode());
-			}
-
-			bool contains(const std::string &key) const
-			{
-				std::shared_lock<const BasicNodeMap> lock(*this);
-				const innerValueType &map = ref<innerValueType>();
-				return map.find(key) != map.end();
-			}
-
-			P_BasicNode remove(const std::string &key)
-			{
-				P_BasicNode node;
-				std::unique_lock<BasicNodeMap> lock(*this);
-				innerValueType &map = ref<innerValueType>();
-				innerValueType::const_iterator iter = map.find(key);
-				if (iter != map.end())
-				{
-					node = iter->second;
-					map.erase(iter);
-				}
-				return std::move(node);
-			}
-		protected:
-			template<typename vT> vT get() const = delete;
-			template<typename vT> void set(const vT&) = delete;
-			template<typename vT> bool is_a() const = delete;
-			bool has_value() = delete;
-		};
-
-		template<class... _Types>
-		P_BasicNode make_PropertyMap(_Types&&... _Args)
-		{
-			return  std::dynamic_pointer_cast<BasicNode>(std::make_shared<BasicNodeMap>(std::forward<_Types>(_Args)...));
+			lock();
+			_value = value;
+			unlock();
+			_op->onModified(shared_from_this());
 		}
 
-
-		class BasicNodeList : public BasicNode
+		template<typename vT>
+		bool BasicNode::is_a() const
 		{
-		public:
-			using innerValueType = std::vector<P_BasicNode>;
-
-			BasicNodeList() :BasicNode(innerValueType())
-			{
-			}
-
-			BasicNodeList(std::list<std::any> values) :BasicNode(innerValueType())
-			{
-				for (auto& x : values)
-				{
-					(ref<innerValueType>()).push_back(make_PropertyNode(x));
-				}
-			}
-
-			BasicNodeList(const innerValueType &&nodeMap) :
-				BasicNode(nodeMap)
-			{
-				std::shared_lock<const BasicNodeList> lock(*this);
-				for (auto& x : ref<innerValueType>())
-				{
-					if (x)
-					{
-						x->_parent = weakFromThis();
-					}
-				}
-			}
-
-			unsigned int length() const
-			{
-				return ref<innerValueType>().size();
-			}
-
-			void foreach(std::function<bool(const P_BasicNode& child)> p) const
-			{
-				if (p)
-				{
-					std::shared_lock<const BasicNodeList> lock(*this);
-					for (const auto& x : ref<const innerValueType>())
-					{
-						if (!p(x))
-						{
-							return;
-						}
-					}
-				}
-			}
-
-			template<typename vT>
-			vT get(innerValueType::size_type index) const
-			{
-				std::shared_lock<const BasicNodeList> lock(*this);
-				const innerValueType &v = ref<innerValueType>();
-				if (index < 0 || index >= v.size() || !v.at(index))
-				{
-					return vT();
-				}
-				return v.at(index)->ref<vT>();
-			}
-
-			template<>
-			P_BasicNode get<P_BasicNode>(innerValueType::size_type index) const
-			{
-				std::shared_lock<const BasicNodeList> lock(*this);
-				const innerValueType &v = ref<innerValueType>();
-				if (index < 0 || index >= v.size())
-				{
-					return nullptr;
-				}
-				return v.at(index);
-			}
-
-			template<typename vT>
-			void set(innerValueType::size_type index, vT&& node)
-			{
-				std::unique_lock<BasicNodeList> lock(*this);
-				((*this)[index] = make_PropertyNode(std::any(std::forward<vT>(node))))->_parent = weakFromThis();
-			}
-
-			template<>
-			void set<P_BasicNode>(innerValueType::size_type index, P_BasicNode&& node)
-			{
-				std::unique_lock<BasicNodeList> lock(*this);
-				if (!node)
-				{
-					return;
-				}
-				innerValueType &v = ref<innerValueType>();
-				if (index < 0 || index >= v.size())
-				{
-					return;
-				}
-				((ref<innerValueType>())[index] = node)->_parent = weakFromThis();
-			}
-
-			template<typename vT>
-			vT& operator[](innerValueType::size_type index)
-			{
-				innerValueType &v = ref<innerValueType>();
-				if (index < 0 || index >= v.size() || !v.at(index))
-				{
-					return std::move(vT());
-				}
-				return v.at(index)->ref<vT>();
-			}
-
-			template<>
-			P_BasicNode& operator[]<P_BasicNode>(innerValueType::size_type index)
-			{
-				innerValueType &v = ref<innerValueType>();
-				if (index < 0 || index >= v.size() || !v.at(index))
-				{
-					return std::move(P_BasicNode());
-				}
-				return v.at(index);
-			}
-
-			P_BasicNode remove(innerValueType::size_type index)
-			{
-				P_BasicNode node;
-				std::unique_lock<BasicNodeList> lock(*this);
-				innerValueType &v = ref<innerValueType>();
-				if (index < 0 || index >= v.size())
-				{
-					return nullptr;
-				}
-				node = v[index];
-				v.erase(v.begin() + index);
-				return std::move(node);
-			}
-		protected:
-			template<typename vT> vT get() const = delete;
-			template<typename vT> void set(const vT&) = delete;
-			template<typename vT> bool is_a() const = delete;
-			bool has_value() = delete;
-		};
-
-		template<class... _Types>
-		P_BasicNode make_PropertyList(_Types&&... _Args)
-		{
-			return  std::dynamic_pointer_cast<BasicNode>(std::make_shared<BasicNodeList>(std::forward<_Types>(_Args)...));
+			shared_lock_const_node lock(*this);
+			return _value.type() == typeid(vT);
 		}
 
+		template<typename vT>
+		vT& BasicNode::ref()
+		{
+			return std::any_cast<vT&>(_value);
+		}
+
+		template<typename vT>
+		const vT& BasicNode::ref() const
+		{
+			return std::any_cast<const vT&>(_value);
+		}
 	}
 
 }

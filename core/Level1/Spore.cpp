@@ -34,11 +34,7 @@ namespace fs
 	{
 		Spore::Spore(const std::string &name) :BasicNodeMap()
 		{
-			set("name", name);
-			set("/", make_PropertyMap());
-			set("pins", make_PropertyMap());
-			set("paths", make_PropertyMap());
-			set("processes", make_PropertyMap());
+			setValue("name", name);
 		}
 
 		Spore::~Spore()

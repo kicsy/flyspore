@@ -11,9 +11,9 @@ namespace fs
 		class AnyValues;
 		using P_AnyValues = std::shared_ptr<AnyValues>;
 		class BasicNode;
-		using P_BasicNode = std::shared_ptr<BasicNode>;
-		using PW_BasicNode = std::weak_ptr<BasicNode>;
-
+		class BasicNodeMap;
+		class BasicNodeList;
+		class BasicNodeOperator;
 
 		class Data;
 		using P_Data = std::shared_ptr<Data>;
@@ -23,6 +23,10 @@ namespace fs
 
 		class DataAdapter;
 		using P_DataAdapter = std::shared_ptr<DataAdapter>;
+
+		class DefaultNest;
+		using P_DefaultNest = std::shared_ptr<DefaultNest>;
+		using PW_DefaultNest = std::weak_ptr<DefaultNest>;
 
 		class Spore;
 		using P_Spore = std::shared_ptr<Spore>;
