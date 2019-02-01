@@ -1,12 +1,8 @@
 #include "Context.h"
 #include "Session.h"
-#include "Spore.h"
 #include "Data.h"
-fs::L1::Context::Context(P_Spore ps, P_Session pss, P_AnyValues plocal):
-	_ps(ps)
-	,_pss(pss)
-	,_plocal(plocal)
-	,local(*plocal.get())
+fs::L1::Context::Context(P_Session pss):
+	_pss(pss)
 	,session(pss->values())
 {
 }

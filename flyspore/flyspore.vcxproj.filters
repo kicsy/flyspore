@@ -51,9 +51,6 @@
     <ClCompile Include="..\core\Level2\Maze.cpp">
       <Filter>core\Level2</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Level1\PropertyMetaDataManager.cpp">
-      <Filter>core\Level1</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\Level1\BasicNode.cpp">
       <Filter>core\Level1</Filter>
     </ClCompile>
@@ -133,12 +130,6 @@
     </ClInclude>
     <ClInclude Include="..\core\Level2\ConsoleColor.h">
       <Filter>core\Level2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level1\Traceable.h">
-      <Filter>core\Level1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level1\PropertyMetaDataManager.h">
-      <Filter>core\Level1</Filter>
     </ClInclude>
     <ClInclude Include="..\core\Level1\BasicNode.h">
       <Filter>core\Level1</Filter>

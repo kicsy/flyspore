@@ -34,6 +34,11 @@ namespace fs
 			return pnode;
 		}
 
+		std::shared_ptr<fs::L1::BasicNode> BasicNodeOperator::create(const char* pvalue)
+		{
+			return create(std::any(std::string(pvalue)));
+		}
+
 		std::shared_ptr<BasicNodeMap> BasicNodeOperator::createMap()
 		{
 			auto pnode = std::shared_ptr<BasicNodeMap>(new BasicNodeMap(weak_from_this()));

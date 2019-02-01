@@ -16,6 +16,7 @@ namespace fs
 			~BasicNodeOperator();
 			virtual std::shared_ptr<BasicNodeMap> root();
 			virtual std::shared_ptr<BasicNode> create(const std::any& value);
+			virtual std::shared_ptr<BasicNode> create(const char* pvalue);
 			virtual std::shared_ptr<BasicNodeMap> createMap();
 			virtual std::shared_ptr<BasicNodeList> createList();
 			virtual bool modify(const std::shared_ptr<BasicNode>& pnode, const std::any& value);

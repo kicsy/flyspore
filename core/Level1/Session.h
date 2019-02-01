@@ -53,7 +53,7 @@ namespace fs
 			std::condition_variable  _cond_status;
 			mutable std::mutex _mut_status;
 			Session_Status _status;
-			friend class Spore;
+			friend class Pin;
 
 		};
 	}

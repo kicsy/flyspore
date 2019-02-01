@@ -161,7 +161,6 @@
     <ClCompile Include="..\core\Level1\DefaultSchema.cpp" />
     <ClCompile Include="..\core\Level1\Path.cpp" />
     <ClCompile Include="..\core\Level1\Pin.cpp" />
-    <ClCompile Include="..\core\Level1\PropertyMetaDataManager.cpp" />
     <ClCompile Include="..\core\Level1\Session.cpp" />
     <ClCompile Include="..\core\Level1\Spore.cpp" />
     <ClCompile Include="..\core\Level2\Maze.cpp" />
@@ -185,13 +184,11 @@
     <ClInclude Include="..\core\Level1\Level1.h" />
     <ClInclude Include="..\core\Level1\Path.h" />
     <ClInclude Include="..\core\Level1\Pin.h" />
-    <ClInclude Include="..\core\Level1\PropertyMetaDataManager.h" />
     <ClInclude Include="..\core\Level1\BasicNode.h" />
     <ClInclude Include="..\core\Level1\Schema.h" />
     <ClInclude Include="..\core\Level1\Session.h" />
     <ClInclude Include="..\core\Level1\Spore.h" />
     <ClInclude Include="..\core\Level1\Statement.h" />
-    <ClInclude Include="..\core\Level1\Traceable.h" />
     <ClInclude Include="..\core\Level1\WarpPin.h" />
     <ClInclude Include="..\core\Level2\ConsoleColor.h" />
     <ClInclude Include="..\core\Level2\Maze.h" />

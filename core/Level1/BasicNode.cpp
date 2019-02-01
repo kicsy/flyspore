@@ -4,7 +4,7 @@ namespace fs
 {
 	namespace L1
 	{
-		BasicNode::BasicNode(std::weak_ptr<BasicNodeOperator> op, const any &value /*= any()*/):
+		BasicNode::BasicNode(const std::weak_ptr<BasicNodeOperator>& op, const any &value /*= any()*/):
 			_operator(op)
 			, _value(value)
 			, _mode(NodeMode::AsNode)
@@ -90,11 +90,6 @@ namespace fs
 				return std::string();
 			}
 			return collection->getItemPath(shared_from_this());
-		}
-
-		any BasicNode::mark() const
-		{
-			return _mark;
 		}
 
 		std::shared_ptr< BasicNodeOperator> BasicNode::opr() const

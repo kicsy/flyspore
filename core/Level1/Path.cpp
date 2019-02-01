@@ -1,17 +1,17 @@
 #include <algorithm>
 #include "Path.h"
 #include "Pin.h"
-#include "Spore.h"
+#include "DefaultNest.h"
 namespace fs
 {
 	namespace L1
 	{
-		Path::Path(P_Pin from, P_Pin to, const std::string &name /*= ""*/) :
-			std::enable_shared_from_this<Path>()
-			, _name(name)
+		Path::Path(const std::weak_ptr<DefaultNest>& pNest, const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to) :
+			BasicNodeMap(pNest)
 			, _from(from)
 			, _to(to)
 		{
+
 		}
 
 		Path::~Path()
@@ -19,7 +19,7 @@ namespace fs
 
 		}
 
-		bool Path::move(P_Data data)
+		bool Path::move(const std::shared_ptr<Data>& data)
 		{
 			if (_to)
 			{

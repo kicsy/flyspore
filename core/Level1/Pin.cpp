@@ -1,37 +1,80 @@
 #include <algorithm>
 #include "Pin.h"
-#include "Spore.h"
+#include "DefaultNest.h"
+#include "Session.h"
+#include "Context.h"
 #include "Path.h"
+#include "../Level0/task_pool.h"
+using namespace fs::L0;
+
 namespace fs
 {
 	namespace L1
 	{
-		Pin::Pin(PW_Spore spore, std::string name, Pin_Type type) :
-			_spore(spore)
-			, _type(type)
-			, _name(name)
+		Pin::Pin(const std::weak_ptr<DefaultNest>& pNest, Pin_Type type):
+			BasicNodeMap(pNest),
+			_type(type)
 		{
-
+			auto _op = opr();
+			if (_op)
+			{
+				set(_op->create(std::string("pin")), std::string("class"));
+				std::string strType;
+				switch (type)
+				{
+				case fs::L1::Pin_Type::IN_PIN:
+					strType = "in";
+					break;
+				case fs::L1::Pin_Type::OUT_PIN:
+					strType = "out";
+					break;
+				default:
+					strType = "unknown";
+					break;
+				}
+				set(_op->create(strType), std::string("pin_type"));
+			}
 		}
 
 		Pin::~Pin()
 		{
 		}
 
-		void Pin::push(const P_Data &data)
+		bool Pin::push(const const std::shared_ptr<Data> &data)
 		{
-			P_Spore spore = _spore.lock();
-			if (spore == nullptr)
-				return;
-			if (_type == Pin_Type::IN_PIN) {
-				spore->input(shared_from_this(), data);
+			if (!data)
+			{
+				return false;
 			}
-			std::shared_lock<std::shared_mutex> lock(_mutex);
-			for (auto &path : _outPaths) {
-				if (path != nullptr && path->isvalid()) {
-					path->move(data);
+			P_Session pss = data->getSession();
+			if (!pss || pss->status() == Session_Status::BlackOut)
+			{
+				return false;
+			}
+			if (_type == Pin_Type::IN_PIN && enableProcess())
+			{
+				pss->increaseTask();
+				task_pool::get_instance().submit(&Pin::task_process, this, data);
+				return true;
+			}
+			else if (_type == Pin_Type::OUT_PIN)
+			{
+				std::shared_lock<std::shared_mutex> lock(_mutex);
+				for (auto &path : _outPaths)
+				{
+					if (path != nullptr && path->isvalid()) {
+						path->move(data);
+					}
 				}
 			}
+		}
+
+		void Pin::task_process(const P_Data &data)
+		{
+			P_Session pss = data->getSession();
+			Context cc(pss);
+			process(cc, data);
+			pss->decreaseTask();
 		}
 
 		P_DataAdapter Pin::adapter() const
@@ -101,24 +144,6 @@ namespace fs
 				}) != _inPaths.end();
 			}
 			return isok;
-		}
-
-		P_Spore Pin::spore() const
-		{
-			return _spore.lock();
-		}
-
-		std::string Pin::name() const
-		{
-			std::shared_lock<std::shared_mutex> lock(_mutex);
-			return _name;
-		}
-
-		std::string Pin::reName(const std::string &name)
-		{
-			std::unique_lock<std::shared_mutex> lock(_mutex);
-			_name = name;
-			return _name;
 		}
 	}
 }

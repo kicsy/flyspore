@@ -25,184 +25,29 @@
 #include "Session.h"
 #include "Context.h"
 #include "DataPack.h"
-
+#include "DefaultNest.h"
 using namespace fs::L0;
 
 namespace fs
 {
 	namespace L1
 	{
-		Spore::Spore(const std::string &name) :BasicNodeMap()
+		Spore::Spore(const std::weak_ptr<DefaultNest>& pNest):
+			BasicNodeMap(pNest)
 		{
-			setValue("name", name);
+			auto _op = opr();
+			if (_op)
+			{
+				set(_op->createMap(), std::string("/"));
+				set(_op->createMap(), std::string("pins"));
+				set(_op->createMap(), std::string("paths"));
+			}
 		}
 
 		Spore::~Spore()
 		{
 		}
 
-		bool Spore::input(const P_Pin &pin, const P_Data &data)
-		{
-			if (pin == nullptr)
-			{
-				return false;
-			}
-			auto inSpore = pin->spore();
-			if (inSpore != shared_from_this())
-			{
-				return false;
-			}
-			P_Session pss = data->getSession();
-			if (!pss)
-			{
-				return false;
-			}
-			if (pss->status() == Session_Status::BlackOut)
-			{
-				return false;
-			}
-			if (pin->enableProcess())
-			{
-				pss->increaseTask();
-				task_pool::get_instance().submit(&Spore::process, this, pin, data);
-			}
-			return true;
-		}
-
-		std::vector<P_Pin> Spore::pins()
-		{
-			std::vector<P_Pin> ps(_pins.size());
-			std::shared_lock<std::shared_mutex> lock(_pins_mutex);
-			for (const auto& pin : _pins)
-			{
-				ps.push_back(pin.second);
-			}
-			return std::move(ps);
-		}
-
-		P_Pin Spore::getPin(const std::string &name)
-		{
-			std::shared_lock<std::shared_mutex> lock(_pins_mutex);
-			auto iter = _pins.find(name);
-			if (iter == _pins.end())
-				return nullptr;
-			return iter->second;
-		}
-
-		P_Pin Spore::addPin(P_Pin &pin)
-		{
-			if (!pin || pin->spore().get() != this)
-			{
-				return NULL;
-			}
-			std::unique_lock<std::shared_mutex> lock(_pins_mutex);
-			if (_pins.find(pin->name()) != _pins.end())
-				return nullptr;
-			_pins[pin->name()] = pin;
-			return pin;
-		}
-
-		bool Spore::deletePin(P_Pin &pin)
-		{
-			if (!pin || pin->spore().get() != this)
-			{
-				return false;
-			}
-			{
-				std::unique_lock<std::shared_mutex> lock(_pins_mutex);
-				auto iter = _pins.find(pin->name());
-				if (iter == _pins.end())
-				{
-					return false;
-				}
-				pin = iter->second;
-				_pins.erase(iter);
-			}
-			if (pin)
-			{
-				for (const P_Path& path : pin->_inPaths)
-				{
-					Path::release(path);
-				}
-				for (const P_Path& path : pin->_outPaths)
-				{
-					Path::release(path);
-				}
-			}
-			return true;
-		}
-
-		bool Spore::deletePin(const std::string &name)
-		{
-			return deletePin(getPin(name));
-		}
-
-		void Spore::buildSession(IdType sessionId)
-		{
-			{
-				std::unique_lock<std::shared_mutex> lock(_session_local_mutex);
-				if (!_session_local_Values.count(sessionId))
-				{
-					_session_local_Values[sessionId] = std::make_shared<AnyValues>();
-				}
-			}
-			forwardChild([&](const P_Spore& child) ->bool{
-				child->buildSession(sessionId);
-				return true;
-			});
-		}
-
-		void Spore::releaseSession(IdType sessionId)
-		{
-			forwardChild([&](const P_Spore& child) ->bool {
-				child->releaseSession(sessionId);
-				return true;
-			});
-			{
-				std::unique_lock<std::shared_mutex> lock(_session_local_mutex);
-				if (_session_local_Values.count(sessionId))
-				{
-					_session_local_Values[sessionId] = nullptr;
-				}
-			}
-		}
-
-		void Spore::cleanAllSession()
-		{
-			forwardChild([&](const P_Spore& child) ->bool {
-				child->cleanAllSession();
-				return true;
-			});
-			{
-				std::unique_lock<std::shared_mutex> lock(_session_local_mutex);
-				_session_local_Values.clear();
-			}
-		}
-
-		void Spore::process(const P_Pin &pin, const P_Data &data)
-		{
-			if (pin && data)
-			{
-				P_Session pss = data->getSession();
-				if (pss == nullptr)
-				{
-					return;
-				}
-				if (pss->status() == Session_Status::BlackOut)
-				{
-					pss->decreaseTask();
-					return;
-				}
-				P_AnyValues plocal;
-				{
-					std::shared_lock<std::shared_mutex> lock(_session_local_mutex);
-					plocal = _session_local_Values[pss->id()];
-				}
-				Context cc(shared_from_this(), pss, plocal);
-				pin->process(cc, data);
-				pss->decreaseTask();
-			}
-		}
 
 		P_Path Spore::create_or_find_Path(P_Pin from, P_Pin to, const std::string &name /*= ""*/)
 		{
@@ -235,11 +80,6 @@ namespace fs
 			return isOk;
 		}
 
-		P_BasicNode Spore::newSpore(const std::string &name, const PropertyInitList &&initList = PropertyInitList())
-		{
-			return std::static_pointer_cast<BasicNode>(std::make_shared<Spore>(
-				name, std::forward<const PropertyInitList>(initList)));
-		}
 	}
 }
 

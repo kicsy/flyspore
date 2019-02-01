@@ -4,7 +4,7 @@ namespace fs
 {
 	namespace L1
 	{
-		BasicNodeMap::BasicNodeMap(std::weak_ptr< BasicNodeOperator> op) :
+		BasicNodeMap::BasicNodeMap(const std::weak_ptr< BasicNodeOperator>& op) :
 			BasicNode(op, any(innerValueType()))
 		{
 			_mode = NodeMode::AsMap;
@@ -30,16 +30,9 @@ namespace fs
 			{
 				pre = collection->getItemPath(shared_from_this());
 			}
-			std::string nodeKey;
-			try
-			{
-				nodeKey = std::any_cast<std::string>(itemNode->mark());
-			}
-			catch (const std::bad_any_cast&)
-			{
-				return std::string();
-			}
-			return pre + std::string("/") + nodeKey;
+			bool isok = false;
+			std::string nodeKey = itemNode->mark<std::string>(&isok);
+			return isok ? (pre + std::string("/") + nodeKey) : std::string("");
 		}
 
 		std::shared_ptr<fs::L1::BasicNode> BasicNodeMap::clone() const
@@ -56,7 +49,7 @@ namespace fs
 				auto pchild = get(key);
 				if (pchild)
 				{
-					pnode->set(key, pchild->clone());
+					pnode->set(pchild->clone(), key);
 				}
 			}
 			return pnode;
@@ -90,8 +83,95 @@ namespace fs
 			}
 		}
 
-		std::shared_ptr<BasicNode> BasicNodeMap::remove(const std::string &key)
+		std::shared_ptr<BasicNode> BasicNodeMap::get(const any &key) const
 		{
+			bool isok = false;
+			auto keyname = getAny<std::string>(key, &isok);
+			if (!isok)
+			{
+				return nullptr;
+			}
+			shared_lock_const_node lock(*this);
+			auto &map = ref<innerValueType>();
+			auto iter = map.find(keyname);
+			if (iter == map.end() || !iter->second)
+			{
+				return std::shared_ptr<BasicNode>();
+			}
+			return iter->second;
+		}
+
+		std::shared_ptr<BasicNode> BasicNodeMap::set(const std::shared_ptr<BasicNode>& node, const any &key)
+		{
+			bool isok = false;
+			auto keyname = getAny<std::string>(key, &isok);
+			if (!isok)
+			{
+				return nullptr;
+			}
+
+			auto _op = opr();
+			if (!node || node->parent() || !_op)
+			{
+				return nullptr;
+			}
+			auto oldNode = get(keyname);
+			if (oldNode)
+			{
+				if (!_op->replace(shared_from_this(), key, oldNode, node))
+				{
+					return nullptr;
+				}
+				lock();
+				auto &map = ref<innerValueType>();
+				map[keyname] = node;
+				unlock();
+				_op->onReplaced(shared_from_this(), key, node);
+			}
+			else
+			{
+				if (!_op->add(shared_from_this(), key, node))
+				{
+					return nullptr;
+				}
+				lock();
+
+				auto &map = ref<innerValueType>();
+				map[keyname] = node;
+				unlock();
+				_op->onAdded(shared_from_this(), key, node);
+			}
+			return node;
+		}
+
+		std::shared_ptr<BasicNode> BasicNodeMap::add(const std::shared_ptr<BasicNode>& node, const any &key /*= any()*/)
+		{
+			return set(node, key);
+		}
+
+		bool BasicNodeMap::contains(const any &key) const
+		{
+			bool isok = false;
+			auto keyname = getAny<std::string>(key, &isok);
+			if (!isok)
+			{
+				return nullptr;
+			}
+
+			shared_lock_const_node lock(*this);
+			auto &map = ref<innerValueType>();
+			return map.find(keyname) != map.end();
+		}
+
+		std::shared_ptr<BasicNode> BasicNodeMap::remove(const any &key)
+		{
+			bool isok = false;
+			auto keyname = getAny<std::string>(key, &isok);
+			if (!isok)
+			{
+				return nullptr;
+			}
+
 			auto _op = opr();
 			if (!_op || !_op->remove(shared_from_this(), key))
 			{
@@ -100,7 +180,7 @@ namespace fs
 			std::shared_ptr<BasicNode> node;
 			lock();
 			auto &map = ref<innerValueType>();
-			auto iter = map.find(key);
+			auto iter = map.find(keyname);
 			if (iter != map.end())
 			{
 				node = iter->second;
@@ -114,59 +194,5 @@ namespace fs
 			return std::move(node);
 		}
 
-		std::shared_ptr<BasicNode> BasicNodeMap::get(const std::string &key) const
-		{
-			shared_lock_const_node lock(*this);
-			auto &map = ref<innerValueType>();
-			auto iter = map.find(key);
-			if (iter == map.end() || !iter->second)
-			{
-				return std::shared_ptr<BasicNode>();
-			}
-			return iter->second;
-		}
-
-		std::shared_ptr<BasicNode> BasicNodeMap::set(const std::string &key, const std::shared_ptr<BasicNode>& node)
-		{
-			auto _op = opr();
-			if (!node || node->parent() || !_op)
-			{
-				return nullptr;
-			}
-			auto oldNode = get(key);
-			if (oldNode)
-			{
-				if (!_op->replace(shared_from_this(), key, oldNode, node))
-				{
-					return nullptr;
-				}
-				lock();
-				auto &map = ref<innerValueType>();
-				map[key] = node;
-				unlock();
-				_op->onReplaced(shared_from_this(), key, node);
-			}
-			else
-			{
-				if (!_op->add(shared_from_this(), key, node))
-				{
-					return nullptr;
-				}
-				lock();
-
-				auto &map = ref<innerValueType>();
-				map[key] = node;
-				unlock();
-				_op->onAdded(shared_from_this(), key, node);
-			}
-			return node;
-		}
-
-		bool BasicNodeMap::contains(const std::string &key) const
-		{
-			shared_lock_const_node lock(*this);
-			auto &map = ref<innerValueType>();
-			return map.find(key) != map.end();
-		}
 	}
 }

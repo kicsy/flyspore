@@ -25,45 +25,22 @@ namespace fs
 {
 	namespace L1
 	{
+		class DefaultNest;
 		class Spore : protected BasicNodeMap
 		{
 		public:
-			Spore(const std::string &name);
-			Spore(const Spore&) = delete;
-			Spore() = delete;
 			~Spore();
 			bool input(const P_Pin &pin, const P_Data &data);
-
-			std::vector<P_Pin> pins();
-			P_Pin getPin(const std::string &name);
-			P_Pin addPin(P_Pin &pin);
-			bool deletePin(P_Pin &pin);
-			bool deletePin(const std::string &name);
 		protected:
-			void buildSession(IdType sessionId);
-			void releaseSession(IdType sessionId);
-			void cleanAllSession();
+			Spore(const std::weak_ptr<DefaultNest>& pNest);
+			Spore(const Spore&) = delete;
 			void process(const P_Pin &pin, const P_Data &data);
 			P_Path create_or_find_Path(P_Pin from, P_Pin to, const std::string &name = "");
 			bool deletePath(const P_Path &path);
-
 		protected:
-			std::unordered_map<std::string, P_Pin> _pins;
-			std::shared_mutex _pins_mutex;
-
-			std::vector<P_Path> _paths;
-			std::shared_mutex _paths_mutex;
-
-			std::unordered_map<IdType, P_AnyValues> _session_local_Values;
-			std::shared_mutex _session_local_mutex;
-
+			friend class DefaultNest;
 			friend class Session;
 			friend class Path;
-		};
-
-		class SporeBuilder
-		{
-
 		};
 	}
 }

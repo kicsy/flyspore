@@ -23,6 +23,12 @@ namespace fs
 		{
 		public:
 			virtual std::string getItemPath(const std::shared_ptr<const BasicNode>& itemNode) const = 0;
+			virtual void foreach(std::function<bool(const any& mark, const std::shared_ptr<BasicNode>& child)> p) const = 0;
+			virtual std::shared_ptr<BasicNode> get(const any &key) const = 0;
+			virtual std::shared_ptr<BasicNode> set(const std::shared_ptr<BasicNode>& value, const any &key) = 0;
+			virtual std::shared_ptr<BasicNode> add(const std::shared_ptr<BasicNode>& node, const any &key = any()) = 0;
+			virtual bool contains(const any &key) const = 0;
+			virtual std::shared_ptr<BasicNode> remove(const any &key) =0;
 		};
 		
 
@@ -39,9 +45,9 @@ namespace fs
 			std::shared_ptr<BasicNode> parent() const;
 			virtual uint32_t mode() const;
 			virtual uint32_t setMode(uint32_t mode);
+			virtual std::shared_ptr<BasicNode> clone() const;
 			bool has_value() const;
 			void swap(BasicNode &&other);
-			virtual std::shared_ptr<BasicNode> clone() const;
 			std::string path() const;
 			template<typename vT> 
 			vT value() const;
@@ -49,15 +55,18 @@ namespace fs
 			void setValue(const vT& value);
 			template<typename vT>
 			bool is_a() const;
-			any mark() const;
+			template<typename vT>
+			vT mark(bool *isok = nullptr) const;
 			std::shared_ptr< BasicNodeOperator> opr() const;
 			template<typename vT>
 			vT& ref();
 			template<typename vT>
 			const vT& ref() const;
 
+			template<typename vT>
+			static vT getAny(const any& value, bool *isok = nullptr);
 		protected:
-			BasicNode(std::weak_ptr<BasicNodeOperator> op, const any  &value = any());
+			BasicNode(const std::weak_ptr<BasicNodeOperator>& op, const any  &value = any());
 			BasicNode(const BasicNode& other);
 			BasicNode(BasicNode&& other);
 			void lock() const;
@@ -104,6 +113,14 @@ namespace fs
 		}
 
 		template<typename vT>
+		vT BasicNode::mark(bool *isok) const
+		{
+			bool _ok = false;
+			shared_lock_const_node lock(*this);
+			return getAny<vT>(_mark, isok);
+		}
+
+		template<typename vT>
 		vT& BasicNode::ref()
 		{
 			return std::any_cast<vT&>(_value);
@@ -113,6 +130,25 @@ namespace fs
 		const vT& BasicNode::ref() const
 		{
 			return std::any_cast<const vT&>(_value);
+		}
+
+		template<typename vT>
+		vT BasicNode::getAny(const any& value, bool *isok /*= nullptr*/)
+		{
+			bool _ok = false;
+			
+			try
+			{
+				vT _v = std::any_cast<vT>(value);
+				if(isok) *isok = true;
+				return _v;
+			}
+			catch (const std::bad_any_cast&)
+			{
+				if (isok) *isok = false;
+				return vT();
+			}
+			return vT();
 		}
 	}
 

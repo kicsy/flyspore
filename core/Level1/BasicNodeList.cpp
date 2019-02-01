@@ -5,7 +5,7 @@ namespace fs
 	namespace L1
 	{
 
-		BasicNodeList::BasicNodeList(std::weak_ptr< BasicNodeOperator> op) : 
+		BasicNodeList::BasicNodeList(const std::weak_ptr< BasicNodeOperator>& op) : 
 			BasicNode(op, any(innerValueType()))
 		{
 			_mode = NodeMode::AsList;
@@ -24,26 +24,6 @@ namespace fs
 
 		}
 
-		std::string BasicNodeList::getItemPath(const std::shared_ptr<const BasicNode>& itemNode) const
-		{
-			auto collection = std::dynamic_pointer_cast<NodeCollectionVisitor>(_parent.lock());
-			std::string pre;
-			if (collection)
-			{
-				pre = collection->getItemPath(shared_from_this());
-			}
-			innerValueType::size_type nodeIndex;
-			try
-			{
-				nodeIndex = std::any_cast<innerValueType::size_type>(itemNode->mark());
-			}
-			catch (const std::bad_any_cast&)
-			{
-				return std::string();
-			}
-			return pre + std::string("[") + std::to_string(nodeIndex) + std::string("]");
-		}
-
 		std::shared_ptr<BasicNode> BasicNodeList::clone() const
 		{
 			auto _op = opr();
@@ -53,7 +33,8 @@ namespace fs
 			}
 			auto pnode = _op->createList();
 			pnode->_mode = _mode;
-			for (innerValueType::size_type n = 0; n < length(); n ++)
+			auto &v = ref<innerValueType>();
+			for (innerValueType::size_type n = 0; n < v.size(); n ++)
 			{
 				auto child = get(n);
 				if (child)
@@ -64,11 +45,17 @@ namespace fs
 			return pnode;
 		}
 
-		BasicNodeList::innerValueType::size_type BasicNodeList::length() const
+		std::string BasicNodeList::getItemPath(const std::shared_ptr<const BasicNode>& itemNode) const
 		{
-			shared_lock_const_node lock(*this);
-			auto &v = ref<innerValueType>();
-			return v.size();
+			auto collection = std::dynamic_pointer_cast<NodeCollectionVisitor>(_parent.lock());
+			std::string pre;
+			if (collection)
+			{
+				pre = collection->getItemPath(shared_from_this());
+			}
+			bool isok = false;
+			innerValueType::size_type nodeIndex = itemNode->mark<innerValueType::size_type>(&isok);
+			return isok ? (pre + std::string("[") + std::to_string(nodeIndex) + std::string("]")) : std::string("");
 		}
 
 		void BasicNodeList::foreach(std::function<bool(const any& mark, const std::shared_ptr<BasicNode>& child)> p) const
@@ -85,8 +72,14 @@ namespace fs
 			}
 		}
 
-		std::shared_ptr<BasicNode> BasicNodeList::get(innerValueType::size_type index) const
+		std::shared_ptr<BasicNode> BasicNodeList::get(const any &key) const
 		{
+			bool isok = false;
+			auto index = getAny<innerValueType::size_type>(key, &isok);
+			if (!isok)
+			{
+				return nullptr;
+			}
 			shared_lock_const_node lock(*this);
 			auto &v = ref<innerValueType>();
 			if (index < 0 || index >= v.size())
@@ -96,8 +89,15 @@ namespace fs
 			return v.at(index);
 		}
 
-		std::shared_ptr<BasicNode> BasicNodeList::set(innerValueType::size_type index, const std::shared_ptr<BasicNode>& node)
+		std::shared_ptr<fs::L1::BasicNode> BasicNodeList::set(const std::shared_ptr<BasicNode>& node, const any &key)
 		{
+			bool isok = false;
+			auto index = getAny<innerValueType::size_type>(key, &isok);
+			if (!isok)
+			{
+				return nullptr;
+			}
+
 			auto _op = opr();
 			if (!node || node->parent() || !_op)
 			{
@@ -122,8 +122,15 @@ namespace fs
 			return node;
 		}
 
-		std::shared_ptr<BasicNode> BasicNodeList::add(const std::shared_ptr<BasicNode>& node, innerValueType::size_type index)
+		std::shared_ptr<fs::L1::BasicNode> BasicNodeList::add(const std::shared_ptr<BasicNode>& node, const any &key /*= any()*/)
 		{
+			bool isok = false;
+			auto index = getAny<innerValueType::size_type>(key, &isok);
+			if (!isok)
+			{
+				return nullptr;
+			}
+
 			auto _op = opr();
 			if (!node || node->parent() || !_op)
 			{
@@ -147,10 +154,32 @@ namespace fs
 			}
 			unlock();
 			return nullptr;
+
 		}
 
-		std::shared_ptr<BasicNode> BasicNodeList::remove(innerValueType::size_type index)
+		bool BasicNodeList::contains(const any &key) const
 		{
+			bool isok = false;
+			auto index = getAny<innerValueType::size_type>(key, &isok);
+			if (!isok)
+			{
+				return nullptr;
+			}
+			lock();
+			auto &v = ref<innerValueType>();
+			isok = index >= 0 && index < v.size();
+			unlock();
+			return isok;
+		}
+
+		std::shared_ptr<fs::L1::BasicNode> BasicNodeList::remove(const any &key)
+		{
+			bool isok = false;
+			auto index = getAny<innerValueType::size_type>(key, &isok);
+			if (!isok)
+			{
+				return nullptr;
+			}
 			auto _op = opr();
 			if (!_op || _op->remove(shared_from_this(), index))
 			{
@@ -172,5 +201,6 @@ namespace fs
 			}
 			return node;
 		}
+
 	}
 }
