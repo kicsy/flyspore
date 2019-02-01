@@ -54,7 +54,7 @@ namespace fs
 			mutable std::mutex _mut_status;
 			Session_Status _status;
 			friend class Pin;
-
+		
 		};
 	}
 }

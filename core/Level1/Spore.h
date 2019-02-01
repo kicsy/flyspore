@@ -30,11 +30,9 @@ namespace fs
 		{
 		public:
 			~Spore();
-			bool input(const P_Pin &pin, const P_Data &data);
 		protected:
 			Spore(const std::weak_ptr<DefaultNest>& pNest);
 			Spore(const Spore&) = delete;
-			void process(const P_Pin &pin, const P_Data &data);
 			P_Path create_or_find_Path(P_Pin from, P_Pin to, const std::string &name = "");
 			bool deletePath(const P_Path &path);
 		protected:
