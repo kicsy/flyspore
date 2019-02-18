@@ -2,11 +2,13 @@
 #include "Session.h"
 #include "Spore.h"
 #include "DataPack.h"
+#include "Pin.h"
+#include "DataAdapter.h"
 namespace fs
 {
 	namespace L1
 	{
-		Session::Session(P_Pin entryPin) :
+		Session::Session(const std::shared_ptr<Pin>& entryPin) :
 			_task_remain(0)
 			, _status(Session_Status::Normal)
 		{
@@ -18,19 +20,11 @@ namespace fs
 			{
 				_entryPin = entryPin;
 				_entrySpore = entryPin->spore();
-				if (_entrySpore)
-				{
-					_entrySpore->buildSession(_id);
-				}
 			}
 		}
 
 		Session::~Session()
 		{
-			if (_entrySpore)
-			{
-				_entrySpore->releaseSession(_id);
-			}
 		}
 
 		IdType Session::id()
@@ -42,8 +36,12 @@ namespace fs
 		{
 			if (_entrySpore && _entryPin && _entryPin->adapter())
 			{
+				//////////////////////////////////////////////////////////////////////////
 
-				P_Data pdata = _entryPin->adapter()->toData(any);
+				//////////////////////////////////////////////////////////////////////////
+
+
+				auto pdata = _entryPin->adapter()->toData(any);
 				pdata->setSession(shared_from_this());
 				_entryPin->push(pdata);
 				_startTime = std::chrono::high_resolution_clock::now();
@@ -60,7 +58,7 @@ namespace fs
 			_cond_status.notify_all();
 		}
 
-		void Session::onFinish(std::function<void(P_Session)> func)
+		void Session::onFinish(std::function<void(std::shared_ptr<Session>)> func)
 		{
 			_triggerOnFinish = func;
 		}
@@ -71,7 +69,7 @@ namespace fs
 			_cond_status.wait(lk, [&] {return _status == Session_Status::Finish; });
 		}
 
-		P_Session Session::newSession(P_Pin entryPin)
+		std::shared_ptr<Session> Session::newSession(std::shared_ptr<Pin> entryPin)
 		{
 			return std::make_shared<Session>(entryPin);
 		}

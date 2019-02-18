@@ -1,21 +1,24 @@
 #pragma once
-#include "Statement.h"
+#include <memory>
+#include "AnyValues.h"
 namespace fs
 {
 	namespace L1
 	{
-		class CellContext;
+		class Session;
+		class Spore;
+		class Data;
 		class Context
 		{
 		public:
-			Context(P_Session pss);
+			Context(const std::shared_ptr<Spore>& spore, const std::shared_ptr<Session>& pss);
 			~Context();
 			AnyValues& session;
-			bool push(const std::string  &outPinName, const P_Data &ppack);
-			P_Spore spore();
+			bool push(const std::string  &outPinName, const std::shared_ptr<Data> &ppack);
+			std::shared_ptr<Spore> spore();
 		protected:
-			P_Session _pss;
-			friend class CellContext;
+			std::shared_ptr<Session> _pss;
+			std::shared_ptr<Spore> _spore;
 		};
 	}
 }

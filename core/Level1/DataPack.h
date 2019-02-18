@@ -1,5 +1,4 @@
 #pragma once
-#include "Statement.h"
 #include "Data.h"
 #include "AnyValues.h"
 
@@ -18,6 +17,18 @@ namespace fs
 			}
 			DataPack(const DataPack&) = delete;
 			DataPack& operator=(const DataPack&) = delete;
+			virtual unsigned int hashCode() override
+			{
+				return 0;
+			}
+			static DataPack* toData(const AnyValues & values)
+			{
+				return new DataPack(values);
+			}
+			static AnyValues toAnyValues(const DataPack & dataPack)
+			{
+				return *(AnyValues*)(&dataPack);
+			}
 		};
 	}
 }

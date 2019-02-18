@@ -120,32 +120,32 @@ namespace fs
 			}
 		}
 
-		void BasicNodeOperator::lock(const std::shared_ptr<const BasicNode>&) const
+		void BasicNodeOperator::lock() const
 		{
 			_sync.lock();
 		}
 
-		void BasicNodeOperator::unlock(const std::shared_ptr<const BasicNode> &) const
+		void BasicNodeOperator::unlock() const
 		{
 			_sync.unlock();
 		}
 
-		void BasicNodeOperator::lock_shared(const std::shared_ptr<const BasicNode> &) const
+		void BasicNodeOperator::lock_shared() const
 		{
 			_sync.lock_shared();
 		}
 
-		void BasicNodeOperator::unlock_shared(const std::shared_ptr<const BasicNode>&) const
+		void BasicNodeOperator::unlock_shared() const
 		{
 			_sync.unlock_shared();
 		}
 
-		bool BasicNodeOperator::try_lock(const std::shared_ptr<const BasicNode> &) const
+		bool BasicNodeOperator::try_lock() const
 		{
 			return _sync.try_lock();
 		}
 
-		bool BasicNodeOperator::try_lock_shared(const std::shared_ptr<const BasicNode> &) const
+		bool BasicNodeOperator::try_lock_shared() const
 		{
 			return _sync.try_lock_shared();
 		}

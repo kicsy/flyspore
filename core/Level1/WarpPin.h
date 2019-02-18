@@ -4,32 +4,33 @@ namespace fs
 {
 	namespace L1
 	{
+		class DataAdapter;
+		class Data;
 		template< typename SchemaType>
-		class WarpPin : public Pin
+		class WarpPin : public Pin, public SchemaType
 		{
 		public:
 			using InnerProcessType = typename SchemaType::InnerProcessType;
-			WarpPin(PW_Spore spore, std::string name, Pin_Type type, std::shared_ptr< SchemaType> schema, InnerProcessType innerProcess) :
-				Pin(spore, name, type)
-				, _schema(schema)
+			WarpPin(const std::string& name, Pin_Type type, InnerProcessType innerProcess) :
+				Pin(name, type)
 				, _innerProcess(innerProcess)
 			{
 			}
-			virtual P_DataAdapter adapter() const
+			virtual std::shared_ptr<DataAdapter> adapter()
 			{
-				return std::move(std::dynamic_pointer_cast<DataAdapter>(_schema));
+				auto _p = std::dynamic_pointer_cast<WarpPin<SchemaType>>(shared_from_this());
+				return std::dynamic_pointer_cast<DataAdapter>(_p);
 			}
 		protected:
 			virtual bool enableProcess() const { return NULL != _innerProcess; }
-			virtual void process(Context& ct, const P_Data& pdata)
+			virtual void process(Context& ct, const std::shared_ptr<Data>& pdata)
 			{
 				if (_innerProcess)
 				{
-					_schema->callInnerProcess(_innerProcess, ct, pdata);
+					SchemaType::callInnerProcess(_innerProcess, ct, pdata);
 				}
 			}
 		protected:
-			std::shared_ptr< SchemaType> _schema;
 			InnerProcessType _innerProcess;
 		};
 	}

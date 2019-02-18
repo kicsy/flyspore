@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "../Level1/Level1.h"
 
 using namespace fs::L1;
@@ -22,7 +23,8 @@ namespace fs
 			void _echo_textBlock(std::ostream &stream, std::string &textBlock);
 			void _echo_Welcome();
 		protected:
-			P_Session _session_call;
+			std::shared_ptr<DefaultNest> _nest;
+			std::shared_ptr<Session> _session_call;
 			mutable std::mutex _mut_console;
 
 		};

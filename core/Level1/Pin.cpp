@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "Pin.h"
+#include "Spore.h"
 #include "DefaultNest.h"
 #include "Session.h"
 #include "Context.h"
@@ -11,42 +12,23 @@ namespace fs
 {
 	namespace L1
 	{
-		Pin::Pin(const std::weak_ptr<DefaultNest>& pNest, Pin_Type type):
-			BasicNodeMap(pNest),
+		Pin::Pin(const std::string& name, Pin_Type type):
 			_type(type)
+			,_name(name)
 		{
-			auto _op = opr();
-			if (_op)
-			{
-				set(_op->create(std::string("pin")), std::string("class"));
-				std::string strType;
-				switch (type)
-				{
-				case fs::L1::Pin_Type::IN_PIN:
-					strType = "in";
-					break;
-				case fs::L1::Pin_Type::OUT_PIN:
-					strType = "out";
-					break;
-				default:
-					strType = "unknown";
-					break;
-				}
-				set(_op->create(strType), std::string("pin_type"));
-			}
 		}
 
 		Pin::~Pin()
 		{
 		}
 
-		bool Pin::push(const const std::shared_ptr<Data> &data)
+		bool Pin::push(const std::shared_ptr<Data> &data)
 		{
 			if (!data)
 			{
 				return false;
 			}
-			P_Session pss = data->getSession();
+			std::shared_ptr<Session> pss = data->getSession();
 			if (!pss || pss->status() == Session_Status::BlackOut)
 			{
 				return false;
@@ -55,31 +37,52 @@ namespace fs
 			{
 				pss->increaseTask();
 				task_pool::get_instance().submit(&Pin::task_process, this, data);
-				return true;
 			}
-			else if (_type == Pin_Type::OUT_PIN)
+
+			for (auto &path : _outPaths)
 			{
-				std::shared_lock<std::shared_mutex> lock(_mutex);
-				for (auto &path : _outPaths)
+				if (path != nullptr && path->isvalid())
 				{
-					if (path != nullptr && path->isvalid()) {
-						path->move(data);
-					}
+					path->move(data);
 				}
 			}
+
+			//!!这里用到Nest的唯一共享锁，会导致性能瓶颈
+			//auto theSpore = _spore.lock();
+			//if (theSpore)
+			//{
+			//	auto nest = theSpore->nest();
+			//	if (nest)
+			//	{
+			//		NestSharedLock lock(nest);
+			//		for (auto &path : _outPaths)
+			//		{
+			//			if (path != nullptr && path->isvalid())
+			//			{
+			//				path->move(data);
+			//			}
+			//		}
+			//	}
+			//}
+			return true;
 		}
 
-		void Pin::task_process(const P_Data &data)
+		std::shared_ptr<fs::L1::Path> Pin::connect(const std::shared_ptr<Pin>& to, const std::string& name /*= ""*/)
 		{
-			P_Session pss = data->getSession();
-			Context cc(pss);
+			return Path::connect(shared_from_this(), to, name);
+		}
+
+		void Pin::task_process(const std::shared_ptr<Data>&data)
+		{
+			std::shared_ptr<Session> pss = data->getSession();
+			Context cc(spore(), pss);
 			process(cc, data);
 			pss->decreaseTask();
 		}
 
-		P_DataAdapter Pin::adapter() const
+		std::shared_ptr<DataAdapter> Pin::adapter()
 		{
-			return NULL;
+			return nullptr;
 		}
 
 		Pin_Type Pin::type() const
@@ -87,63 +90,14 @@ namespace fs
 			return _type;
 		}
 
-		std::vector<P_Path> Pin::paths() const
+		std::shared_ptr<Spore> Pin::spore() const
 		{
-			std::shared_lock<std::shared_mutex> lock(_mutex);
-			return _outPaths;
+			return _spore.lock();
 		}
 
-		bool Pin::addPath(P_Path path)
+		std::string Pin::name() const
 		{
-			if (!path)
-			{
-				return false;
-			}
-			std::unique_lock<std::shared_mutex> lock(_mutex);
-			if (path->from().get() == this)
-			{
-				auto iter = std::find(_outPaths.begin(), _outPaths.end(), path);
-				if (iter == _outPaths.end())
-				{
-					_outPaths.push_back(path);
-				}
-				return true;
-			}
-			else if (path->to().get() == this)
-			{
-				auto iter = std::find(_inPaths.begin(), _inPaths.end(), path);
-				if (iter == _inPaths.end())
-				{
-					_inPaths.push_back(path);
-				}
-				return true;
-			}
-			return false;
-		}
-
-		bool Pin::removePath(P_Path path)
-		{
-			if (!path)
-			{
-				return false;
-			}
-			bool isok = false;
-			std::unique_lock<std::shared_mutex> lock(_mutex);
-			if (path->from().get() == this)
-			{
-				isok = std::remove_if(_outPaths.begin(), _outPaths.end(), [&](P_Path& pp)-> bool {
-					isok = true;
-					return pp == path;
-				}) != _outPaths.end();
-			}
-			else if (path->to().get() == this)
-			{
-				isok = std::remove_if(_inPaths.begin(), _inPaths.end(), [&](P_Path& pp)->bool {
-					isok = true;
-					return pp == path;
-				}) != _inPaths.end();
-			}
-			return isok;
+			return _name;
 		}
 	}
 }

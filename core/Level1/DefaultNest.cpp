@@ -1,7 +1,7 @@
 #include "DefaultNest.h"
 #include "Spore.h"
-#include "Pin.h"
 #include "Path.h"
+#include "WarpPin.h"
 namespace fs
 {
 	namespace L1
@@ -9,6 +9,7 @@ namespace fs
 
 		DefaultNest::DefaultNest()
 		{
+
 		}
 
 
@@ -16,98 +17,76 @@ namespace fs
 		{
 		}
 
-		std::shared_ptr<Spore> DefaultNest::createSpore()
+		std::shared_ptr<Spore> DefaultNest::createSpore(const std::string& name)
 		{
-			auto pnode = std::shared_ptr<Spore>(new Spore(std::shared_ptr<DefaultNest>(shared_from_this(), this)));
-			onCreated(std::static_pointer_cast<BasicNode>(pnode));
-			return pnode;
+			return std::shared_ptr<Spore>(new Spore(weak_from_this(), name));
 		}
 
-		std::shared_ptr<Pin> DefaultNest::createPin()
+		std::shared_ptr<Pin> DefaultNest::createPin(const std::string& name, Pin_Type type /*= Pin_Type::OUT_PIN*/, DefaultSchema::InnerProcessType proess /*= nullptr*/)
 		{
-			auto pnode = std::shared_ptr<Pin>(new Pin(std::shared_ptr<DefaultNest>(shared_from_this(), this)));
-			onCreated(std::static_pointer_cast<BasicNode>(pnode));
-			return pnode;
+			return std::shared_ptr<Pin>(new WarpPin<DefaultSchema>(name, type, proess));
+		}
+
+		std::shared_ptr<Pin> DefaultNest::createPin(const std::string& name, DefaultSchema::InnerProcessType proess)
+		{
+			return std::shared_ptr<Pin>(new WarpPin<DefaultSchema>(name, Pin_Type::IN_PIN, proess));
+		}
+
+		void DefaultNest::onAddSpore(std::shared_ptr<Spore> parent, std::shared_ptr<Spore> child)
+		{
 
 		}
 
-		std::shared_ptr<Path> DefaultNest::connectPin(const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to, const std::string& name)
+		void DefaultNest::onRemoveSpore(std::shared_ptr<Spore> parent, std::shared_ptr<Spore> child)
 		{
-			if (!from || !to)
-			{
-				return nullptr;
-			}
-			auto fromSpore = getParent(from);
-			auto toSproe = getParent(to);
-			if (!fromSpore || !toSproe)
-			{
-				return nullptr;
-			}
-			auto fromSporeParent = getParent(fromSpore);
-			auto toSporeParent = getParent(toSproe);
-			if (fromSporeParent == toSporeParent)
-			{
-				//两个Pin的宿主Spore为同级，通过Path连接
-				if (!toSporeParent)
-				{
-					return nullptr;
-				}
-				if (from->type() != Pin_Type::OUT_PIN || to->type() != Pin_Type::IN_PIN)
-				{
-					return nullptr;
-				}
-				return  holder->create_or_find_Path(from, to, name);
-			}
-			else if (fromSpore == toSproe->parent().lock())
-			{
-				if (from->type() != Pin_Type::IN_PIN || to->type() != Pin_Type::IN_PIN)
-				{
-					return nullptr;
-				}
-				return  fromSpore->create_or_find_Path(from, to, name);
-			}
-			else if (fromSpore->parent().lock() == toSproe)
-			{
-				if (from->type() != Pin_Type::OUT_PIN || to->type() != Pin_Type::OUT_PIN)
-				{
-					return nullptr;
-				}
-				return  toSproe->create_or_find_Path(from, to, name);
-			}
-			return nullptr;
 		}
 
-		std::shared_ptr<Spore> DefaultNest::getParent(std::shared_ptr<Pin> pin)
+		void DefaultNest::onAddPin(std::shared_ptr<Spore> parent, std::shared_ptr<Pin> child)
 		{
-			if (!pin)
-			{
-				return nullptr;
-			}
-			auto _p = pin->parent();
-			if (!_p || !(_p->mode() & NodeMode::AsMap) || _p->mark<std::string>() != "pins")
-			{
-				return nullptr;
-			}
-			_p = _p->parent();
-			auto _spore = std::dynamic_pointer_cast<Spore>(_p);
-			return _spore;
+
 		}
 
-		std::shared_ptr<fs::L1::Spore> DefaultNest::getParent(std::shared_ptr<Spore> spore)
+		void DefaultNest::onRemovePin(std::shared_ptr<Spore> parent, std::shared_ptr<Pin> child)
 		{
-			if (!spore)
-			{
-				return nullptr;
-			}
-			auto _p = spore->parent();
-			if (!_p || !(_p->mode() & NodeMode::AsMap) || _p->mark<std::string>() != "/")
-			{
-				return nullptr;
-			}
-			_p = _p->parent();
-			auto _spore = std::dynamic_pointer_cast<Spore>(_p);
-			return _spore;
 		}
 
+		void DefaultNest::onAddPath(std::shared_ptr<Spore> spore, std::shared_ptr<Path> path)
+		{
+		}
+
+		void DefaultNest::onRemovePath(std::shared_ptr<Spore> spore, std::shared_ptr<Path> path)
+		{
+		}
+
+
+		void DefaultNest::lock() const
+		{
+			_sync.lock();
+		}
+
+		void DefaultNest::unlock() const
+		{
+			_sync.unlock();
+		}
+
+		void DefaultNest::lock_shared() const
+		{
+			_sync.lock_shared();
+		}
+
+		void DefaultNest::unlock_shared() const
+		{
+			_sync.unlock_shared();
+		}
+
+		bool DefaultNest::try_lock() const
+		{
+			return _sync.try_lock();
+		}
+
+		bool DefaultNest::try_lock_shared() const
+		{
+			return _sync.try_lock_shared();
+		}
 	}
 }

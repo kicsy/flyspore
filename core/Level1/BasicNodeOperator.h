@@ -27,12 +27,12 @@ namespace fs
 			virtual void onAdded(const std::shared_ptr<BasicNode>& parent, const std::any& key, const std::shared_ptr<BasicNode>& pnode);
 			virtual bool remove(const std::shared_ptr<BasicNode>& parent, const std::any& key);
 			virtual void onRemoved(const std::shared_ptr<BasicNode>& parent, const std::any& key, const std::shared_ptr<BasicNode>& pnode);
-			virtual void lock(const std::shared_ptr<const BasicNode>& pnode) const;
-			virtual void unlock(const std::shared_ptr<const BasicNode>& pnode) const;
-			virtual void lock_shared(const std::shared_ptr<const BasicNode>& pnode) const;
-			virtual void unlock_shared(const std::shared_ptr<const BasicNode>& pnode) const;
-			virtual bool try_lock(const std::shared_ptr<const BasicNode>& pnode) const;
-			virtual bool try_lock_shared(const std::shared_ptr<const BasicNode>& pnode) const;
+			virtual void lock() const;
+			virtual void unlock() const;
+			virtual void lock_shared() const;
+			virtual void unlock_shared() const;
+			virtual bool try_lock() const;
+			virtual bool try_lock_shared() const;
 
 			int getNodeCount() { return _nodecount; }
 		protected:
@@ -43,7 +43,6 @@ namespace fs
 			mutable std::shared_mutex _sync;
 			std::shared_ptr<BasicNodeMap> _root;
 			friend class BasicNode;
-
 			int _nodecount{ 0 };
 		};
 	}

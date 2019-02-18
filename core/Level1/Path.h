@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "BasicNodeMap.h"
+#include <xstring>
 namespace fs
 {
 	namespace L1
@@ -8,29 +8,34 @@ namespace fs
 		class DefaultNest;
 		class Pin;
 		class Data;
-		class Path : public BasicNodeMap
+		class Spore;
+		class Path : public std::enable_shared_from_this<Path>
 		{
 		public:
 			~Path();
 			Path(const Path&) = delete;
 			Path& operator=(const Path&) = delete;
-			P_Pin from() const;
-			P_Pin to() const;
+			std::shared_ptr<Pin> from() const;
+			std::shared_ptr<Pin> to() const;
+			std::shared_ptr<Spore> spore() const;
+			std::string name() const;
 			bool isvalid() const;
 			bool move(const std::shared_ptr<Data>& data);
-			static P_Path connect(P_Pin &from, P_Pin &to, const std::string &name = "");
-			static P_Path connect(P_Spore &fromSpore, const std::string &fromPinName,
-				P_Spore &toSpore, const std::string &toPinName, const std::string &name = "");
-			static bool release(const P_Path &path);
+			static std::shared_ptr<Path> connect(const std::shared_ptr<Pin> &from, const std::shared_ptr<Pin> &to, const std::string &name = "");
+			static std::shared_ptr<Path> connect(std::shared_ptr<Spore> &fromSpore, const std::string &fromPinName,
+				std::shared_ptr<Spore> &toSpore, const std::string &toPinName, const std::string &name = "");
+			static bool release(const std::shared_ptr<Path> &path);
 		protected:
-			Path(const std::weak_ptr<DefaultNest>& pNest, const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to);
-			bool _build();
-			bool _release();
+			Path(const std::weak_ptr<Spore>& spore, const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to, const std::string& name);
+			bool attach();
+			bool detach();
 		protected:
 			std::string _name;
-			P_Pin _from;
-			P_Pin _to;
+			std::shared_ptr<Pin> _from;
+			std::shared_ptr<Pin> _to;
+			std::weak_ptr<Spore> _spore;
 			friend class DefaultNest;
+			friend class Spore;
 		};
 	}
 }

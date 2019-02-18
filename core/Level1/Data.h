@@ -1,21 +1,23 @@
 #pragma once
-#include "Statement.h"
+#include <memory>
 namespace fs
 {
 	namespace L1
 	{
+		class Session;
 		class Data
 		{
 		public:
-			Data(const P_Session& session = NULL) :_session(session) {}
+			Data(const std::shared_ptr<Session>& session = NULL) :_session(session) {}
 			virtual ~Data() {}
-			virtual P_Session  getSession() const { return _session; }
+			virtual std::shared_ptr<Session>  getSession() const { return _session; }
+			virtual unsigned int hashCode() = 0;
 		protected:
-			void setSession(const P_Session &session) { _session = session; }
+			void setSession(const std::shared_ptr<Session>& session) { _session = session; }
 		protected:
-			P_Session _session;
-			friend Context;
-			friend Session;
+			std::shared_ptr<Session> _session;
+			friend class Context;
+			friend class Session;
 		};
 	}
 }

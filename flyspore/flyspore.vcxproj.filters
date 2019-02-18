@@ -51,18 +51,6 @@
     <ClCompile Include="..\core\Level2\Maze.cpp">
       <Filter>core\Level2</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Level1\BasicNode.cpp">
-      <Filter>core\Level1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\Level1\BasicNodeList.cpp">
-      <Filter>core\Level1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\Level1\BasicNodeMap.cpp">
-      <Filter>core\Level1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\Level1\BasicNodeOperator.cpp">
-      <Filter>core\Level1</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\Level1\DefaultNest.cpp">
       <Filter>core\Level1</Filter>
     </ClCompile>
@@ -113,9 +101,6 @@
     <ClInclude Include="..\core\Level1\Spore.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\Level1\Statement.h">
-      <Filter>core\Level1</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\Level1\WarpPin.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
@@ -130,18 +115,6 @@
     </ClInclude>
     <ClInclude Include="..\core\Level2\ConsoleColor.h">
       <Filter>core\Level2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level1\BasicNode.h">
-      <Filter>core\Level1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level1\BasicNodeList.h">
-      <Filter>core\Level1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level1\BasicNodeMap.h">
-      <Filter>core\Level1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level1\BasicNodeOperator.h">
-      <Filter>core\Level1</Filter>
     </ClInclude>
     <ClInclude Include="..\core\Level1\DefaultNest.h">
       <Filter>core\Level1</Filter>

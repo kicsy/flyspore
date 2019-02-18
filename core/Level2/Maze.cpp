@@ -5,24 +5,27 @@
 
 fs::L2::Maze::Maze()
 {
-	P_Spore _root = Spore::newSpore("/");
-	P_Spore _spore = _root->addChild("Maze");
-	defaultSchema().addPin(_spore, "call",
-		std::bind(&Maze::_call, this, std::placeholders::_1, std::placeholders::_2));
-	defaultSchema().addPin(_spore, "out");
-	defaultSchema().addPin(_spore, "error");
+	_nest = std::make_shared<DefaultNest>();
 
-	P_Spore _console = _root->addChild("Console");
-	defaultSchema().addPin(_console, "out",
-		std::bind(&Maze::_out, this, std::placeholders::_1, std::placeholders::_2));
-	defaultSchema().addPin(_console, "error",
-		std::bind(&Maze::_error, this, std::placeholders::_1, std::placeholders::_2));
+	auto root = _nest->createSpore("/");
+	auto maze = _nest->createSpore("Maze");
+	root->addSpore(maze);
+	auto callPin = maze->addPin(_nest->createPin("call",
+		std::bind(&Maze::_call, this, std::placeholders::_1, std::placeholders::_2)));
+	auto outPin = maze->addPin(_nest->createPin("out"));
+	auto errorPin = maze->addPin(_nest->createPin("error"));
 
-	Path::connect(_spore, "out", _console, "out", "out");
-	Path::connect(_spore, "error", _console, "error", "error");
+	auto console = _nest->createSpore("Console");
+	root->addSpore(console);
+	auto printPin = console->addPin(_nest->createPin("print",
+		std::bind(&Maze::_out, this, std::placeholders::_1, std::placeholders::_2)));
+	auto printErrorPin = console->addPin(_nest->createPin("error",
+		std::bind(&Maze::_error, this, std::placeholders::_1, std::placeholders::_2)));
 
-	_session_call = Session::newSession(_spore->getPin("call"));
+	outPin->connect(printPin);
+	errorPin->connect(printErrorPin);
 
+	_session_call = Session::newSession(callPin);
 }
 
 fs::L2::Maze::~Maze()

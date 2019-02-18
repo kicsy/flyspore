@@ -1,22 +1,22 @@
 #include <algorithm>
 #include "Path.h"
 #include "Pin.h"
+#include "Spore.h"
 #include "DefaultNest.h"
 namespace fs
 {
 	namespace L1
 	{
-		Path::Path(const std::weak_ptr<DefaultNest>& pNest, const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to) :
-			BasicNodeMap(pNest)
+		Path::Path(const std::weak_ptr<Spore>& spore, const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to, const std::string& name) :
+			_spore(spore)
 			, _from(from)
 			, _to(to)
+			, _name(name)
 		{
-
 		}
 
 		Path::~Path()
 		{
-
 		}
 
 		bool Path::move(const std::shared_ptr<Data>& data)
@@ -29,34 +29,84 @@ namespace fs
 			return false;
 		}
 
-		bool Path::_build()
+		bool Path::attach()
 		{
-			return _from && _from->addPath(shared_from_this()) &&
-				_to && _to->addPath(shared_from_this());
+			auto sp = spore();
+			if (!sp)
+			{
+				return false;
+			}
+			auto nest = sp->nest();
+			if (!nest)
+			{
+				return false;
+			}
+			auto thisPath = shared_from_this();
+			if (_from)
+			{
+				_from->_outPaths.push_back(thisPath);
+			}
+			if (_to)
+			{
+				_to->_inPaths.push_back(thisPath);
+			}
+			return true;
 		}
 
-		bool Path::_release()
+		bool Path::detach()
 		{
-			return _from && _from->removePath(shared_from_this()) &&
-				_to && _to->removePath(shared_from_this());
+			auto sp = spore();
+			if (!sp)
+			{
+				return false;
+			}
+			auto nest = sp->nest();
+			if (!nest)
+			{
+				return false;
+			}
+			auto thisPath = shared_from_this();
+			if (_from)
+			{
+				auto &paths = _from->_outPaths;
+				std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
+					if (pp == thisPath)
+					{
+						return true;
+					}
+					return false;
+				});
+			}
+			if (_to)
+			{
+				auto &paths = _to->_inPaths;
+				std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
+					if (pp == thisPath)
+					{
+						return true;
+					}
+					return false;
+				});
+			}
+			return true;
 		}
 
-		P_Path Path::connect(P_Pin &from, P_Pin &to, const std::string &name /*= ""*/)
+		std::shared_ptr<Path> Path::connect(const std::shared_ptr<Pin> &from, const std::shared_ptr<Pin> &to, const std::string &name /*= ""*/)
 		{
 			if (!from || !to)
 			{
 				return nullptr;
 			}
-			P_Spore fromSpore = from->spore();
-			P_Spore toSproe = to->spore();
+			auto fromSpore = from->spore();
+			auto toSproe = to->spore();
 			if (!fromSpore || !toSproe)
 			{
 				return nullptr;
 			}
-			if (fromSpore->parent().lock() == toSproe->parent().lock())
+			if (fromSpore->parent() == toSproe->parent())
 			{
 				//两个Pin的宿主Spore为同级，通过Path连接
-				P_Spore holder = fromSpore->parent().lock();
+				auto holder = fromSpore->parent();
 				if (!holder)
 				{
 					return nullptr;
@@ -65,28 +115,28 @@ namespace fs
 				{
 					return nullptr;
 				}
-				return  holder->create_or_find_Path(from, to, name);
+				return  holder->addPath(from, to, name);
 			}
-			else if (fromSpore == toSproe->parent().lock())
+			else if (fromSpore == toSproe->parent())
 			{
 				if (from->type() != Pin_Type::IN_PIN || to->type() != Pin_Type::IN_PIN)
 				{
 					return nullptr;
 				}
-				return  fromSpore->create_or_find_Path(from, to, name);
+				return  fromSpore->addPath(from, to, name);
 			}
-			else if (fromSpore->parent().lock() == toSproe)
+			else if (fromSpore->parent() == toSproe)
 			{
 				if (from->type() != Pin_Type::OUT_PIN || to->type() != Pin_Type::OUT_PIN)
 				{
 					return nullptr;
 				}
-				return  toSproe->create_or_find_Path(from, to, name);
+				return  toSproe->addPath(from, to, name);
 			}
 			return nullptr;
 		}
 
-		fs::L1::P_Path Path::connect(P_Spore &fromSpore, const std::string &fromPinName, P_Spore &toSpore, const std::string &toPinName, const std::string &name /*= ""*/)
+		std::shared_ptr<Path> Path::connect(std::shared_ptr<Spore> &fromSpore, const std::string &fromPinName, std::shared_ptr<Spore> &toSpore, const std::string &toPinName, const std::string &name /*= ""*/)
 		{
 			if (!fromSpore || !toSpore)
 			{
@@ -95,49 +145,39 @@ namespace fs
 			return connect(fromSpore->getPin(fromPinName), toSpore->getPin(toPinName), name);
 		}
 
-		bool Path::release(const P_Path &path)
+		bool Path::release(const std::shared_ptr<Path> &path)
 		{
-			if (!path->from() || !path->to())
+			if (path)
 			{
-				return false;
-			}
-			P_Spore fromSpore = path->from()->spore();
-			P_Spore toSproe = path->to()->spore();
-			if (!fromSpore || !toSproe)
-			{
-				return false;
-			}
-			if (fromSpore->parent().lock() == toSproe->parent().lock())
-			{
-				//两个Pin的宿主Spore为同级，通过Path连接
-				P_Spore holder = fromSpore->parent().lock();
-				if (!holder)
+				auto holder = path->spore();
+				if (holder)
 				{
-					return nullptr;
+					return holder->removePath(path);
 				}
-				return holder->deletePath(path);
 			}
-			else if (fromSpore == toSproe->parent().lock())
-			{
-				return fromSpore->deletePath(path);
-			}
-			else if (fromSpore->parent().lock() == toSproe)
-			{
-				return toSproe->deletePath(path);
-			}
-			return nullptr;
+			return false;
 		}
 
-		P_Pin Path::from() const
+		std::shared_ptr<Pin> Path::from() const
 		{
 			return _from;
 		}
 
-		P_Pin Path::to() const
+		std::shared_ptr<Pin> Path::to() const
 		{
 			return _to;
 		}
 
+
+		std::shared_ptr<Spore> Path::spore() const
+		{
+			return _spore.lock();
+		}
+
+		std::string Path::name() const
+		{
+			return _name;
+		}
 
 		bool Path::isvalid() const
 		{
