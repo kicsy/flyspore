@@ -33,9 +33,6 @@
     <ClCompile Include="..\core\Level1\Context.cpp">
       <Filter>core\Level1</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\Level1\DefaultSchema.cpp">
-      <Filter>core\Level1</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\Level1\Path.cpp">
       <Filter>core\Level1</Filter>
     </ClCompile>
@@ -81,9 +78,6 @@
       <Filter>core\Level1</Filter>
     </ClInclude>
     <ClInclude Include="..\core\Level1\DataPack.h">
-      <Filter>core\Level1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\Level1\DefaultSchema.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
     <ClInclude Include="..\core\Level1\Path.h">

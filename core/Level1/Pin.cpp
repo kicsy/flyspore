@@ -39,31 +39,31 @@ namespace fs
 				task_pool::get_instance().submit(&Pin::task_process, this, data);
 			}
 
-			for (auto &path : _outPaths)
-			{
-				if (path != nullptr && path->isvalid())
-				{
-					path->move(data);
-				}
-			}
-
-			//!!这里用到Nest的唯一共享锁，会导致性能瓶颈
-			//auto theSpore = _spore.lock();
-			//if (theSpore)
+			//for (auto &path : _outPaths)
 			//{
-			//	auto nest = theSpore->nest();
-			//	if (nest)
+			//	if (path != nullptr && path->isvalid())
 			//	{
-			//		NestSharedLock lock(nest);
-			//		for (auto &path : _outPaths)
-			//		{
-			//			if (path != nullptr && path->isvalid())
-			//			{
-			//				path->move(data);
-			//			}
-			//		}
+			//		path->move(data);
 			//	}
 			//}
+
+			//!!这里用到Nest的唯一共享锁，会导致性能瓶颈
+			auto theSpore = _spore.lock();
+			if (theSpore)
+			{
+				auto nest = theSpore->nest();
+				if (nest)
+				{
+					NestSharedLock lock(nest);
+					for (auto &path : _outPaths)
+					{
+						if (path != nullptr && path->isvalid())
+						{
+							path->move(data);
+						}
+					}
+				}
+			}
 			return true;
 		}
 
@@ -80,7 +80,7 @@ namespace fs
 			pss->decreaseTask();
 		}
 
-		std::shared_ptr<DataAdapter> Pin::adapter()
+		DataAdapter* Pin::adapter()
 		{
 			return nullptr;
 		}

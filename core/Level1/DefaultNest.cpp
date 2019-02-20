@@ -22,14 +22,14 @@ namespace fs
 			return std::shared_ptr<Spore>(new Spore(weak_from_this(), name));
 		}
 
-		std::shared_ptr<Pin> DefaultNest::createPin(const std::string& name, Pin_Type type /*= Pin_Type::OUT_PIN*/, DefaultSchema::InnerProcessType proess /*= nullptr*/)
+		std::shared_ptr<Pin> DefaultNest::createPin(const std::string& name, Pin_Type type /*= Pin_Type::OUT_PIN*/, WarpPin<>::InnerProcessType proess /*= nullptr*/)
 		{
-			return std::shared_ptr<Pin>(new WarpPin<DefaultSchema>(name, type, proess));
+			return std::shared_ptr<Pin>(new WarpPin<>(name, type, proess));
 		}
 
-		std::shared_ptr<Pin> DefaultNest::createPin(const std::string& name, DefaultSchema::InnerProcessType proess)
+		std::shared_ptr<Pin> DefaultNest::createPin(const std::string& name, WarpPin<>::InnerProcessType proess)
 		{
-			return std::shared_ptr<Pin>(new WarpPin<DefaultSchema>(name, Pin_Type::IN_PIN, proess));
+			return std::shared_ptr<Pin>(new WarpPin<>(name, Pin_Type::IN_PIN, proess));
 		}
 
 		void DefaultNest::onAddSpore(std::shared_ptr<Spore> parent, std::shared_ptr<Spore> child)

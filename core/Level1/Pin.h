@@ -26,7 +26,7 @@ namespace fs
 			Pin_Type type() const;
 			std::shared_ptr<Spore> spore() const;
 			std::string name() const;
-			virtual std::shared_ptr<DataAdapter> adapter();
+			virtual DataAdapter* adapter();
 			virtual bool push(const std::shared_ptr<Data>& data);
 			virtual std::shared_ptr<Path> connect(const std::shared_ptr<Pin>& to, const std::string& name = "");
 		protected:

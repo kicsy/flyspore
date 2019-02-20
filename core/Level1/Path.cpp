@@ -69,24 +69,24 @@ namespace fs
 			if (_from)
 			{
 				auto &paths = _from->_outPaths;
-				std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
+				paths.erase(std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
 					if (pp == thisPath)
 					{
 						return true;
 					}
 					return false;
-				});
+				}), paths.end());
 			}
 			if (_to)
 			{
 				auto &paths = _to->_inPaths;
-				std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
+				paths.erase(std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
 					if (pp == thisPath)
 					{
 						return true;
 					}
 					return false;
-				});
+				}), paths.end());
 			}
 			return true;
 		}

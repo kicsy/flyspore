@@ -1,13 +1,16 @@
 #pragma once
 #include "Pin.h"
+#include "Data.h"
+#include "DataPack.h"
+#include "DataAdapter.h"
+#include "Schema.h"
+
 namespace fs
 {
 	namespace L1
 	{
-		class DataAdapter;
-		class Data;
-		template< typename SchemaType>
-		class WarpPin : public Pin, public SchemaType
+		template<typename DataType = DataPack, typename SchemaType = LightSchema<typename DataType>>
+		class WarpPin : public Pin
 		{
 		public:
 			using InnerProcessType = typename SchemaType::InnerProcessType;
@@ -16,18 +19,31 @@ namespace fs
 				, _innerProcess(innerProcess)
 			{
 			}
-			virtual std::shared_ptr<DataAdapter> adapter()
+			virtual DataAdapter* adapter() override
 			{
-				auto _p = std::dynamic_pointer_cast<WarpPin<SchemaType>>(shared_from_this());
-				return std::dynamic_pointer_cast<DataAdapter>(_p);
+				return DataType::adapterInst();
 			}
 		protected:
-			virtual bool enableProcess() const { return NULL != _innerProcess; }
+			virtual bool enableProcess() const { return nullptr != _innerProcess; }
 			virtual void process(Context& ct, const std::shared_ptr<Data>& pdata)
 			{
-				if (_innerProcess)
+				if (_innerProcess && pdata)
 				{
-					SchemaType::callInnerProcess(_innerProcess, ct, pdata);
+					DataAdapter* adp = pdata->adapter();
+					if (!adp || !adapter())
+					{
+						return;
+					}
+
+					if (adp->hashCode() != adapter()->hashCode())
+					{
+						auto temp = adapter()->toData(adp->toAnyValues(pdata));
+						SchemaType::callInnerProcess(_innerProcess, ct, temp);
+					}
+					else
+					{
+						SchemaType::callInnerProcess(_innerProcess, ct, pdata);
+					}
 				}
 			}
 		protected:

@@ -1,33 +1,43 @@
 #pragma once
 #include "Data.h"
 #include "AnyValues.h"
-
+#include "DataAdapter.h"
 namespace fs
 {
 	namespace L1
 	{
-		class DataPack : public Data, public AnyValues
+		class DataPackAdapter;
+		class DataPack : public BasicData<DataPackAdapter>, public AnyValues
 		{
 		public:
 			DataPack(const AnyValues &any = AnyValues()) :
-				Data(NULL)
+				BasicData<DataPackAdapter>()
 				, AnyValues(any) {
 			}
 			virtual ~DataPack() {
 			}
 			DataPack(const DataPack&) = delete;
 			DataPack& operator=(const DataPack&) = delete;
-			virtual unsigned int hashCode() override
+		};
+
+		class DataPackAdapter : public DataAdapter
+		{
+		public:
+			virtual unsigned int hashCode() const override
 			{
-				return 0;
+				return *(const unsigned int*)("DataPackAdapter");
 			}
-			static DataPack* toData(const AnyValues & values)
+
+			virtual std::shared_ptr<Data> toData(const AnyValues &values) const override
 			{
-				return new DataPack(values);
+				auto mypack = new DataPack(values);
+				return std::shared_ptr<Data>(mypack);
+
 			}
-			static AnyValues toAnyValues(const DataPack & dataPack)
+			virtual AnyValues toAnyValues(const std::shared_ptr<Data>& pdata) const override
 			{
-				return *(AnyValues*)(&dataPack);
+				auto *dataPack = (const DataPack*)pdata.get();
+				return *(AnyValues*)dataPack;
 			}
 		};
 	}

@@ -6,3 +6,4 @@
 #include "Session.h"
 #include "DataPack.h"
 #include "Path.h"
+#include "DataAdapter.h"

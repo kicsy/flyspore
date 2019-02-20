@@ -36,11 +36,6 @@ namespace fs
 		{
 			if (_entrySpore && _entryPin && _entryPin->adapter())
 			{
-				//////////////////////////////////////////////////////////////////////////
-
-				//////////////////////////////////////////////////////////////////////////
-
-
 				auto pdata = _entryPin->adapter()->toData(any);
 				pdata->setSession(shared_from_this());
 				_entryPin->push(pdata);

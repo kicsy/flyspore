@@ -2,7 +2,6 @@
 #include <memory>
 #include <shared_mutex>
 #include "WarpPin.h"
-#include "DefaultSchema.h"
 namespace fs
 {
 	namespace L1
@@ -17,12 +16,12 @@ namespace fs
 			DefaultNest();
 			~DefaultNest();
 			std::shared_ptr<Spore> createSpore(const std::string& name);
-			std::shared_ptr<Pin> createPin(const std::string& name, Pin_Type type = Pin_Type::OUT_PIN, DefaultSchema::InnerProcessType proess = nullptr);
-			std::shared_ptr<Pin> createPin(const std::string& name, DefaultSchema::InnerProcessType proess);
-			template<typename SchemaType>
-			std::shared_ptr<Pin> createPin(const std::string& name, Pin_Type type = Pin_Type::OUT_PIN, typename SchemaType::InnerProcessType proess = nullptr);
-			template<typename SchemaType>
-			std::shared_ptr<Pin> createPin(const std::string& name, typename SchemaType::InnerProcessType proess = nullptr);
+			std::shared_ptr<Pin> createPin(const std::string& name, Pin_Type type = Pin_Type::OUT_PIN, WarpPin<>::InnerProcessType proess = nullptr);
+			std::shared_ptr<Pin> createPin(const std::string& name, WarpPin<>::InnerProcessType proess);
+			template<typename DataType, typename SchemaType = LightSchema<typename DataType>>
+			std::shared_ptr<Pin> createPin(const std::string& name, Pin_Type type = Pin_Type::OUT_PIN, typename WarpPin<typename DataType, typename SchemaType>::InnerProcessType proess = nullptr);
+			template<typename DataType, typename SchemaType = LightSchema<typename DataType>>
+			std::shared_ptr<Pin> createPin(const std::string& name, typename WarpPin<typename DataType, typename SchemaType>::InnerProcessType proess = nullptr);
 			virtual void lock() const;
 			virtual void unlock() const;
 			virtual void lock_shared() const;
@@ -44,18 +43,18 @@ namespace fs
 			friend class Spore;
 		};
 
-		template<typename SchemaType>
+		template<typename DataType, typename SchemaType>
 		std::shared_ptr<Pin>
-			DefaultNest::createPin(const std::string& name, Pin_Type type /*= Pin_Type::OUT_PIN*/, typename SchemaType::InnerProcessType proess /*= nullptr*/)
+			DefaultNest::createPin(const std::string& name, Pin_Type type /*= Pin_Type::OUT_PIN*/, typename WarpPin<typename DataType, typename SchemaType>::InnerProcessType proess /*= nullptr*/)
 		{
-			return std::shared_ptr<Pin>(new WarpPin<SchemaType>(name, type, proess));
+			return std::shared_ptr<Pin>(new WarpPin<DataType, SchemaType>(name, type, proess));
 		}
 
-		template<typename SchemaType>
+		template<typename DataType, typename SchemaType>
 		std::shared_ptr<Pin>
-			DefaultNest::createPin(const std::string& name, typename SchemaType::InnerProcessType proess /*= nullptr*/)
+			DefaultNest::createPin(const std::string& name, typename WarpPin<typename DataType, typename SchemaType>::InnerProcessType proess /*= nullptr*/)
 		{
-			return std::shared_ptr<Pin>(new WarpPin<SchemaType>(name, Pin_Type::IN_PIN, proess));
+			return std::shared_ptr<Pin>(new WarpPin<DataType, SchemaType>(name, Pin_Type::IN_PIN, proess));
 		}
 
 		class NestSharedLock : public std::shared_lock<DefaultNest>
