@@ -5,9 +5,7 @@
 #include "Session.h"
 #include "Context.h"
 #include "Path.h"
-#include "../Level0/task_pool.h"
-using namespace fs::L0;
-
+#include "Actuator.h"
 namespace fs
 {
 	namespace L1
@@ -36,8 +34,15 @@ namespace fs
 			if (_type == Pin_Type::IN_PIN && enableProcess())
 			{
 				pss->increaseTask();
-				task_pool::get_instance().submit(&Pin::task_process, this, data);
+				Actuator::get_instance().emplace(std::bind(Pin::call_process, shared_from_this(), data));
 			}
+
+			_outPaths.for_each([&](const std::shared_ptr<Path>& path) {
+				if (path != nullptr && path->isvalid())
+				{
+					path->move(data);
+				}
+			});
 
 			//for (auto &path : _outPaths)
 			//{
@@ -48,22 +53,22 @@ namespace fs
 			//}
 
 			//!!这里用到Nest的唯一共享锁，会导致性能瓶颈
-			auto theSpore = _spore.lock();
-			if (theSpore)
-			{
-				auto nest = theSpore->nest();
-				if (nest)
-				{
-					NestSharedLock lock(nest);
-					for (auto &path : _outPaths)
-					{
-						if (path != nullptr && path->isvalid())
-						{
-							path->move(data);
-						}
-					}
-				}
-			}
+			//auto theSpore = _spore.lock();
+			//if (theSpore)
+			//{
+			//	auto nest = theSpore->nest();
+			//	if (nest)
+			//	{
+			//		NestSharedLock lock(nest);
+			//		for (auto &path : _outPaths)
+			//		{
+			//			if (path != nullptr && path->isvalid())
+			//			{
+			//				path->move(data);
+			//			}
+			//		}
+			//	}
+			//}
 			return true;
 		}
 
@@ -78,6 +83,14 @@ namespace fs
 			Context cc(spore(), pss);
 			process(cc, data);
 			pss->decreaseTask();
+		}
+
+		void Pin::call_process(const std::shared_ptr<Pin>& pin, const std::shared_ptr<Data>&data)
+		{
+			if (pin)
+			{
+				pin->task_process(data);
+			}
 		}
 
 		DataAdapter* Pin::adapter()

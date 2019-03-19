@@ -44,11 +44,13 @@ namespace fs
 			auto thisPath = shared_from_this();
 			if (_from)
 			{
-				_from->_outPaths.push_back(thisPath);
+				_from->_outPaths.add(thisPath);
+				//_from->_outPaths.push_back(thisPath);
 			}
 			if (_to)
 			{
-				_to->_inPaths.push_back(thisPath);
+				_to->_inPaths.add(thisPath);
+				//_to->_inPaths.push_back(thisPath);
 			}
 			return true;
 		}
@@ -69,24 +71,26 @@ namespace fs
 			if (_from)
 			{
 				auto &paths = _from->_outPaths;
-				paths.erase(std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
-					if (pp == thisPath)
-					{
-						return true;
-					}
-					return false;
-				}), paths.end());
+				paths.remove(thisPath);
+				//paths.erase(std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
+				//	if (pp == thisPath)
+				//	{
+				//		return true;
+				//	}
+				//	return false;
+				//}), paths.end());
 			}
 			if (_to)
 			{
 				auto &paths = _to->_inPaths;
-				paths.erase(std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
-					if (pp == thisPath)
-					{
-						return true;
-					}
-					return false;
-				}), paths.end());
+				paths.remove(thisPath);
+				//paths.erase(std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
+				//	if (pp == thisPath)
+				//	{
+				//		return true;
+				//	}
+				//	return false;
+				//}), paths.end());
 			}
 			return true;
 		}

@@ -71,13 +71,12 @@ namespace fs
 
 		void Session::increaseTask()
 		{
-			_task_remain.fetch_add(1);
+			_task_remain.fetch_add(1, std::memory_order::memory_order_relaxed);
 		}
 
 		void Session::decreaseTask()
 		{
-			_task_remain.fetch_sub(1);
-			if (_task_remain.load(std::memory_order_relaxed) == 0)
+			if (_task_remain.fetch_sub(1, std::memory_order::memory_order_relaxed) == 1)
 			{
 				_stopTime = std::chrono::high_resolution_clock::now();
 				if (_triggerOnFinish)

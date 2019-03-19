@@ -113,6 +113,18 @@
     <ClInclude Include="..\core\Level1\DefaultNest.h">
       <Filter>core\Level1</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\Level0\notifier.hpp">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\workstealing_threadpool.hpp">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level1\Actuator.h">
+      <Filter>core\Level1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\Level0\lockfree_vector.hpp">
+      <Filter>core\Level0</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\core\Level2\maze_cmd.txt">

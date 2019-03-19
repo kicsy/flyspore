@@ -3,6 +3,8 @@
 #include <shared_mutex>
 #include <atomic>
 #include "Data.h"
+#include "../Level0/lockfree_vector.hpp"
+using namespace fs::L0;
 namespace fs
 {
 	namespace L1
@@ -29,6 +31,7 @@ namespace fs
 			virtual DataAdapter* adapter();
 			virtual bool push(const std::shared_ptr<Data>& data);
 			virtual std::shared_ptr<Path> connect(const std::shared_ptr<Pin>& to, const std::string& name = "");
+			static void call_process(const std::shared_ptr<Pin>& pin, const std::shared_ptr<Data>&data);
 		protected:
 			Pin(const std::string& name, Pin_Type type);
 			Pin(const Pin&) = delete;
@@ -39,8 +42,12 @@ namespace fs
 		protected:
 			Pin_Type _type;
 			std::string _name;
-			std::vector<std::shared_ptr<Path>> _outPaths;
-			std::vector<std::shared_ptr<Path>> _inPaths;
+
+			//std::vector<std::shared_ptr<Path>> _outPaths;
+			//std::vector<std::shared_ptr<Path>> _inPaths;
+
+			lockfree_vector<std::shared_ptr<Path>> _outPaths;
+			lockfree_vector<std::shared_ptr<Path>> _inPaths;
 			std::weak_ptr<Spore> _spore;
 			friend class Spore;
 			friend class Path;

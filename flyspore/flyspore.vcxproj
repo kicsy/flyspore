@@ -163,9 +163,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\core\Level0\Level0.h" />
+    <ClInclude Include="..\core\Level0\lockfree_vector.hpp" />
+    <ClInclude Include="..\core\Level0\notifier.hpp" />
     <ClInclude Include="..\core\Level0\stealing_queue.h" />
     <ClInclude Include="..\core\Level0\sync_deque.h" />
     <ClInclude Include="..\core\Level0\task_pool.h" />
+    <ClInclude Include="..\core\Level0\workstealing_threadpool.hpp" />
+    <ClInclude Include="..\core\Level1\Actuator.h" />
     <ClInclude Include="..\core\Level1\AnyValues.h" />
     <ClInclude Include="..\core\Level1\Context.h" />
     <ClInclude Include="..\core\Level1\Data.h" />

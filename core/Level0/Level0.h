@@ -2,3 +2,4 @@
 #include "stealing_queue.h"
 #include "sync_deque.h"
 #include "task_pool.h"
+#include "lockfree_vector.hpp"

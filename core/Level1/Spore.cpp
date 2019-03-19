@@ -18,15 +18,14 @@
  * Contact: lmj07luck@126.com
  *
  */
+#include <algorithm>
 #include "Spore.h"
 #include "Pin.h"
 #include "Path.h"
-#include "../Level0/task_pool.h"
 #include "Session.h"
 #include "Context.h"
 #include "DataPack.h"
 #include "DefaultNest.h"
-using namespace fs::L0;
 
 namespace fs
 {
