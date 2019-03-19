@@ -1,3 +1,5 @@
+// 2019/03/19 - modified by menju.li
+//  - In order to adapt to the msvc 14.12
 // 2019/02/15 - modified by Tsung-Wei Huang
 //  - batch to take reference not move
 //
@@ -385,7 +387,7 @@ template <typename Closure>
 WorkStealingThreadpool<Closure>::~WorkStealingThreadpool() {
 
   {
-    std::scoped_lock lock(_mutex);
+    std::scoped_lock<std::mutex> lock(_mutex);
     for(auto& w : _workers){
       w.exit = true;
     }
@@ -574,7 +576,7 @@ void WorkStealingThreadpool<Closure>::emplace(ArgsT&&... args){
   }
   // other threads
   else {
-    std::scoped_lock lock(_mutex);
+    std::scoped_lock<std::mutex> lock(_mutex);
     _queue.push(Closure{std::forward<ArgsT>(args)...});
   }
 
@@ -616,7 +618,7 @@ void WorkStealingThreadpool<Closure>::batch(std::vector<Closure>& tasks) {
   }
   
   {
-    std::scoped_lock lock(_mutex);
+    std::scoped_lock<std::mutex> lock(_mutex);
 
     for(size_t k=0; k<tasks.size(); ++k) {
       _queue.push(std::move(tasks[k]));

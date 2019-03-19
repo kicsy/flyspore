@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10.0)
 
 project(flyspore VERSION 0.0.1 LANGUAGES CXX)
 
-include(${CMAKE_SOURCE_DIR}/cmake/base.cmake)
+#include(${CMAKE_SOURCE_DIR}/cmake/base.cmake)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -47,8 +47,8 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
 ## microsoft visual c++
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  if(NOT MSVC_VERSION GREATER_EQUAL 1914)
-    message(FATAL_ERROR "\nrequires MSVC++ at least v14.14") 
+  if(NOT MSVC_VERSION GREATER_EQUAL 1900)
+    message(FATAL_ERROR "\nrequires MSVC++ at least v14.00") 
   endif()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2 /W3")
   add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
