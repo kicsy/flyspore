@@ -16,7 +16,7 @@ if exist %BUILD_BAT% call %BUILD_BAT% %4
 set BUILD_BAT="C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat" 
 if exist %BUILD_BAT% call %BUILD_BAT% %4
 
-cd %2
+cd /d "%2"
 
 echo "current path:" %cd%
 
