@@ -3,6 +3,7 @@
 #include <shared_mutex>
 #include <atomic>
 #include "Data.h"
+#include "Context.h"
 #include "../Level0/lockfree_vector.hpp"
 using namespace fs::L0;
 namespace fs

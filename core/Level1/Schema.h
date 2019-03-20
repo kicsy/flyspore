@@ -13,8 +13,9 @@ namespace fs
 		template<typename DataType>
 		class LightSchema
 		{
-		public:
-			using InnerProcessType = std::function< void(Context&, typename DataType&)>;
+		public:	
+			typedef void(*InnerProcessFunc)(Context&, DataType&);
+			using InnerProcessType = std::function< InnerProcessFunc >;
 			static void callInnerProcess(InnerProcessType innerProcess, Context& context, const std::shared_ptr<Data>& pdata)
 			{
 				DataType* pvs = (DataType*)pdata.get();

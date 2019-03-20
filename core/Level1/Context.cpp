@@ -8,9 +8,9 @@ namespace fs
 	{
 
 		Context::Context(const std::shared_ptr<Spore>& spore, const std::shared_ptr<Session>& pss):
-			_spore(spore)
+			session(pss->values())
+			,_spore(spore)
 			,_pss(pss)
-			, session(pss->values())
 		{
 		}
 

@@ -17,8 +17,9 @@ namespace fs
 			bool push(const std::string  &outPinName, const std::shared_ptr<Data> &ppack);
 			std::shared_ptr<Spore> spore();
 		protected:
-			std::shared_ptr<Session> _pss;
-			std::shared_ptr<Spore> _spore;
+			std::shared_ptr<Spore> _spore{nullptr};
+			std::shared_ptr<Session> _pss{nullptr};
+
 		};
 	}
 }

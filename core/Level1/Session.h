@@ -3,6 +3,7 @@
 #include <atomic>
 #include <condition_variable>
 #include <chrono>
+#include <functional>
 #include "AnyValues.h"
 namespace fs
 {
