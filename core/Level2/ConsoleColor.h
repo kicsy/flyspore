@@ -2,7 +2,7 @@
 #ifdef _WIN32
 #include <windows.h>
 struct ConsoleColor {
-	ConsoleColor(WORD attribute) :_color(attribute) {};
+	explicit ConsoleColor(WORD attribute) :_color(attribute) {};
 	WORD _color;
 };
 

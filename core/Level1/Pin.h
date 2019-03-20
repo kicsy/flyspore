@@ -36,7 +36,7 @@ namespace fs
 			Pin(const std::string& name, Pin_Type type);
 			Pin(const Pin&) = delete;
 			Pin& operator=(const Pin&) = delete;
-			void Pin::task_process(const std::shared_ptr<Data>&data);
+			void task_process(const std::shared_ptr<Data>&data);
 			virtual void process(Context& ct, const std::shared_ptr<Data>&pdata) {}
 			virtual bool enableProcess() const { return false; }
 		protected:
