@@ -43,10 +43,6 @@ namespace fs
 		protected:
 			Pin_Type _type;
 			std::string _name;
-
-			//std::vector<std::shared_ptr<Path>> _outPaths;
-			//std::vector<std::shared_ptr<Path>> _inPaths;
-
 			lockfree_vector<std::shared_ptr<Path>> _outPaths;
 			lockfree_vector<std::shared_ptr<Path>> _inPaths;
 			std::weak_ptr<Spore> _spore;

@@ -29,7 +29,7 @@ namespace fs{
 		struct task_wrap {
 		public:
 			/*
-				下面定义执行与释放的funtion，按理来说应该使用std::function<void(void*)>，但这个结构在VC14下sizeof太大，达到40Byte
+				锟斤拷锟芥定锟斤拷执锟斤拷锟斤拷锟酵放碉拷funtion锟斤拷锟斤拷锟斤拷锟斤拷说应锟斤拷使锟斤拷std::function<void(void*)>锟斤拷锟斤拷锟斤拷锟斤拷峁癸拷锟絍C14锟斤拷sizeof太锟襟，达到40Byte
 			*/
 			typedef void(*_pfn_fire)(void*);
 			typedef void(*_pfn_release)(void*);
@@ -87,7 +87,8 @@ namespace fs{
 			static void release(void* inst) {
 				any_task_wrap<_Res> *pthis = reinterpret_cast<any_task_wrap<_Res>*>(inst);
 				_any_task_type _t;
-				_t.swap(*reinterpret_cast<_any_task_type*> (&pthis->_task));
+				_any_task_type& _this_task = *reinterpret_cast<_any_task_type*> (&pthis->_task);
+				_t.swap(_this_task);
 			}
 		};
 

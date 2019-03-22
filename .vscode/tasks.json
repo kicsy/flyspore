@@ -4,6 +4,24 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "build-gcc",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/buildtool/linux-gcc.sh",
+            "args": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/build",
+                "Debug"  
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "build-windows-msvc-x86-Release",
             "type": "shell",
             "command": "${workspaceFolder}/scripts/buildtool/windows-msvc-build.bat",

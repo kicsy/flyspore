@@ -32,8 +32,8 @@ namespace fs
 	namespace L1
 	{
 		Spore::Spore(const std::weak_ptr<DefaultNest>& pNest, const std::string& name):
-			_nest(pNest)
-			,_name(name)
+		_name(name)
+		,_nest(pNest)
 		{
 		}
 

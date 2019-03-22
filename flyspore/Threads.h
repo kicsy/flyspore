@@ -37,38 +37,38 @@
 #include "core/Level0/task_pool.h"
 using namespace std;
 
-#ifdef _MSC_VER
+// #ifdef _MSC_VER
 
-#else
+// #else
 
-#define _MAX_INT_DIG 32
-#define _TOSTRING(buf, bufsize,fmt, val)	\
-	snprintf(buf,  bufsize, fmt, val)
+// #define _MAX_INT_DIG 32
+// #define _TOSTRING(buf, bufsize,fmt, val)	\
+// 	snprintf(buf,  bufsize, fmt, val)
 
-inline string to_string(int _Val)
-{	// convert long to string
-	char _Buf[2 * _MAX_INT_DIG];
-	_TOSTRING(_Buf, sizeof(_Buf), "%d", _Val);
-	return (string(_Buf));
-}
+// inline string to_string(int _Val)
+// {	// convert long to string
+// 	char _Buf[2 * _MAX_INT_DIG];
+// 	_TOSTRING(_Buf, sizeof(_Buf), "%d", _Val);
+// 	return (string(_Buf));
+// }
 
-inline string to_string(long _Val)
-{	// convert long to string
-	char _Buf[2 * _MAX_INT_DIG];
+// inline string to_string(long _Val)
+// {	// convert long to string
+// 	char _Buf[2 * _MAX_INT_DIG];
 
-	_TOSTRING(_Buf, sizeof(_Buf), "%ld", _Val);
-	return (string(_Buf));
-}
+// 	_TOSTRING(_Buf, sizeof(_Buf), "%ld", _Val);
+// 	return (string(_Buf));
+// }
 
-inline string to_string(unsigned long _Val)
-{	// convert unsigned long to string
-	char _Buf[2 * _MAX_INT_DIG];
+// inline string to_string(unsigned long _Val)
+// {	// convert unsigned long to string
+// 	char _Buf[2 * _MAX_INT_DIG];
 
-	_TOSTRING(_Buf, sizeof(_Buf), "%lu", _Val);
-	return (string(_Buf));
-}
+// 	_TOSTRING(_Buf, sizeof(_Buf), "%lu", _Val);
+// 	return (string(_Buf));
+// }
 
-#endif
+// #endif
 
 void g_do_some_work(int v1, int v2, string &result) {
 	this_thread::sleep_for(chrono::milliseconds(100));
@@ -102,22 +102,22 @@ void g_process_unique_obj(unique_ptr<int> val) {
 int test_Threads(){
 
    	/*
-	threadµÄÆô¶¯
+	threadçš„å¯åŠ¨
 
-	threadµÄ¶à¸ö¹¹Ôìº¯ÊıÌá¹©ÁË²»Í¬µÄÆô¶¯·½Ê½£¬ÓÈÆäÊÇ¹¹ÔìÊ±Ê¹ÓÃ±ä³¤²ÎÊıÄ£°åºÍmove²Ù×÷£¬Ìá¹©·Ç³£Áé»îµÄÆô¶¯º¯Êı°ó¶¨¡£
-	¶øÇÒËü½«²»ÏŞ¶¨Æô¶¯º¯ÊıÎª¾²Ì¬º¯Êı£¨ÔÚC++11Ö®Ç°£¬Æ½Ì¨Ïà¹ØµÄÆô¶¯º¯Êı£¬ÈçWindowsÏÂµÄ::CreateThread£©£¬ÆäÄÚ²¿Ê¹ÓÃÀàËÆÓÚbind»úÖÆÀ´ºÏ³ÉÆô¶¯Èë¿Ú¡£
+	threadçš„å¤šä¸ªæ„é€ å‡½æ•°æä¾›äº†ä¸åŒçš„å¯åŠ¨æ–¹å¼ï¼Œå°¤å…¶æ˜¯æ„é€ æ—¶ä½¿ç”¨å˜é•¿å‚æ•°æ¨¡æ¿å’Œmoveæ“ä½œï¼Œæä¾›éå¸¸çµæ´»çš„å¯åŠ¨å‡½æ•°ç»‘å®šã€‚
+	è€Œä¸”å®ƒå°†ä¸é™å®šå¯åŠ¨å‡½æ•°ä¸ºé™æ€å‡½æ•°ï¼ˆåœ¨C++11ä¹‹å‰ï¼Œå¹³å°ç›¸å…³çš„å¯åŠ¨å‡½æ•°ï¼Œå¦‚Windowsä¸‹çš„::CreateThreadï¼‰ï¼Œå…¶å†…éƒ¨ä½¿ç”¨ç±»ä¼¼äºbindæœºåˆ¶æ¥åˆæˆå¯åŠ¨å…¥å£ã€‚
 	*/
 
-	//eg.1.´«Í³µÄÏß³ÌÆô¶¯·½Ê½£¬¾²Ì¬º¯ÊıÈë¿Ú
+	//eg.1.ä¼ ç»Ÿçš„çº¿ç¨‹å¯åŠ¨æ–¹å¼ï¼Œé™æ€å‡½æ•°å…¥å£
 	string strresult;
-	//ĞèÒª×¢ÒâµÄÊÇ£¬Ïß³Ìº¯Êı´«µİ²ÎÊıÊ±ÊÇ°´Öµ´«µİ£¬Èç¹ûĞèÒª´«ÈëÒıÓÃ£¬Ê¹ÓÃstd::ref·â×°£¨Õâ¸ö·â×°ÄÚ²¿Ê¹ÓÃÁËreference_wrapper£©
+	//éœ€è¦æ³¨æ„çš„æ˜¯ï¼Œçº¿ç¨‹å‡½æ•°ä¼ é€’å‚æ•°æ—¶æ˜¯æŒ‰å€¼ä¼ é€’ï¼Œå¦‚æœéœ€è¦ä¼ å…¥å¼•ç”¨ï¼Œä½¿ç”¨std::refå°è£…ï¼ˆè¿™ä¸ªå°è£…å†…éƒ¨ä½¿ç”¨äº†reference_wrapperï¼‰
 	thread th1(g_do_some_work, 11, 22, std::ref(strresult));
 	th1.join();
 
 
 
 	/*
-	ÕâÀï¿ÉÒÔ½«´ø²»Í¬²ÎÊıµÄº¯ÊıÍ¨¹ıbind¹éÒ»»¯ÎªÒ»¸öÀàĞÍÍ³Ò»µÄº¯ÊıÖ¸Õë·â×°£¨std::function<void()>£©£¬È»ºó·Åµ½¶ÓÁĞÀï£¬ÕâÑù¿ÉÒÔÍ¨¹ı¹¹½¨Ïß³Ì³ØÀ´±éÀúÖ´ĞĞÈÎÎñ
+	è¿™é‡Œå¯ä»¥å°†å¸¦ä¸åŒå‚æ•°çš„å‡½æ•°é€šè¿‡bindå½’ä¸€åŒ–ä¸ºä¸€ä¸ªç±»å‹ç»Ÿä¸€çš„å‡½æ•°æŒ‡é’ˆå°è£…ï¼ˆstd::function<void()>ï¼‰ï¼Œç„¶åæ”¾åˆ°é˜Ÿåˆ—é‡Œï¼Œè¿™æ ·å¯ä»¥é€šè¿‡æ„å»ºçº¿ç¨‹æ± æ¥éå†æ‰§è¡Œä»»åŠ¡
 	*/
 	cout << "\n-------------task_list-------------------\n";
 	std::packaged_task<int()> task([](){return 7;}); // wrap the function
@@ -185,7 +185,7 @@ int test_Threads(){
     //std::function<void()> fc = std::move(work_call2);
 
 
-	//eg.2. ´«µİÌá¹©ÁËoperator()ÔËËã·ûµÄÀàµÄÊµÀı
+	//eg.2. ä¼ é€’æä¾›äº†operator()è¿ç®—ç¬¦çš„ç±»çš„å®ä¾‹
 	class do_some_work_man {
 		string base;
 	public:
@@ -200,12 +200,12 @@ int test_Threads(){
 
 
 
-	//eg.3. ´«µİlambda
+	//eg.3. ä¼ é€’lambda
 	thread th3([base = string("th3 Combin Result")](int v1, int v2, string &result){
 		result = base + to_string(v1) + "__" + to_string(v2);
 	}, 33, 44, std::ref(strresult));
 	th3.join();
-	//´ËÍâ£¬¹ØÓÚlambdaµÄ·ÃÎÊÓò£¬ÉÏÀı¿ÉÒÔ¸Ã³ÉÏÂÃæµÄĞÎÊ½£º
+	//æ­¤å¤–ï¼Œå…³äºlambdaçš„è®¿é—®åŸŸï¼Œä¸Šä¾‹å¯ä»¥è¯¥æˆä¸‹é¢çš„å½¢å¼ï¼š
 	thread th4([base = string("th4 Combin Result"), &strresult](int v1, int v2){
 		strresult = base + to_string(v1) + "__" + to_string(v2);
 	}, 33, 44);
@@ -213,7 +213,7 @@ int test_Threads(){
 
 
 
-	//eg.4. ´«µİ³ÉÔ±º¯Êı
+	//eg.4. ä¼ é€’æˆå‘˜å‡½æ•°
 	class do_some_work_man2 {
 		string base;
 	public:
@@ -228,7 +228,7 @@ int test_Threads(){
 
 
 
-	//ÁíÍâ£¬ÎÒÃÇÒ²¿ÉÒÔÊ¹ÓÃbindÀ´Íê³ÉÉÏÃæµÄÀı×Ó
+	//å¦å¤–ï¼Œæˆ‘ä»¬ä¹Ÿå¯ä»¥ä½¿ç”¨bindæ¥å®Œæˆä¸Šé¢çš„ä¾‹å­
 	do_some_work_man2 man3(string("th6 Combin Result:"));
 	auto work_call = std::bind(&do_some_work_man2::run, &man3, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	thread th6(work_call, 55, 66, std::ref(strresult));
@@ -237,22 +237,22 @@ int test_Threads(){
 
 
 	/*
-		µÈ´ıÏß³ÌÖ´ĞĞÍê³É
+		ç­‰å¾…çº¿ç¨‹æ‰§è¡Œå®Œæˆ
 	*/
 
 	/*
-		threadÔÚ¹¹ÔìÊ±£¬¼´¿ªÊ¼Æô¶¯Ïß³Ì£¬ÇÒÊ¼ÖÕÔËĞĞÖ±µ½Ïß³Ì½áÊø£¬¼´Ê¹thread¶ÔÏóµÄÉúÃüÖÜÆÚÒÑ¾­½áÊø¡£
-		thread::join()½«×èÈûµ±Ç°Ïß³Ì£¬Ö±µ½±»µ÷ÓÃÏß³ÌÍê³ÉÎªÖ¹¡£Èç¹ûÎÒÃÇÏ£ÍûthreadµÄÉúÃüÖÜÆÚºÍÏß³ÌÍ¬Ê±½áÊøÊ±£¬¿ÉÊÇÊ¹ÓÃRAII¼¼Êõ
+		threadåœ¨æ„é€ æ—¶ï¼Œå³å¼€å§‹å¯åŠ¨çº¿ç¨‹ï¼Œä¸”å§‹ç»ˆè¿è¡Œç›´åˆ°çº¿ç¨‹ç»“æŸï¼Œå³ä½¿threadå¯¹è±¡çš„ç”Ÿå‘½å‘¨æœŸå·²ç»ç»“æŸã€‚
+		thread::join()å°†é˜»å¡å½“å‰çº¿ç¨‹ï¼Œç›´åˆ°è¢«è°ƒç”¨çº¿ç¨‹å®Œæˆä¸ºæ­¢ã€‚å¦‚æœæˆ‘ä»¬å¸Œæœ›threadçš„ç”Ÿå‘½å‘¨æœŸå’Œçº¿ç¨‹åŒæ—¶ç»“æŸæ—¶ï¼Œå¯æ˜¯ä½¿ç”¨RAIIæŠ€æœ¯
 	*/
 
-	//eg.5.µÈ´ıÏß³ÌÍê³É
+	//eg.5.ç­‰å¾…çº¿ç¨‹å®Œæˆ
 	class thread_guard{
 		std::thread &t;
 	public:
 		explicit thread_guard(std::thread &t_):t(t_){}
 		~thread_guard() { if (t.joinable()) t.join(); }
-		thread_guard(thread_guard const&) = delete;				//¹Ø±Õ¿½±´¹¹Ôìº¯Êı
-		thread_guard& operator=(thread_guard const&) = delete;  //¹Ø±Õ¸³Öµº¯Êı
+		thread_guard(thread_guard const&) = delete;				//å…³é—­æ‹·è´æ„é€ å‡½æ•°
+		thread_guard& operator=(thread_guard const&) = delete;  //å…³é—­èµ‹å€¼å‡½æ•°
 	};
 
 	thread th7([]() {
@@ -266,21 +266,21 @@ int test_Threads(){
 	assert(!th7.joinable());
 
 
-	//eg.6. ºóÌ¨ÔËĞĞÏß³Ì
+	//eg.6. åå°è¿è¡Œçº¿ç¨‹
 
 	thread th8(g_do_some_work, 11, 22, ref(strresult));
 	/*
-		detch()½«·ÖÀëÓëÏß³ÌµÄ¹ØÁª£¬ ²Ù×÷ÏµÍ³½«¸ºÔğÊÍ·ÅÖÕÖ¹Ïß³ÌµÄ×ÊÔ´,ÆäĞ§¹ûÓëÏß³Ì¶ÔÏóÏú»ÙÏàÍ¬¡£
-		Ã÷È·µÄµ÷ÓÃËüµÄÄ¿µÄÔÚÓÚ±íÃ÷ÎÒÃÇÈ·ÊµĞèÒª·ÖÀëÕâ¸öÏß³Ì×ÊÔ´£¬¶ø²»ÊÇÍü¼Çjoin£¨£©²Ù×÷
+		detch()å°†åˆ†ç¦»ä¸çº¿ç¨‹çš„å…³è”ï¼Œ æ“ä½œç³»ç»Ÿå°†è´Ÿè´£é‡Šæ”¾ç»ˆæ­¢çº¿ç¨‹çš„èµ„æº,å…¶æ•ˆæœä¸çº¿ç¨‹å¯¹è±¡é”€æ¯ç›¸åŒã€‚
+		æ˜ç¡®çš„è°ƒç”¨å®ƒçš„ç›®çš„åœ¨äºè¡¨æ˜æˆ‘ä»¬ç¡®å®éœ€è¦åˆ†ç¦»è¿™ä¸ªçº¿ç¨‹èµ„æºï¼Œè€Œä¸æ˜¯å¿˜è®°joinï¼ˆï¼‰æ“ä½œ
 	*/
 	th8.detach();
 	assert(!th8.joinable());
 
 
 	/*
-		¹ØÓÚÏòÏß³Ì´«µİ²ÎÊıĞèÒª×¢ÒâµÄµØ·½
+		å…³äºå‘çº¿ç¨‹ä¼ é€’å‚æ•°éœ€è¦æ³¨æ„çš„åœ°æ–¹
 
-		Ç°ÃæËµ¹ıÏß³ÌÆô¶¯Ê±ÊÇ°´Öµ´«µİ²ÎÊı£¬±ØÒªÊ±Ê¹ÓÃstd::refÒıÓÃ·â×°£¬µ«¶ÔÓÚÒ»Ğ©²»ÄÜ¿½±´µÄ²ÎÊı¶øÑÔ£¬ĞèÒªÊ¹ÓÃmoveÀ´´¦Àí
+		å‰é¢è¯´è¿‡çº¿ç¨‹å¯åŠ¨æ—¶æ˜¯æŒ‰å€¼ä¼ é€’å‚æ•°ï¼Œå¿…è¦æ—¶ä½¿ç”¨std::refå¼•ç”¨å°è£…ï¼Œä½†å¯¹äºä¸€äº›ä¸èƒ½æ‹·è´çš„å‚æ•°è€Œè¨€ï¼Œéœ€è¦ä½¿ç”¨moveæ¥å¤„ç†
 	*/
 
 	//eg.7.
@@ -291,7 +291,7 @@ int test_Threads(){
 	};
 	unique_ptr<int> u_val = make_unique<int>(100);
 
-	//Èç¹û²»Ê¹ÓÃstd::move£¬½«»á³öÏÖ±àÒë´íÎó C2280£¬±íÃ÷unique_ptrµÄ¿½±´¹¹Ôìº¯ÊıÒÑÉ¾³ı
+	//å¦‚æœä¸ä½¿ç”¨std::moveï¼Œå°†ä¼šå‡ºç°ç¼–è¯‘é”™è¯¯ C2280ï¼Œè¡¨æ˜unique_ptrçš„æ‹·è´æ„é€ å‡½æ•°å·²åˆ é™¤
 	thread th9(process_unique_obj, std::move(u_val));
 	th9.join();
 

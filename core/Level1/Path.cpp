@@ -8,10 +8,10 @@ namespace fs
 	namespace L1
 	{
 		Path::Path(const std::weak_ptr<Spore>& spore, const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to, const std::string& name) :
-			_spore(spore)
+			_name(name)
 			, _from(from)
 			, _to(to)
-			, _name(name)
+			, _spore(spore)
 		{
 		}
 
@@ -109,7 +109,7 @@ namespace fs
 			}
 			if (fromSpore->parent() == toSproe->parent())
 			{
-				//Á½¸öPinµÄËÞÖ÷SporeÎªÍ¬¼¶£¬Í¨¹ýPathÁ¬½Ó
+				//ï¿½ï¿½ï¿½ï¿½Pinï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SporeÎªÍ¬ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½Pathï¿½ï¿½ï¿½ï¿½
 				auto holder = fromSpore->parent();
 				if (!holder)
 				{

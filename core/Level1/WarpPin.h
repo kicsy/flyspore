@@ -1,20 +1,19 @@
 #pragma once
+#include <functional>
 #include "Pin.h"
 #include "Data.h"
-#include "DataPack.h"
 #include "DataAdapter.h"
-#include "Schema.h"
 
 namespace fs
 {
 	namespace L1
 	{
-		template<typename DataType = DataPack, typename SchemaType = LightSchema<typename DataType>>
+		template<typename DataType>
 		class WarpPin : public Pin
 		{
 		public:
-			using InnerProcessType = typename SchemaType::InnerProcessType;
-			WarpPin(const std::string& name, Pin_Type type, InnerProcessType innerProcess) :
+		    using ProcessType = std::function< void(Context&, DataType&) >;
+			WarpPin(const std::string& name, Pin_Type type, ProcessType innerProcess) :
 				Pin(name, type)
 				, _innerProcess(innerProcess)
 			{
@@ -34,20 +33,28 @@ namespace fs
 					{
 						return;
 					}
-
+					DataType* pvs = nullptr;
 					if (adp->hashCode() != adapter()->hashCode())
 					{
 						auto temp = adapter()->toData(adp->toAnyValues(pdata));
-						SchemaType::callInnerProcess(_innerProcess, ct, temp);
+						pvs = (DataType*)temp.get();
+						if(pvs)
+						{
+							_innerProcess(ct, *pvs);
+						}
 					}
 					else
 					{
-						SchemaType::callInnerProcess(_innerProcess, ct, pdata);
+						pvs = (DataType*)pdata.get();
+						if(pvs)
+						{
+							_innerProcess(ct, *pvs);
+						}
 					}
 				}
 			}
 		protected:
-			InnerProcessType _innerProcess;
+			ProcessType _innerProcess;
 		};
 	}
 }
