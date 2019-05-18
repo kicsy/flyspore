@@ -8,3 +8,4 @@
     运行的途径可以是：
         a) 通过开始菜单Visual Studio 2017/Visual Studio Tools/VC/适用于 VS 2017 的 x86/64 本机工具命令提示
         b) 运行"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars32/64.bat"
+	c)
