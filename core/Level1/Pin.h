@@ -32,7 +32,6 @@ namespace fs
 			virtual DataAdapter* adapter();
 			virtual bool push(const std::shared_ptr<Data>& data);
 			virtual std::shared_ptr<Path> connect(const std::shared_ptr<Pin>& to, const std::string& name = "");
-			static void call_process(const std::shared_ptr<Pin>& pin, const std::shared_ptr<Data>&data);
 		protected:
 			Pin(const std::string& name, Pin_Type type);
 			Pin(const Pin&) = delete;

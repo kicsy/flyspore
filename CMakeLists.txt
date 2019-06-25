@@ -1,7 +1,8 @@
+message(STATUS "--------CMAKE--------")
 cmake_minimum_required(VERSION 3.10.0)
-
+message(STATUS "--------PROJECT--------")
 project(flyspore VERSION 0.0.1 LANGUAGES CXX)
-
+message(STATUS "----------------")
 #include(${CMAKE_SOURCE_DIR}/cmake/base.cmake)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)

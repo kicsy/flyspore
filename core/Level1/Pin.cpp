@@ -34,7 +34,7 @@ namespace fs
 			if (_type == Pin_Type::IN_PIN && enableProcess())
 			{
 				pss->increaseTask();
-				Actuator::get_instance().emplace(std::bind(Pin::call_process, shared_from_this(), data));
+				Actuator::get_instance().emplace(std::bind(&Pin::task_process, this, data));
 			}
 
 			_outPaths.for_each([&](const std::shared_ptr<Path>& path) {
@@ -43,32 +43,6 @@ namespace fs
 					path->move(data);
 				}
 			});
-
-			//for (auto &path : _outPaths)
-			//{
-			//	if (path != nullptr && path->isvalid())
-			//	{
-			//		path->move(data);
-			//	}
-			//}
-
-			//!!这里用到Nest的唯一共享锁，会导致性能瓶颈
-			//auto theSpore = _spore.lock();
-			//if (theSpore)
-			//{
-			//	auto nest = theSpore->nest();
-			//	if (nest)
-			//	{
-			//		NestSharedLock lock(nest);
-			//		for (auto &path : _outPaths)
-			//		{
-			//			if (path != nullptr && path->isvalid())
-			//			{
-			//				path->move(data);
-			//			}
-			//		}
-			//	}
-			//}
 			return true;
 		}
 
@@ -83,14 +57,6 @@ namespace fs
 			Context cc(spore(), pss);
 			process(cc, data);
 			pss->decreaseTask();
-		}
-
-		void Pin::call_process(const std::shared_ptr<Pin>& pin, const std::shared_ptr<Data>&data)
-		{
-			if (pin)
-			{
-				pin->task_process(data);
-			}
 		}
 
 		DataAdapter* Pin::adapter()
