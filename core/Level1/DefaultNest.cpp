@@ -24,12 +24,12 @@ namespace fs
 
 		std::shared_ptr<Pin> DefaultNest::createPin(const std::string& name, Pin_Type type, DefaultWarpPin::ProcessType proess)
 		{
-			return std::shared_ptr<Pin>(new DefaultWarpPin(name, type, proess));
+			return std::shared_ptr<Pin>(new DefaultWarpPin(weak_from_this(), name, type, proess));
 		}
 
 		std::shared_ptr<Pin> DefaultNest::createPin(const std::string& name, DefaultWarpPin::ProcessType proess)
 		{
-			return std::shared_ptr<Pin>(new DefaultWarpPin(name, Pin_Type::IN_PIN, proess));
+			return std::shared_ptr<Pin>(new DefaultWarpPin(weak_from_this(), name, Pin_Type::IN_PIN, proess));
 		}
 
 		void DefaultNest::onAddSpore(std::shared_ptr<Spore> parent, std::shared_ptr<Spore> child)

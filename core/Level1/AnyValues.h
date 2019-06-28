@@ -11,7 +11,7 @@ namespace fs
 		class AnyValues
 		{
 		public:
-			AnyValues()
+			AnyValues():_values(1)
 			{
 
 			}

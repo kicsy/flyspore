@@ -30,10 +30,12 @@ namespace fs
 			std::shared_ptr<Spore> spore() const;
 			std::string name() const;
 			virtual DataAdapter* adapter();
+			std::shared_ptr<DefaultNest> nest() const;
 			virtual bool push(const std::shared_ptr<Data>& data);
 			virtual std::shared_ptr<Path> connect(const std::shared_ptr<Pin>& to, const std::string& name = "");
+			virtual std::shared_ptr<Pin> clone(const std::string& newName = std::string("")){return nullptr;};
 		protected:
-			Pin(const std::string& name, Pin_Type type);
+			Pin(const std::weak_ptr<DefaultNest>& pNest, const std::string& name, Pin_Type type);
 			Pin(const Pin&) = delete;
 			Pin& operator=(const Pin&) = delete;
 			void task_process(const std::shared_ptr<Data>&data);
@@ -45,6 +47,7 @@ namespace fs
 			lockfree_vector<std::shared_ptr<Path>> _outPaths;
 			lockfree_vector<std::shared_ptr<Path>> _inPaths;
 			std::weak_ptr<Spore> _spore;
+			std::weak_ptr<DefaultNest> _nest;
 			friend class Spore;
 			friend class Path;
 		};

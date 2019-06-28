@@ -241,6 +241,18 @@ int main()
 	//Maze maze;
 	//maze.run();
 	//testCalc();
+	int ntemp = sizeof(std::any);
+	ntemp = sizeof(std::string);
+	ntemp = sizeof(std::unordered_map<std::string, std::any>);
+	ntemp = sizeof(std::shared_mutex);
+	ntemp = sizeof(std::shared_ptr<std::unordered_map<std::string, std::any>>);
+	
+	int size_AnyValues = sizeof(AnyValues);
+	int size_Spore = sizeof(Spore);
+
+	char _c;
+	
+
 	calc_deep = 5;
 	calc_range = 10;
 
@@ -271,7 +283,6 @@ int main()
 	std::cout << "default avg: " << t_d / e_d << "\n";
 	std::cout << "my avg: " << t / e << "\n";
 
-	char _c;
 	std::cin >> _c;
 	return 0;
 

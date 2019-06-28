@@ -13,14 +13,19 @@ namespace fs
 		{
 		public:
 		    using ProcessType = std::function< void(Context&, DataType&) >;
-			WarpPin(const std::string& name, Pin_Type type, ProcessType innerProcess) :
-				Pin(name, type)
+			WarpPin(const std::weak_ptr<DefaultNest>& pNest, const std::string& name, Pin_Type type, ProcessType innerProcess) :
+				Pin(pNest, name, type)
 				, _innerProcess(innerProcess)
 			{
 			}
 			virtual DataAdapter* adapter() override
 			{
 				return DataType::adapterInst();
+			}
+
+			ProcessType innerProcess()
+			{
+				return _innerProcess;
 			}
 		protected:
 			virtual bool enableProcess() const { return nullptr != _innerProcess; }

@@ -34,11 +34,35 @@ namespace fs
 		Spore::Spore(const std::weak_ptr<DefaultNest>& pNest, const std::string& name):
 		_name(name)
 		,_nest(pNest)
+		,_ppins(nullptr)
+		,_pchilds(nullptr)
+		,_ppaths(nullptr)
+		,_pvalues(nullptr)
 		{
 		}
 
 		Spore::~Spore()
 		{
+			if(_ppins)
+			{
+				delete _ppins;
+				_ppins = nullptr;
+			}
+			if(_pchilds)
+			{
+				delete _pchilds;
+				_pchilds = nullptr;
+			}
+			if(_ppaths)
+			{
+				delete _ppaths;
+				_ppaths = nullptr;
+			}
+			if(_pvalues)
+			{
+				delete _pvalues;
+				_pvalues = nullptr;
+			}
 		}
 
 		std::shared_ptr<Spore> Spore::addSpore(const std::shared_ptr<Spore>& spore)
@@ -48,12 +72,12 @@ namespace fs
 				return nullptr;
 			}
 			NestUniqueLock lock(_nest);
-			if (std::find(_childs.begin(), _childs.end(), spore) != _childs.end())
+			if (std::find(_childs().begin(), _childs().end(), spore) != _childs().end())
 			{
 				return spore;
 			}
 			spore->_parent = weak_from_this();
-			_childs.push_back(spore);
+			_childs().push_back(spore);
 			nest()->onAddSpore(shared_from_this(), spore);
 			return spore;
 		}
@@ -66,13 +90,13 @@ namespace fs
 			}
 
 			NestUniqueLock lock(_nest);
-			auto iter = std::find(_childs.begin(), _childs.end(), spore);
-			if(iter == _childs.end())
+			auto iter = std::find(_childs().begin(), _childs().end(), spore);
+			if(iter == _childs().end())
 			{
 				return nullptr;
 			}
 			spore->_parent.reset();
-			_childs.erase(iter);
+			_childs().erase(iter);
 			nest()->onRemoveSpore(shared_from_this(), spore);
 			return spore;
 		}
@@ -84,10 +108,10 @@ namespace fs
 				return nullptr;
 			}
 			NestUniqueLock lock(_nest);
-			auto iter = std::find_if(_childs.begin(), _childs.end(), [&](const std::shared_ptr<Spore>& spore) {
+			auto iter = std::find_if(_childs().begin(), _childs().end(), [&](const std::shared_ptr<Spore>& spore) {
 				return spore && spore->name() == name;
 			});
-			if (iter != _childs.end())
+			if (iter != _childs().end())
 			{
 				return *iter;
 			}
@@ -101,12 +125,12 @@ namespace fs
 				return nullptr;
 			}
 			NestUniqueLock lock(_nest);
-			if (std::find(_pins.begin(), _pins.end(), pin) != _pins.end())
+			if (std::find(_pins().begin(), _pins().end(), pin) != _pins().end())
 			{
 				return pin;
 			}
 			pin->_spore = weak_from_this();
-			_pins.push_back(pin);
+			_pins().push_back(pin);
 			nest()->onAddPin(shared_from_this(), pin);
 			return pin;
 		}
@@ -119,28 +143,28 @@ namespace fs
 			}
 
 			NestUniqueLock lock(_nest);
-			auto iter = std::find(_pins.begin(), _pins.end(), pin);
-			if (iter == _pins.end())
+			auto iter = std::find(_pins().begin(), _pins().end(), pin);
+			if (iter == _pins().end())
 			{
 				return nullptr;
 			}
 			pin->_spore.reset();
-			_pins.erase(iter);
+			_pins().erase(iter);
 			nest()->onRemovePin(shared_from_this(), pin);
 			return pin;
 		}
 
-		std::shared_ptr<Pin> Spore::getPin(const std::string& name) const
+		std::shared_ptr<Pin> Spore::getPin(const std::string& name)
 		{
 			if (name.length() == 0 || !nest())
 			{
 				return nullptr;
 			}
 			NestSharedLock lock(_nest);
-			auto iter = std::find_if(_pins.begin(), _pins.end(), [&](const std::shared_ptr<Pin>& pin) {
+			auto iter = std::find_if(_pins().begin(), _pins().end(), [&](const std::shared_ptr<Pin>& pin) {
 				return pin && pin->name() == name;
 			});
-			if (iter != _pins.end())
+			if (iter != _pins().end())
 			{
 				return *iter;
 			}
@@ -162,6 +186,66 @@ namespace fs
 			return _nest.lock();
 		}
 
+		std::vector < std::shared_ptr<Pin>> Spore::getPins()
+		{
+			NestUniqueLock lock(_nest);
+			return _pins();
+		}
+		
+		std::vector < std::shared_ptr<Spore>> Spore::getChilds()
+		{
+			NestUniqueLock lock(_nest);
+			return _childs();
+		}
+		
+		std::vector< std::shared_ptr<Path>> Spore::getPaths()
+		{
+			NestUniqueLock lock(_nest);
+			return _paths();
+		}
+
+		std::vector < std::shared_ptr<Pin>>& Spore::_pins()
+		{
+			if(!_ppins)
+			{
+				_ppins = new std::vector < std::shared_ptr<Pin>>(1);
+			}
+			return *_ppins;
+		}
+
+		AnyValues& Spore::propertys()
+		{
+			NestUniqueLock lock(_nest);
+			return _propertys();
+		}
+
+		std::vector < std::shared_ptr<Spore>>& Spore::_childs()
+		{
+			if(!_pchilds)
+			{
+				_pchilds = new std::vector < std::shared_ptr<Spore>>(1);
+			}
+			return *_pchilds;
+		}
+
+		std::vector < std::shared_ptr<Path>>& Spore::_paths()
+		{
+			if(!_ppaths)
+			{
+				_ppaths = new std::vector < std::shared_ptr<Path>>(1);
+			}
+			return *_ppaths;
+		}
+
+		AnyValues& Spore::_propertys()
+		{
+			if(!_pvalues)
+			{
+				_pvalues = new AnyValues();
+			}
+			return *_pvalues;
+		}
+
 		const std::shared_ptr<Path> Spore::addPath(const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to, const std::string &name /*= ""*/)
 		{
 			if (!from || !to ||  !nest())
@@ -169,16 +253,16 @@ namespace fs
 				return nullptr;
 			}
 			NestUniqueLock lock(_nest);
-			auto iter = std::find_if(_paths.begin(), _paths.end(), [&](const std::shared_ptr<Path>& pp) {
+			auto iter = std::find_if(_paths().begin(), _paths().end(), [&](const std::shared_ptr<Path>& pp) {
 				return pp->from() == from && pp->to() == to;
 			});
-			if (iter != _paths.end())
+			if (iter != _paths().end())
 			{
 				return *iter;
 			}
 			std::shared_ptr<Path> path(new Path(shared_from_this(), from, to, name));
 			path->attach();
-			_paths.push_back(path);
+			_paths().push_back(path);
 			nest()->onAddPath(shared_from_this(), path);
 			return path;
 		}
@@ -187,15 +271,45 @@ namespace fs
 		{
 			bool isOk = false;
 			NestUniqueLock lock(_nest);
-			isOk = std::remove_if(_paths.begin(), _paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
+			isOk = std::remove_if(_paths().begin(), _paths().end(), [&](const std::shared_ptr<Path>& pp)->bool {
 				if (pp == path)
 				{
+					nest()->onRemovePath(shared_from_this(), pp);
 					pp->detach();
 					return true;
 				}
 				return false;
-			}) != _paths.end();
+			}) != _paths().end();
 			return isOk;
+		}
+
+		std::shared_ptr<Spore> Spore::clone(const std::string& newName/*= std::string("")*/)
+		{
+			std::map<std::shared_ptr<Pin>, std::shared_ptr<Pin>> pinmap;
+			return _clone(newName, pinmap);
+		}
+
+		std::shared_ptr<Spore> Spore::_clone(const std::string& newName, std::map<std::shared_ptr<Pin>, std::shared_ptr<Pin>> &pinmap)
+		{
+			auto newSpore = nest()->createSpore(newName.empty() ? name() : newName);
+			
+			for(auto pin : getPins())
+			{
+				pinmap[pin] = newSpore->addPin(pin->clone());
+			}
+			for(auto child : getChilds())
+			{
+				newSpore->addSpore(child->_clone(std::string(""), pinmap));
+			}
+
+			for(auto path : getPaths())
+			{
+				if(path->from() && pinmap.count(path->from()) > 0 &&  path->to() && pinmap.count(path->to()) > 0)
+				{
+					pinmap[path->from()]->connect(pinmap[path->to()]);
+				}
+			}
+			return newSpore;
 		}
 	}
 }

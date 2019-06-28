@@ -10,8 +10,9 @@ namespace fs
 {
 	namespace L1
 	{
-		Pin::Pin(const std::string& name, Pin_Type type):
-			_type(type)
+		Pin::Pin(const std::weak_ptr<DefaultNest>& pNest, const std::string& name, Pin_Type type):
+			_nest(pNest)
+			,_type(type)
 			,_name(name)
 		{
 		}
@@ -77,6 +78,11 @@ namespace fs
 		std::string Pin::name() const
 		{
 			return _name;
+		}
+		
+		std::shared_ptr<DefaultNest> Pin::nest() const
+		{
+			return _nest.lock();
 		}
 	}
 }

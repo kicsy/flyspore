@@ -17,12 +17,15 @@ namespace fs
 			DefaultNest();
 			~DefaultNest();
 			std::shared_ptr<Spore> createSpore(const std::string& name);
+			template<typename SporeType, typename... Args>
+			std::shared_ptr<Spore> createSpore(const std::string& name, Args&&... args);
 			std::shared_ptr<Pin> createPin(const std::string& name, Pin_Type type = Pin_Type::OUT_PIN, DefaultWarpPin::ProcessType process = nullptr);
 			std::shared_ptr<Pin> createPin(const std::string& name, DefaultWarpPin::ProcessType proess);
 			template<typename DataType>
 			std::shared_ptr<Pin> createPin(const std::string& name, Pin_Type type = Pin_Type::OUT_PIN, typename WarpPin<DataType>::ProcessType proess = nullptr);
 			template<typename DataType>
 			std::shared_ptr<Pin> createPin(const std::string& name, typename WarpPin<DataType>::ProcessType proess = nullptr);
+			
 			virtual void lock() const;
 			virtual void unlock() const;
 			virtual void lock_shared() const;
@@ -44,18 +47,25 @@ namespace fs
 			friend class Spore;
 		};
 
+		template<typename SporeType, typename... Args>
+		std::shared_ptr<Spore>
+			DefaultNest::createSpore(const std::string& name, Args&&... args)
+		{
+			return std::shared_ptr<Spore>(new SporeType(weak_from_this(), name, std::forward<Args>(args)...));
+		}
+
 		template<typename DataType>
 		std::shared_ptr<Pin>
 			DefaultNest::createPin(const std::string& name, Pin_Type type /*= Pin_Type::OUT_PIN*/, typename WarpPin<DataType>::ProcessType proess /*= nullptr*/)
 		{
-			return std::shared_ptr<Pin>(new WarpPin<DataType>(name, type, proess));
+			return std::shared_ptr<Pin>(new WarpPin<DataType>(weak_from_this(), name, type, proess));
 		}
 
 		template<typename DataType>
 		std::shared_ptr<Pin>
 			DefaultNest::createPin(const std::string& name, typename WarpPin<DataType>::ProcessType proess /*= nullptr*/)
 		{
-			return std::shared_ptr<Pin>(new WarpPin<DataType>(name, Pin_Type::IN_PIN, proess));
+			return std::shared_ptr<Pin>(new WarpPin<DataType>(weak_from_this(), name, Pin_Type::IN_PIN, proess));
 		}
 
 		class NestSharedLock : public std::shared_lock<DefaultNest>

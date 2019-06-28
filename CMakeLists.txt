@@ -62,6 +62,8 @@ currently supports the following compilers:\n\
 ")
 endif()
 
+##add_subdirectory(3rdparty)
+
 add_subdirectory(core)
 
 add_subdirectory(flyspore)
