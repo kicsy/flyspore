@@ -12,11 +12,17 @@ namespace fs
 			, _from(from)
 			, _to(to)
 			, _spore(spore)
+			,_pvalues(nullptr)
 		{
 		}
 
 		Path::~Path()
 		{
+			if(_pvalues)
+			{
+				delete _pvalues;
+				_pvalues = nullptr;
+			}
 		}
 
 		bool Path::move(const std::shared_ptr<Data>& data)
@@ -44,13 +50,11 @@ namespace fs
 			auto thisPath = shared_from_this();
 			if (_from)
 			{
-				_from->_outPaths.add(thisPath);
-				//_from->_outPaths.push_back(thisPath);
+				_from->_outPaths().add(thisPath);
 			}
 			if (_to)
 			{
-				_to->_inPaths.add(thisPath);
-				//_to->_inPaths.push_back(thisPath);
+				_to->_inPaths().add(thisPath);
 			}
 			return true;
 		}
@@ -70,34 +74,18 @@ namespace fs
 			auto thisPath = shared_from_this();
 			if (_from)
 			{
-				auto &paths = _from->_outPaths;
-				paths.remove(thisPath);
-				//paths.erase(std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
-				//	if (pp == thisPath)
-				//	{
-				//		return true;
-				//	}
-				//	return false;
-				//}), paths.end());
+				_from->_outPaths().remove(thisPath);
 			}
 			if (_to)
 			{
-				auto &paths = _to->_inPaths;
-				paths.remove(thisPath);
-				//paths.erase(std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
-				//	if (pp == thisPath)
-				//	{
-				//		return true;
-				//	}
-				//	return false;
-				//}), paths.end());
+				_to->_inPaths().remove(thisPath);
 			}
 			return true;
 		}
 
 		std::shared_ptr<Path> Path::connect(const std::shared_ptr<Pin> &from, const std::shared_ptr<Pin> &to, const std::string &name /*= ""*/)
 		{
-			if (!from || !to)
+			if (!from || !to || from->nest() != to->nest())
 			{
 				return nullptr;
 			}
@@ -146,6 +134,7 @@ namespace fs
 			{
 				return nullptr;
 			}
+
 			return connect(fromSpore->getPin(fromPinName), toSpore->getPin(toPinName), name);
 		}
 
@@ -186,6 +175,25 @@ namespace fs
 		bool Path::isvalid() const
 		{
 			return _from != nullptr && _to != nullptr;
+		}
+
+		AnyValues& Path::propertys()
+		{
+			if(!isvalid())
+			{
+				return _propertys();
+			}
+			NestUniqueLock lock(_from->nest());
+			return _propertys();
+		}
+				
+		inline AnyValues& Path::_propertys()
+		{
+			if(!_pvalues)
+			{
+				_pvalues = new AnyValues();
+			}
+			return *_pvalues;
 		}
 	}
 }

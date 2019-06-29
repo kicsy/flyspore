@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include "AnyValues.h"
 namespace fs
 {
 	namespace L1
@@ -21,6 +22,7 @@ namespace fs
 			std::string name() const;
 			bool isvalid() const;
 			bool move(const std::shared_ptr<Data>& data);
+			AnyValues& propertys();
 			static std::shared_ptr<Path> connect(const std::shared_ptr<Pin> &from, const std::shared_ptr<Pin> &to, const std::string &name = "");
 			static std::shared_ptr<Path> connect(std::shared_ptr<Spore> &fromSpore, const std::string &fromPinName,
 				std::shared_ptr<Spore> &toSpore, const std::string &toPinName, const std::string &name = "");
@@ -29,11 +31,13 @@ namespace fs
 			Path(const std::weak_ptr<Spore>& spore, const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to, const std::string& name);
 			bool attach();
 			bool detach();
+			AnyValues& _propertys();
 		protected:
 			std::string _name;
 			std::shared_ptr<Pin> _from;
 			std::shared_ptr<Pin> _to;
 			std::weak_ptr<Spore> _spore;
+			AnyValues *_pvalues;
 			friend class DefaultNest;
 			friend class Spore;
 		};

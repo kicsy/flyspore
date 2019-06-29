@@ -204,7 +204,13 @@ namespace fs
 			return _paths();
 		}
 
-		std::vector < std::shared_ptr<Pin>>& Spore::_pins()
+		AnyValues& Spore::propertys()
+		{
+			NestUniqueLock lock(_nest);
+			return _propertys();
+		}
+
+		inline std::vector < std::shared_ptr<Pin>>& Spore::_pins()
 		{
 			if(!_ppins)
 			{
@@ -213,13 +219,7 @@ namespace fs
 			return *_ppins;
 		}
 
-		AnyValues& Spore::propertys()
-		{
-			NestUniqueLock lock(_nest);
-			return _propertys();
-		}
-
-		std::vector < std::shared_ptr<Spore>>& Spore::_childs()
+		inline std::vector < std::shared_ptr<Spore>>& Spore::_childs()
 		{
 			if(!_pchilds)
 			{
@@ -228,7 +228,7 @@ namespace fs
 			return *_pchilds;
 		}
 
-		std::vector < std::shared_ptr<Path>>& Spore::_paths()
+		inline std::vector < std::shared_ptr<Path>>& Spore::_paths()
 		{
 			if(!_ppaths)
 			{
@@ -237,7 +237,7 @@ namespace fs
 			return *_ppaths;
 		}
 
-		AnyValues& Spore::_propertys()
+		inline AnyValues& Spore::_propertys()
 		{
 			if(!_pvalues)
 			{

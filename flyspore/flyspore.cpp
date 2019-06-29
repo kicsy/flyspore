@@ -234,6 +234,9 @@ auto testMySchema()
 	//task_pool &_tp = task_pool::get_instance();
 	//std::cout << "All task finish,ths  count is :" << _tp.get_finish_count() << "\n";
 }
+
+void testDataStructBuilder();
+
 int main()
 {
 	//lockfree_array<std::shared_ptr<Path>> la;
@@ -241,6 +244,7 @@ int main()
 	//Maze maze;
 	//maze.run();
 	//testCalc();
+	testDataStructBuilder();
 	int ntemp = sizeof(std::any);
 	ntemp = sizeof(std::string);
 	ntemp = sizeof(std::unordered_map<std::string, std::any>);
@@ -288,3 +292,30 @@ int main()
 
 }
 
+void testDataStructBuilder()
+{
+		struct miniscp
+		{
+
+		};
+
+		struct Int32Value
+		{
+
+		};
+
+		struct StringValue
+		{
+
+		};
+
+		struct mylink : public miniscp
+		{
+			Int32Value value1;
+			StringValue string1;
+			struct _segment001 : public miniscp
+			{
+				
+			} segment001;
+		};
+}

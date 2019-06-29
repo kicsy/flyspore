@@ -52,10 +52,10 @@ namespace fs
 			Spore(const std::weak_ptr<DefaultNest>& pNest, const std::string& name);
 			Spore(const Spore&) = delete;
 		protected:
-			inline std::vector < std::shared_ptr<Pin>>& _pins();
-			inline std::vector < std::shared_ptr<Spore>>& _childs();
-			inline std::vector < std::shared_ptr<Path>>& _paths();
-			inline AnyValues& _propertys();
+			std::vector < std::shared_ptr<Pin>>& _pins();
+			std::vector < std::shared_ptr<Spore>>& _childs();
+			std::vector < std::shared_ptr<Path>>& _paths();
+			AnyValues& _propertys();
 			const std::shared_ptr<Path> addPath(const std::shared_ptr<Pin>& from, const std::shared_ptr<Pin>& to, const std::string &name = "");
 			bool removePath(const std::shared_ptr<Path>& path);
 			inline std::shared_ptr<Spore> _clone(const std::string& newName, std::map<std::shared_ptr<Pin>, std::shared_ptr<Pin>> &pinmap);

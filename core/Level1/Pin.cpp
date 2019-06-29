@@ -14,11 +14,29 @@ namespace fs
 			_nest(pNest)
 			,_type(type)
 			,_name(name)
+			,_poutPaths(nullptr)
+			,_pinPaths(nullptr)
+			,_pvalues(nullptr)
 		{
 		}
 
 		Pin::~Pin()
 		{
+			if(_poutPaths)
+			{
+				delete _poutPaths;
+				_poutPaths = nullptr;
+			}
+			if(_pinPaths)
+			{
+				delete _pinPaths;
+				_pinPaths = nullptr;
+			}
+			if(_pvalues)
+			{
+				delete _pvalues;
+				_pvalues = nullptr;
+			}
 		}
 
 		bool Pin::push(const std::shared_ptr<Data> &data)
@@ -38,7 +56,7 @@ namespace fs
 				Actuator::get_instance().emplace(std::bind(&Pin::task_process, this, data));
 			}
 
-			_outPaths.for_each([&](const std::shared_ptr<Path>& path) {
+			_outPaths().for_each([&](const std::shared_ptr<Path>& path) {
 				if (path != nullptr && path->isvalid())
 				{
 					path->move(data);
@@ -83,6 +101,40 @@ namespace fs
 		std::shared_ptr<DefaultNest> Pin::nest() const
 		{
 			return _nest.lock();
+		}
+
+		AnyValues& Pin::propertys()
+		{
+			NestUniqueLock lock(_nest);
+			return _propertys();
+		}
+
+		PathVector& Pin::_outPaths()
+		{
+			if(!_poutPaths)
+			{
+				_poutPaths = new PathVector();
+			}
+			return *_poutPaths;
+		}
+
+		PathVector& Pin::_inPaths()
+		{
+			if(!_pinPaths)
+			{
+				_pinPaths = new PathVector();
+			}
+			return *_pinPaths;
+		}
+
+		
+		inline AnyValues& Pin::_propertys()
+		{
+			if(!_pvalues)
+			{
+				_pvalues = new AnyValues();
+			}
+			return *_pvalues;
 		}
 	}
 }

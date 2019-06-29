@@ -22,15 +22,18 @@ namespace fs
 		class Data;
 		class Path;
 		class DataAdapter;
+		using PathVector = lockfree_vector<std::shared_ptr<Path>>;
 		class Pin : public std::enable_shared_from_this<Pin>
 		{
 		public:
+			
 			virtual ~Pin();
 			Pin_Type type() const;
 			std::shared_ptr<Spore> spore() const;
 			std::string name() const;
 			virtual DataAdapter* adapter();
 			std::shared_ptr<DefaultNest> nest() const;
+			AnyValues& propertys();
 			virtual bool push(const std::shared_ptr<Data>& data);
 			virtual std::shared_ptr<Path> connect(const std::shared_ptr<Pin>& to, const std::string& name = "");
 			virtual std::shared_ptr<Pin> clone(const std::string& newName = std::string("")){return nullptr;};
@@ -41,13 +44,17 @@ namespace fs
 			void task_process(const std::shared_ptr<Data>&data);
 			virtual void process(Context& ct, const std::shared_ptr<Data>&pdata) {}
 			virtual bool enableProcess() const { return false; }
+			PathVector& _outPaths();
+			PathVector& _inPaths();
+			AnyValues& _propertys();
 		protected:
 			Pin_Type _type;
 			std::string _name;
-			lockfree_vector<std::shared_ptr<Path>> _outPaths;
-			lockfree_vector<std::shared_ptr<Path>> _inPaths;
+			PathVector *_poutPaths;
+			PathVector *_pinPaths;
 			std::weak_ptr<Spore> _spore;
 			std::weak_ptr<DefaultNest> _nest;
+			AnyValues *_pvalues;
 			friend class Spore;
 			friend class Path;
 		};
