@@ -214,7 +214,7 @@ namespace fs
 		{
 			if(!_ppins)
 			{
-				_ppins = new std::vector < std::shared_ptr<Pin>>(1);
+				_ppins = new std::vector < std::shared_ptr<Pin>>();
 			}
 			return *_ppins;
 		}
@@ -223,7 +223,7 @@ namespace fs
 		{
 			if(!_pchilds)
 			{
-				_pchilds = new std::vector < std::shared_ptr<Spore>>(1);
+				_pchilds = new std::vector < std::shared_ptr<Spore>>();
 			}
 			return *_pchilds;
 		}
@@ -232,7 +232,7 @@ namespace fs
 		{
 			if(!_ppaths)
 			{
-				_ppaths = new std::vector < std::shared_ptr<Path>>(1);
+				_ppaths = new std::vector < std::shared_ptr<Path>>();
 			}
 			return *_ppaths;
 		}
@@ -253,16 +253,21 @@ namespace fs
 				return nullptr;
 			}
 			NestUniqueLock lock(_nest);
-			auto iter = std::find_if(_paths().begin(), _paths().end(), [&](const std::shared_ptr<Path>& pp) {
-				return pp->from() == from && pp->to() == to;
-			});
-			if (iter != _paths().end())
+			auto &paths = _paths();
+			if(!paths.empty())
 			{
-				return *iter;
+				auto iter = std::find_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp) {
+					return pp->from() == from && pp->to() == to;
+				});
+				if (iter != paths.end())
+				{
+					return *iter;
+				}
 			}
+			
 			std::shared_ptr<Path> path(new Path(shared_from_this(), from, to, name));
 			path->attach();
-			_paths().push_back(path);
+			paths.push_back(path);
 			nest()->onAddPath(shared_from_this(), path);
 			return path;
 		}
@@ -271,7 +276,12 @@ namespace fs
 		{
 			bool isOk = false;
 			NestUniqueLock lock(_nest);
-			isOk = std::remove_if(_paths().begin(), _paths().end(), [&](const std::shared_ptr<Path>& pp)->bool {
+			auto &paths = _paths();
+			if(paths.empty())
+			{
+				return isOk;
+			}
+			isOk = std::remove_if(paths.begin(), paths.end(), [&](const std::shared_ptr<Path>& pp)->bool {
 				if (pp == path)
 				{
 					nest()->onRemovePath(shared_from_this(), pp);
@@ -279,7 +289,7 @@ namespace fs
 					return true;
 				}
 				return false;
-			}) != _paths().end();
+			}) != paths.end();
 			return isOk;
 		}
 

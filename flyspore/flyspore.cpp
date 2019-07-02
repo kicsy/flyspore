@@ -241,8 +241,9 @@ int main()
 {
 	//lockfree_array<std::shared_ptr<Path>> la;
 	//la.push(std::shared_ptr<Path>(nullptr));
-	//Maze maze;
-	//maze.run();
+	Maze maze;
+	maze.run();
+	return 0;
 	//testCalc();
 	testDataStructBuilder();
 	int ntemp = sizeof(std::any);

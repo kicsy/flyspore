@@ -3,6 +3,8 @@
 #include "Maze.h"
 #include "ConsoleColor.h"
 
+#define APP_TITLE "FS"
+
 fs::L2::Maze::Maze()
 {
 	_nest = std::make_shared<DefaultNest>();
@@ -26,6 +28,13 @@ fs::L2::Maze::Maze()
 	errorPin->connect(printErrorPin);
 
 	_session_call = Session::newSession(callPin);
+}
+
+void fs::L2::Maze::buildCallMap()
+{
+	_callMap["load"] = [&](AnyValues& session, std::string &cmd){
+
+	};
 }
 
 fs::L2::Maze::~Maze()
@@ -60,13 +69,14 @@ void fs::L2::Maze::run()
 void fs::L2::Maze::_call(Context& cc, DataPack& data)
 {
 	std::string  cmd = data.get<std::string>("cmd");
+
+	if()
+	if (cmd == "load")
+	{
+		_call_load(cc.session, cmd);
+	}
 	auto echo = std::make_shared<DataPack>();
 	echo->set<std::string>("echo", cmd);
-
-	if (cmd == "info")
-	{
-
-	}
 
 	cc.push("out", echo);
 }
@@ -91,7 +101,7 @@ void fs::L2::Maze::_error(Context& cc, DataPack& data)
 void fs::L2::Maze::_echo_textBlock(std::ostream &stream, std::string &textBlock)
 {
 	std::unique_lock<std::mutex> lk(_mut_console);
-	std::cout << "\r" << CYAN << "FlySpore  " << RESET << "/home" << "\n"  ;
+	std::cout << "\r" << CYAN << APP_TITLE << RESET << "/home" << "\n"  ;
 
 	if (&stream == &std::cerr)
 	{
@@ -105,5 +115,15 @@ void fs::L2::Maze::_echo_textBlock(std::ostream &stream, std::string &textBlock)
 
 void fs::L2::Maze::_echo_Welcome()
 {
-	std::cout << "\r" << GREEN << "FlySpore"<< RESET << "  (version 0.0.6.0)\n"  << INFLAG;
+	std::cout << "\r" << GREEN << APP_TITLE << RESET << "  (version 0.0.6.0)\n"  << INFLAG;
+}
+
+void fs::L2::Maze::_call_load(AnyValues& session, std::string &cmd)
+{
+
+}
+
+void fs::L2::Maze::_call_quit(AnyValues& session, std::string &cmd)
+{
+
 }
